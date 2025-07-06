@@ -1,0 +1,22 @@
+// jsconfig.json
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"] // This line defines the @/ alias to point to your src directory
+    },
+    "jsx": "react-jsx", // Essential for React JSX in JS files
+    "target": "es2020", // Or "esnext"
+    "module": "esnext",
+    "moduleResolution": "bundler", // Or "node" depending on Vite config/preference
+    "allowJs": true, // Allow JavaScript files
+    "strict": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "noEmit": true // Don't emit any output files (handled by Vite)
+  },
+  "include": ["src"], // Include your source files
+  "exclude": ["node_modules", "dist"] // Exclude these folders
+}
