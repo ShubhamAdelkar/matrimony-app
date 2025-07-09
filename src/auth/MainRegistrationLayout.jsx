@@ -7,10 +7,29 @@ import { useNavigate } from "react-router-dom"; // For redirection
 import EmailPasswordForm from "../auth/forms/EmailPasswordForm"; // Step 2 form
 import { GalleryVerticalEnd } from "lucide-react";
 import PersonalDetailsForm from "./forms/PersonalDetailsForm";
+import { ProfessionalDetailsForm } from "./forms/ProfessionalDetailsForm";
 
 function MainRegistrationLayout() {
   const { currentStep, setCurrentStep, resetForm } = useMultiStepForm();
   const navigate = useNavigate();
+
+  // ⭐ Define the array of step components
+  // The index of the array corresponds to (currentStep - 1)
+  const stepComponents = [
+    // Step 1 is handled by /register route and RegisterPage, not by MainRegistrationLayout's Outlet
+    // So, MainRegistrationLayout starts from step 2
+    <EmailPasswordForm key="step2" />, // Corresponds to currentStep 2
+    <PersonalDetailsForm key="step3" />, // Corresponds to currentStep 3
+    <ProfessionalDetailsForm key="step4" />, // Corresponds to currentStep 4
+    // Add more components here as you create more steps:
+    // <OtherDetailsForm key="step5" />,
+    // <FinalReviewForm key="step6" />,
+  ];
+
+  // ⭐ Calculate the total number of steps dynamically
+  // We add 1 because our multi-step form starts from step 1 (RegisterPage)
+  // and MainRegistrationLayout handles steps from 2 onwards.
+  const totalSteps = stepComponents.length + 1; // +1 for the initial RegisterPage (Step 1)
 
   console.log("MainRegistrationLayout: currentStep on render =", currentStep);
 
@@ -28,8 +47,8 @@ function MainRegistrationLayout() {
         return <EmailPasswordForm />;
       case 3:
         return <PersonalDetailsForm />;
-      // case 4:
-      //   return <ProfileDetailsForm />;
+      case 4:
+        return <ProfessionalDetailsForm />;
       // case 5:
       //   return <OnboardingComplete />;
       case 1:
@@ -68,7 +87,7 @@ function MainRegistrationLayout() {
         <div className="flex flex-1 items-center justify-center">
           <div className="flex flex-col w-full max-w-md gap-2">
             <h3 className="mt-6 text-center font-medium">
-              Step {currentStep} of 2
+              Step {currentStep} of {totalSteps}
             </h3>
             {renderStepComponent()}
           </div>

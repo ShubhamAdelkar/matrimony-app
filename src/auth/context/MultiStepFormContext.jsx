@@ -20,13 +20,17 @@ export const MultiStepFormProvider = ({ children }) => {
             dob: "",
             religion: "",
             caste: "",
-            motherTongue: "",
             name: "",
             phone: "",
             gender: "",
             email: "",
             password: "",
             confirmPassword: "",
+            maritalStatus: "",
+            height: "",
+            familyStatus: "",
+            familyType: "",
+            disability: "",
           };
     } catch (error) {
       console.error("Failed to parse stored form data:", error);
@@ -34,13 +38,17 @@ export const MultiStepFormProvider = ({ children }) => {
         caste: "",
         dob: "",
         religion: "",
-        motherTongue: "",
         name: "",
         phone: "",
         gender: "",
         email: "",
         password: "",
         confirmPassword: "",
+        maritalStatus: "",
+        height: "",
+        familyStatus: "",
+        familyType: "",
+        disability: "",
       };
     }
   });
@@ -91,13 +99,17 @@ export const MultiStepFormProvider = ({ children }) => {
       caste: "",
       dob: "",
       religion: "",
-      motherTongue: "",
       name: "",
       phone: "",
       gender: "",
       email: "",
       password: "",
       confirmPassword: "",
+      maritalStatus: "",
+      height: "",
+      familyStatus: "",
+      familyType: "",
+      disability: "",
     });
     setCurrentStep(1);
     try {

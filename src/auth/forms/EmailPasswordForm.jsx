@@ -32,13 +32,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon, Eye, EyeOff } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import * as select from "@/components/ui/select";
 import religions from "./data/religions";
 import marathiCastes from "./data/marathiCastes";
 import { useAuth } from "../context/AuthContext";
@@ -124,7 +118,7 @@ function EmailPasswordForm() {
     resolver: zodResolver(formSchema),
     mode: "onChange",
     defaultValues: {
-      dob: formData.dob || undefined,
+      dob: formData.dob ? new Date(formData.dob) : undefined,
       religion: formData.religion || "",
       caste: formData.caste || "",
       email: formData.email || "",
@@ -171,22 +165,28 @@ function EmailPasswordForm() {
       //     return;
       // }
 
-      // updateFormData(values); // Save email/password to context as well
+      updateFormData(values); // Save email/password to context as well
+
+      nextStep();
+      console.log(
+        "RegisterForm: currentStep after nextStep call:",
+        form.getValues()
+      );
 
       // ⭐ IMPORTANT CHANGES HERE:
       // 1. Simulate successful login immediately after "user creation"
-      const dummyToken = "my_super_secret_dummy_auth_token_from_registration";
-      login(dummyToken); // Log the user in
+      //const dummyToken = "my_super_secret_dummy_auth_token_from_registration";
+      //login(dummyToken); // Log the user in
 
       // 2. Reset the multi-step form data ONLY AFTER successful "creation" and login
-      resetForm(); // Clear the multi-step form data from context/localStorage
+      //resetForm(); // Clear the multi-step form data from context/localStorage
 
       // 3. Navigate to the Home Page (or a dashboard) directly,
       //    as the user is now logged in.
-      navigate("/"); // ⭐ Navigate to the authenticated home page
-      console.log(
-        "EmailPasswordForm: Navigation to Home page initiated after registration and login."
-      );
+      //navigate("/"); // ⭐ Navigate to the authenticated home page
+      // console.log(
+      //   "EmailPasswordForm: Navigation to Home page initiated after registration and login."
+      // );
     } catch (error) {
       console.error("Account creation error:", error);
       form.setError("root.serverError", {
@@ -213,8 +213,10 @@ function EmailPasswordForm() {
     <Form {...form}>
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">Enter your basic details</CardTitle>
-          <CardDescription></CardDescription>
+          <CardTitle className="text-xl">
+            Basic Details for Your Match
+          </CardTitle>
+          <CardDescription>This is crucial for profile</CardDescription>
         </CardHeader>
         <CardContent>
           <form
@@ -282,68 +284,71 @@ function EmailPasswordForm() {
             />
 
             {/* religion & caste */}
-            <div className="flex justify-between">
+            <div className="w-full grid grid-cols-2 gap-3">
+              {" "}
+              {/* ⭐ Changed from flex to grid, added gap */}
               <FormField
                 control={form.control}
                 name="religion"
                 render={({ field }) => (
-                  <FormItem className="">
+                  <FormItem className="w-full">
+                    {" "}
+                    {/* ⭐ Added w-full to FormItem */}
                     <FormLabel>Religion</FormLabel>
-                    <Select
+                    <select.Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
-                      className="w-full"
                     >
-                      <FormControl className="cursor-pointer">
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select religion" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
+                      <select.SelectTrigger className="w-full">
+                        <select.SelectValue placeholder="Select religion" />
+                      </select.SelectTrigger>
+                      <select.SelectContent>
                         {religions.map((religion, index) => (
-                          <SelectItem
+                          <select.SelectItem
                             className="cursor-pointer"
                             key={index}
                             value={religion.replace(/\s/g, "")}
                           >
                             {religion}
-                          </SelectItem>
+                          </select.SelectItem>
                         ))}
-                      </SelectContent>
-                    </Select>
+                      </select.SelectContent>
+                    </select.Select>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
               {/* caste */}
               <FormField
                 control={form.control}
                 name="caste"
                 render={({ field }) => (
-                  <FormItem className="">
+                  <FormItem className="w-full">
+                    {" "}
+                    {/* ⭐ Added w-full to FormItem */}
                     <FormLabel>Caste</FormLabel>
-                    <Select
+                    <select.Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
+                      // className="w-full" // This is already good
                     >
-                      <FormControl className="cursor-pointer">
-                        <SelectTrigger className={"w-full"}>
-                          <SelectValue placeholder="Select caste" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
+                      <select.SelectTrigger className="w-full">
+                        {" "}
+                        {/* ⭐ Added w-full to SelectTrigger */}
+                        <select.SelectValue placeholder="Select caste" />
+                      </select.SelectTrigger>
+                      <select.SelectContent>
                         {marathiCastes.map((caste, index) => (
-                          <SelectItem
+                          <select.SelectItem
                             className="cursor-pointer"
                             key={index}
                             value={caste.replace(/\s/g, "")}
                           >
                             {caste}
-                          </SelectItem>
+                          </select.SelectItem>
                         ))}
-                      </SelectContent>
-                    </Select>
+                      </select.SelectContent>
+                    </select.Select>
                     <FormMessage />
                   </FormItem>
                 )}
