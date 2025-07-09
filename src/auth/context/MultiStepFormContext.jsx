@@ -19,6 +19,7 @@ export const MultiStepFormProvider = ({ children }) => {
         : {
             dob: "",
             religion: "",
+            caste: "",
             motherTongue: "",
             name: "",
             phone: "",
@@ -30,6 +31,7 @@ export const MultiStepFormProvider = ({ children }) => {
     } catch (error) {
       console.error("Failed to parse stored form data:", error);
       return {
+        caste: "",
         dob: "",
         religion: "",
         motherTongue: "",
@@ -86,6 +88,7 @@ export const MultiStepFormProvider = ({ children }) => {
   // Function to reset the form data and step (e.g., after successful registration)
   const resetForm = useCallback(() => {
     setFormData({
+      caste: "",
       dob: "",
       religion: "",
       motherTongue: "",

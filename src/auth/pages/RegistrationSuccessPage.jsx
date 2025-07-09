@@ -3,17 +3,18 @@ import { useMultiStepForm } from "../context/MultiStepFormContext";
 import { Link } from "react-router-dom";
 
 function RegistrationSuccessPage() {
-  const { resetForm } = useMultiStepForm();
+  //const { resetForm } = useMultiStepForm();
 
-  useEffect(() => {
-    // ⭐ CRITICAL: Call resetForm() here when the success page mounts
-    // This ensures that the multi-step form data is cleared ONLY after
-    // successful navigation to the final success page.
-    console.log(
-      "RegistrationSuccessPage: Called resetForm to clear multi-step data."
-    );
-    resetForm();
-  }, [resetForm]);
+  // useEffect(() => {
+  //   // ⭐ CRITICAL: Call resetForm() here when the success page mounts
+  //   // This ensures that the multi-step form data is cleared ONLY after
+  //   // successful navigation to the final success page.
+  //   console.log(
+  //     "RegistrationSuccessPage: Called resetForm to clear multi-step data."
+  //   );
+  //   resetForm();
+  // }, [resetForm]);
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-green-50">
       <div className="text-center p-8 bg-white rounded-lg shadow-lg">

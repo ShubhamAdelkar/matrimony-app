@@ -13,8 +13,9 @@ import MainRegistrationLayout from "./auth/MainRegistrationLayout"; // New orche
 
 // Root/Authenticated related imports
 import RootLayout from "./root/RootLayout";
-import Home from "./root/pages/Home"; // Example private page (e.g., Dashboard)
 import RegistrationSuccessPage from "./auth/pages/RegistrationSuccessPage";
+import { AuthProvider, useAuth } from "./auth/context/AuthContext";
+import HomePage from "./root/pages/HomePage";
 
 // Optional: A simple success page
 // const RegistrationSuccessPage = () => (
@@ -39,58 +40,60 @@ import RegistrationSuccessPage from "./auth/pages/RegistrationSuccessPage";
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        {/* Public Routes using AuthLayout */}
-        {/* ⭐ CORRECTED: BOTH /login and /register are now nested under AuthLayout */}
-        <Route
-          element={
-            // MultiStepFormProvider wrapped here to ensure it's available for RegisterPage and potentially for LoginPage if context is used there too.
-            // If LoginPage doesn't need it, you can move MultiStepFormProvider inside the /register route's element.
-            <MultiStepFormProvider>
-              <AuthLayout />
-            </MultiStepFormProvider>
-          }
-        >
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />{" "}
-          {/* This is Step 1 */}
-        </Route>
+      <AuthProvider>
+        {/* ⭐ Wrap your entire application with AuthProvider */}
+        <Routes>
+          {/* Public Routes using AuthLayout */}
+          {/* ⭐ CORRECTED: BOTH /login and /register are now nested under AuthLayout */}
+          <Route
+            element={
+              // MultiStepFormProvider wrapped here to ensure it's available for RegisterPage and potentially for LoginPage if context is used there too.
+              // If LoginPage doesn't need it, you can move MultiStepFormProvider inside the /register route's element.
+              <MultiStepFormProvider>
+                <AuthLayout />
+              </MultiStepFormProvider>
+            }
+          >
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />{" "}
+            {/* This is Step 1 */}
+          </Route>
 
-        {/* Subsequent Steps: /onboarding (requires MainRegistrationLayout for visuals AND MultiStepFormProvider for context) */}
-        {/* Note: MultiStepFormProvider is already provided by the parent AuthLayout route now, but keeping it here
+          {/* Subsequent Steps: /onboarding (requires MainRegistrationLayout for visuals AND MultiStepFormProvider for context) */}
+          {/* Note: MultiStepFormProvider is already provided by the parent AuthLayout route now, but keeping it here
             is fine if MainRegistrationLayout needs a fresh context or if you want to be explicit.
             However, it's generally better to provide context at the highest common ancestor.
             Since /register and /onboarding both use the MultiStepFormProvider, putting it
             around AuthLayout (as above) makes sense.
         */}
-        <Route
-          path="/onboarding"
-          element={
-            <MultiStepFormProvider>
-              {" "}
-              {/* ENSURE THIS PROVIDER IS HERE */}
-              <MainRegistrationLayout />
-            </MultiStepFormProvider>
-          }
-        />
+          <Route
+            path="/onboarding"
+            element={
+              <MultiStepFormProvider>
+                {/* ENSURE THIS PROVIDER IS HERE */}
+                <MainRegistrationLayout />
+              </MultiStepFormProvider>
+            }
+          />
 
-        {/* Registration Success Page */}
-        <Route
-          path="/registration-success"
-          element={
-            <MultiStepFormProvider>
-              {/* Keep provider here if success page needs it, or remove if it doesn't */}
-              <RegistrationSuccessPage />
-            </MultiStepFormProvider>
-          }
-        />
+          {/* Registration Success Page */}
+          <Route
+            path="/registration-success"
+            element={
+              <MultiStepFormProvider>
+                {/* Keep provider here if success page needs it, or remove if it doesn't */}
+                <RegistrationSuccessPage />
+              </MultiStepFormProvider>
+            }
+          />
 
-        {/* Private Routes */}
-        <Route element={<RootLayout />}>
-          <Route index element={<Home />} />
-          <Route path="/dashboard" element={<Home />} />
-        </Route>
-      </Routes>
+          {/* Private Routes */}
+          <Route element={<RootLayout />}>
+            <Route index element={<HomePage />} />
+            {/* <Route path="/dashboard" element={<Home />} /> */}
+          </Route>
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   );
 }

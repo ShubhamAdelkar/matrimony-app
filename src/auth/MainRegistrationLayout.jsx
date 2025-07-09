@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom"; // For redirection
 //form components for each step
 import EmailPasswordForm from "../auth/forms/EmailPasswordForm"; // Step 2 form
 import { GalleryVerticalEnd } from "lucide-react";
+import PersonalDetailsForm from "./forms/PersonalDetailsForm";
 
 function MainRegistrationLayout() {
   const { currentStep, setCurrentStep, resetForm } = useMultiStepForm();
@@ -25,8 +26,8 @@ function MainRegistrationLayout() {
     switch (currentStep) {
       case 2:
         return <EmailPasswordForm />;
-      // case 3:
-      //   return <PhoneVerificationForm />;
+      case 3:
+        return <PersonalDetailsForm />;
       // case 4:
       //   return <ProfileDetailsForm />;
       // case 5:
