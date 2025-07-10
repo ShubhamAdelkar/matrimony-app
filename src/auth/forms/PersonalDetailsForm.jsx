@@ -26,7 +26,6 @@ import * as select from "@/components/ui/select";
 import * as RadioGroup from "@radix-ui/react-radio-group";
 import {
   disabilityOptions,
-  familyStatuses,
   familyTypes,
   heightOptions,
   maritalStatuses,
@@ -52,17 +51,6 @@ const personalDetailsSchema = z.object({
       errorMap: (issue, ctx) => {
         if (issue.code === z.ZodIssueCode.invalid_enum_value) {
           return { message: "Please select your height." };
-        }
-        return { message: ctx.defaultError };
-      },
-    }
-  ),
-  familyStatus: z.enum(
-    familyStatuses.map((s) => s.value),
-    {
-      errorMap: (issue, ctx) => {
-        if (issue.code === z.ZodIssueCode.invalid_enum_value) {
-          return { message: "Please select your family status." };
         }
         return { message: ctx.defaultError };
       },
@@ -104,7 +92,6 @@ function PersonalDetailsForm() {
       // ⭐ Initialize new fields from formData
       maritalStatus: formData.maritalStatus || "",
       height: formData.height || "",
-      familyStatus: formData.familyStatus || "",
       familyType: formData.familyType || "",
       disability: formData.disability || "",
     },
@@ -250,37 +237,6 @@ function PersonalDetailsForm() {
                 )}
               />
             </div>
-
-            {/* Family Status */}
-            <FormField
-              control={form.control}
-              name="familyStatus"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Family Status</FormLabel>
-                  <FormControl>
-                    <RadioGroup.Root
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      className="w-full grid grid-cols-2 gap-3"
-                    >
-                      {familyStatuses.map((familyStatus) => (
-                        <RadioGroup.Item
-                          key={familyStatus.value}
-                          value={familyStatus.value}
-                          className="ring-[1px] ring-border rounded py-1 px-2 data-[state=checked]:ring-2 data-[state=checked]:ring-blue-500 cursor-pointer"
-                        >
-                          <span className="tracking-tight text-sm">
-                            {familyStatus.label}
-                          </span>
-                        </RadioGroup.Item>
-                      ))}
-                    </RadioGroup.Root>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
             {/* Any Disability */}
             <FormField

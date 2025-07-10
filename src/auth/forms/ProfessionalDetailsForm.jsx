@@ -156,8 +156,11 @@ function ProfessionalDetailsForm() {
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
-                      <select.SelectTrigger className="w-full cursor-pointer">
-                        <select.SelectValue placeholder="Select your highest education" />
+                      <select.SelectTrigger className="w-full cursor-pointer min-w-0">
+                        <select.SelectValue
+                          placeholder="Select your highest education"
+                          className="truncate"
+                        />
                       </select.SelectTrigger>
                       <select.SelectContent>
                         {highestEducationOptions.map((option) => (
