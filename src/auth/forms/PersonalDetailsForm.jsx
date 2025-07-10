@@ -23,8 +23,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import * as select from "@/components/ui/select";
-import religions from "./data/religions";
-import marathiCastes from "./data/marathiCastes";
 import * as RadioGroup from "@radix-ui/react-radio-group";
 import {
   disabilityOptions,
@@ -147,7 +145,9 @@ function PersonalDetailsForm() {
           <CardTitle className="text-xl">
             Personal Details for Matches
           </CardTitle>
-          <CardDescription></CardDescription>
+          <CardDescription>
+            Share your core personal details for ideal matches
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form
@@ -165,7 +165,7 @@ function PersonalDetailsForm() {
                     <RadioGroup.Root
                       onValueChange={field.onChange}
                       defaultValue={field.value}
-                      className="w-full grid grid-cols-3 gap-3"
+                      className="w-full grid grid-cols-2 gap-3"
                     >
                       {maritalStatuses.map((maritalStatus) => (
                         <RadioGroup.Item

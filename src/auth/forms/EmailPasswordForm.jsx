@@ -216,7 +216,9 @@ function EmailPasswordForm() {
           <CardTitle className="text-xl">
             Basic Details for Your Match
           </CardTitle>
-          <CardDescription>This is crucial for profile</CardDescription>
+          <CardDescription>
+            Your foundational information is crucial.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form
