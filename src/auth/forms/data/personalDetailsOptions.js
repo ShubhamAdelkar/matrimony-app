@@ -8,6 +8,7 @@ export const maritalStatuses = [
     { value: "never_married", label: "Never Married" },
     { value: "widowed", label: "Widowed" },
     { value: "divorced", label: "Divorced" },
+    { value: "awaiting_divorce", label: "Awaiting Divorce" },
 ];
 
 /**
@@ -82,5 +83,5 @@ export const familyTypes = [
  */
 export const disabilityOptions = [
     { value: "none", label: "None" },
-    { value: "physically_challenged", label: "Physically Challenged" },
+    { value: "yes", label: "Yes" },
 ];
