@@ -1,10 +1,40 @@
+/* src/index.css */
+
+/*
+  ⭐ IMPORTANT: @font-face rules MUST come before @import "tailwindcss"
+  and any other @import statements (like tw-animate-css).
+  This is a CSS standard requirement.
+*/
+@font-face {
+  font-family: "googleFont";
+  src: url("/fonts/GoogleSans-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "googleFont";
+  src: url("/fonts/GoogleSans-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "googleFont";
+  src: url("/fonts/GoogleSans-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* Tailwind CSS and other imports */
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* Your custom variant (if needed) */
 @custom-variant dark (&:is(.dark *));
 
 summary::-webkit-details-marker {
-  display: none
+  display: none;
 }
 
 .checker-background::before {
@@ -14,15 +44,23 @@ summary::-webkit-details-marker {
   right: 0;
   bottom: 0;
   left: 0;
-  background-image: linear-gradient(#e6e6e690 1px, transparent 1px),
-  linear-gradient(90deg, #e6e6e690 1px, transparent 1px);
+  background-image:
+    linear-gradient(#e6e6e690 1px, transparent 1px),
+    linear-gradient(90deg, #e6e6e690 1px, transparent 1px);
   background-size: 3.7em 3.7em;
   mask-image: radial-gradient(ellipse at 50% 40%, black 0%, transparent 55%);
   z-index: -1;
   background-position-x: center;
 }
 
+/*
+  ⭐ THIS IS WHERE YOU DEFINE YOUR CUSTOM FONT FAMILY FOR TAILWIND UTILITIES
+  within the @theme inline block, using a CSS variable.
+*/
 @theme inline {
+  --font-googleFont:
+    "googleFont", system-ui, sans-serif; /* Define the utility name and fallback fonts */
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -45,11 +83,11 @@ summary::-webkit-details-marker {
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
+  --color-chart-1: oklch(0.646 0.222 41.116);
+  --color-chart-2: oklch(0.6 0.118 184.704);
+  --color-chart-3: oklch(0.398 0.07 227.392);
+  --color-chart-4: oklch(0.828 0.189 84.429);
+  --color-chart-5: oklch(0.769 0.188 70.08);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -110,7 +148,7 @@ summary::-webkit-details-marker {
   --muted-foreground: oklch(0.708 0 0);
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
+  --destructive: #ff6467;
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
@@ -130,10 +168,19 @@ summary::-webkit-details-marker {
 }
 
 @layer base {
+  html {
+    @apply font-googleFont; /* This will now correctly apply the font */
+  }
   * {
     @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Layer for the backdrop-filter and SVG filter */
+.glass-effect-layer {
+  filter: url("https://img.freepik.com/free-photo/abstract-background-with-patterned-glass-texture_53876-139928.jpg?t=st=1752336170~exp=1752339770~hmac=b30b1926c2ae6fcafe98a3481ea280156b2c43f4bcf8d5c354c71cd8fb6ce54a&w=1380"); /* Apply the SVG filter for distortion */
+  overflow: hidden; /* Important for the filter to work correctly */
 }
