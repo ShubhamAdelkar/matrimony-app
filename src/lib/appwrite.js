@@ -1,10 +1,18 @@
-import { Client, Account, Databases } from "appwrite";
+import { Client, Account, Databases, ID } from 'appwrite';
 
-const client = new Client()
-    .setEndpoint(import.meta.env.VITE_APPWRITE_ENDPOINT)
-    .setProject(import.meta.env.VITE_APPWRITE_PROJECT_ID);
+// ⭐ Replace with your actual Appwrite Project ID and Database ID
+// You can get these from your Appwrite Console
+export const appwriteConfig = {
+    projectId: import.meta.env.VITE_APPWRITE_PROJECT_ID,
+    endpoint: import.meta.env.VITE_APPWRITE_ENDPOINT,
+    databaseId: import.meta.env.VITE_APPWRITE_DATABASE_ID,
+    profilesCollectionId: import.meta.env.VITE_APPWRITE_PROFILES_COLLECTION_ID,
+};
 
-const account = new Account(client);
-const databases = new Databases(client);
+const client = new Client();
 
-export { client, account, databases };
+client.setEndpoint(appwriteConfig.endpoint).setProject(appwriteConfig.projectId);
+
+export const account = new Account(client);
+export const databases = new Databases(client);
+export { ID }; // Export ID for unique IDs
