@@ -20,6 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { loginSchema } from "@/lib/validation";
 import { Link } from "react-router-dom";
+import { LoaderCircleIcon } from "lucide-react";
 
 function LoginForm() {
   const isLoading = false;
@@ -73,7 +74,9 @@ function LoginForm() {
             />
             <Button type="submit" className="shad-button cursor-pointer">
               {isLoading ? (
-                <div className="flex flex-center gap-2">Loading...</div>
+                <div className="flex flex-center gap-2">
+                  <LoaderCircleIcon className="animate-spin size-5" />
+                </div>
               ) : (
                 "Login"
               )}

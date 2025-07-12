@@ -35,6 +35,7 @@ import {
   getCitiesByDistrict,
 } from "./data/locations"; // Adjust path if needed
 import { Checkbox } from "@/components/ui/checkbox";
+import { LoaderCircleIcon } from "lucide-react";
 
 // --- Zod Schema for About Form ---
 const aboutSchema = z
@@ -169,6 +170,11 @@ function AboutForm() {
       updateFormData(values);
       nextStep();
       console.log("AboutForm: Moved to next step.");
+
+      // ⭐ IMPORTANT CHANGES HERE:
+      // 1. Simulate successful login immediately after "user creation"
+      //const dummyToken = "my_super_secret_dummy_auth_token_from_registration";
+      //login(dummyToken); // Log the user in
     } catch (error) {
       console.error("Error submitting about details:", error);
       form.setError("root.serverError", {
@@ -205,7 +211,7 @@ function AboutForm() {
                   <FormControl>
                     <Textarea
                       placeholder="Tell us a little bit about yourself (e.g., your personality, and what you're looking for)..."
-                      className="text-md"
+                      className="text-sm"
                       rows={5}
                       {...field}
                       disabled={skipBioChecked} // ⭐ Disable if checkbox is checked
@@ -385,7 +391,9 @@ function AboutForm() {
                 disabled={isLoading}
               >
                 {isLoading ? (
-                  <div className="flex flex-center gap-2">Loading...</div>
+                  <div className="flex flex-center gap-2">
+                    <LoaderCircleIcon className="animate-spin size-5" />
+                  </div>
                 ) : (
                   "Next"
                 )}

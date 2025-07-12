@@ -1,6 +1,7 @@
-import { GalleryVerticalEnd } from "lucide-react";
+import { GalleryVerticalEnd, LoaderPinwheel } from "lucide-react";
 import { Outlet, Navigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
+import SwirlingEffectSpinner from "@/components/spinner-06";
 
 function AuthLayout() {
   const { isAuthenticated, isLoadingAuth } = useAuth();
@@ -11,10 +12,10 @@ function AuthLayout() {
       <div className="min-h-svh flex items-center justify-center">
         <div className="flex justify-center gap-2 md:justify-start">
           <a href="#" className="flex items-center gap-2 font-medium">
-            <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
+            {/* <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
               <GalleryVerticalEnd className="size-4" />
-            </div>
-            Loading...
+            </div> */}
+            <LoaderPinwheel className="animate-spin size-7 text-black" />
           </a>
         </div>
       </div>

@@ -9,12 +9,33 @@ import { GalleryVerticalEnd } from "lucide-react";
 import PersonalDetailsForm from "./forms/PersonalDetailsForm";
 import ProfessionalDetailsForm from "./forms/ProfessionalDetailsForm";
 import AboutForm from "./forms/AboutForm";
+import MobileVerification from "./forms/MobileVerification";
+import ChurchDetailsForm from "./forms/ChurchDetailsForm";
+import CircularProgressBar from "@/components/CircularProgressBar";
 
 function MainRegistrationLayout() {
   const { currentStep, setCurrentStep, resetForm } = useMultiStepForm();
   const navigate = useNavigate();
 
   console.log("MainRegistrationLayout: currentStep on render =", currentStep);
+
+  const allSteps = [
+    { name: "Register", component: null }, // Step 1 is the initial registration page
+    { name: "Email & Password", component: <EmailPasswordForm /> },
+    { name: "Personal Details", component: <PersonalDetailsForm /> },
+    { name: "Professional Details", component: <ProfessionalDetailsForm /> },
+    { name: "About Yourself", component: <AboutForm /> },
+    { name: "Church Details", component: <ChurchDetailsForm /> },
+    { name: "Mobile Verification", component: <MobileVerification /> },
+  ];
+
+  const totalSteps = allSteps.length; // This will be 7
+
+  // Calculate completion percentage
+  // If currentStep is 1 (Register page), percentage is 0.
+  // For subsequent steps, it's (currentStep - 1) / (totalSteps - 1) * 100
+  const completionPercentage =
+    currentStep === 1 ? 0 : ((currentStep - 1) / (totalSteps - 1)) * 100;
 
   // Optional: Redirect if currentStep is 1 (meaning they should be on /register)
   useEffect(() => {
@@ -34,6 +55,10 @@ function MainRegistrationLayout() {
         return <ProfessionalDetailsForm />;
       case 5:
         return <AboutForm />;
+      case 6:
+        return <ChurchDetailsForm />;
+      case 7:
+        return <MobileVerification />;
       case 1:
         return null;
       default:
@@ -57,23 +82,30 @@ function MainRegistrationLayout() {
   };
 
   return (
-    <div className="grid min-h-svh">
-      <div className="flex flex-col gap-4 p-4 md:p-10">
-        <div className="flex justify-center gap-2 md:justify-start">
-          <a href="#" className="flex items-center gap-2 font-medium">
-            <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
+    <div className="flex flex-col min-h-svh">
+      <nav className="flex justify-between sticky top-0 z-50 w-full p-3.5 md:p-6 backdrop-blur-sm bg-white/10 glass-effect-layer inset-shadow-black">
+        <div className="flex items-center gap-2">
+          <a
+            href="#"
+            className="flex items-center gap-2 font-medium text-black justify-center text-center"
+          >
+            <div className="bg-primary text-primary-foreground flex size-7 items-center justify-center rounded-md">
               <GalleryVerticalEnd className="size-4" />
             </div>
-            Matrimony App
+            <h3 className="text-xl font-bold">NLGM Matrimony</h3>
           </a>
         </div>
-        <div className="flex flex-1 items-center justify-center">
-          <div className="flex flex-col w-full max-w-xl gap-2">
-            <h3 className="mt-6 text-center font-medium">
-              Step {currentStep} of 5
-            </h3>
-            {renderStepComponent()}
-          </div>
+        <div className="">
+          <CircularProgressBar
+            percentage={completionPercentage}
+            progressColor="black"
+            strokeWidth={"3"}
+          />
+        </div>
+      </nav>
+      <div className="flex flex-col gap-4 p-4 md:pt-2 md:p-10 flex-1 items-center justify-center">
+        <div className="flex flex-col w-full max-w-xl gap-2">
+          {renderStepComponent()}
         </div>
       </div>
     </div>

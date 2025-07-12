@@ -29,6 +29,7 @@ import {
   highestEducationOptions,
   occupationOptions,
 } from "./data/professionalDetails";
+import { LoaderCircleIcon } from "lucide-react";
 // import { createUserAccount } from '../../lib/appwrite/client'; // <--- Import your Appwrite function here
 
 // --- NEW Zod Schema for Professional Details ---
@@ -298,7 +299,9 @@ function ProfessionalDetailsForm() {
                 disabled={isLoading}
               >
                 {isLoading ? (
-                  <div className="flex flex-center gap-2">Loading...</div>
+                  <div className="flex flex-center gap-2">
+                    <LoaderCircleIcon className="animate-spin size-5" />
+                  </div>
                 ) : (
                   "Next"
                 )}

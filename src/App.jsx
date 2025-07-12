@@ -16,6 +16,7 @@ import RootLayout from "./root/RootLayout";
 import RegistrationSuccessPage from "./auth/pages/RegistrationSuccessPage";
 import { AuthProvider, useAuth } from "./auth/context/AuthContext";
 import HomePage from "./root/pages/HomePage";
+import { Toaster } from "./components/ui/sonner";
 
 // Optional: A simple success page
 // const RegistrationSuccessPage = () => (
@@ -41,6 +42,7 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+        <Toaster position="bottom-right" richColors />
         {/* ⭐ Wrap your entire application with AuthProvider */}
         <Routes>
           {/* Public Routes using AuthLayout */}

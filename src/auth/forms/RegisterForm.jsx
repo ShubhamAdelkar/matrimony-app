@@ -31,13 +31,18 @@ import { registrationSchema } from "@/lib/validation"; // Full schema
 import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
 import { useMultiStepForm } from "../context/MultiStepFormContext"; // Import the custom hook
 import z from "zod";
+import { LoaderCircleIcon } from "lucide-react";
 
 // For Page 1, we only need a subset of the schema for validation
 const step1Schema = z.object({
   name: z
     .string()
     .min(4, "Name must be at least 4 characters.")
-    .nonempty("Name is required."),
+    .nonempty("Name is required.")
+    .regex(
+      /^[a-zA-Z\s'-]+$/,
+      "Name can only contain letters, spaces, hyphens, and apostrophes"
+    ),
   phone: z
     .string()
     .min(10, "Phone number must be at least 10 digits.")
@@ -61,6 +66,7 @@ function RegisterForm() {
 
   const form = useForm({
     resolver: zodResolver(step1Schema), // Use a schema specific to this step
+    mode: "onChange",
     defaultValues: {
       name: formData.name || "", // Populate from context if user goes back
       phone: formData.phone || "",
@@ -167,7 +173,9 @@ function RegisterForm() {
               disabled={isLoading}
             >
               {isLoading ? (
-                <div className="flex flex-center gap-2">Loading...</div>
+                <div className="flex flex-center gap-2">
+                  <LoaderCircleIcon className="animate-spin size-5" />
+                </div>
               ) : (
                 "Next" // Change button text to "Next"
               )}
