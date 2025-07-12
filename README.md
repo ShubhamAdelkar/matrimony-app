@@ -1,26 +1,20 @@
-# React starter kit with Appwrite
+# NLGM Matrimony (In Development)
 
-Kickstart your React development with this ready-to-use starter project integrated with [Appwrite](https://www.appwrite.io)
+NLGM Matrimony is a dedicated platform currently under development, aimed at fostering meaningful connections within a community context. Inspired by the functionality of leading matrimonial sites, goal is to provide a secure and intuitive space for individuals to find compatible partners. This project is being built with a strong emphasis on user privacy, community-based matching, and efficient administrative oversight.
 
-## 🚀Getting started
+## Current Development Status: Phase 1 - (MVP)
 
-###
-Clone the Project
-Clone this repository to your local machine using Git:
+- User Authentication & Basic Profile Creation
+  Users can securely sign up, log in, and create their initial profiles. This includes essential personal, community, and basic location details, along with a short "About Me" section.
 
-`git clone https://github.com/appwrite/starter-for-react`
+- Photo Upload & Basic AI Moderation
+  Users can upload a profile picture. system automatically checks for basic appropriateness using AI image moderation to ensure clear and suitable profile photos.
 
-## 🛠️ Development guid
-1. **Configure Appwrite**<br/>
-   Navigate to `.env` and update the values to match your Appwrite project credentials.
-2. **Customize as needed**<br/>
-   Modify the starter kit to suit your app's requirements. Adjust UI, features, or backend
-   integrations as per your needs.
-3. **Install dependencies**<br/>
-   Run `npm install` to install all dependencies.
-4. **Run the app**<br/>
-   Start the project by running `npm run dev`.
+- Basic Profile Viewing & Search
+  Users can view other profiles and perform simple searches based on criteria like age, religion, and city, allowing them to explore potential matches.
 
-## 💡 Additional notes
-- This starter project is designed to streamline your React development with Appwrite.
-- Refer to the [Appwrite documentation](https://appwrite.io/docs) for detailed integration guidance.
+- Express Interest & Leadership Notification
+  Users can "Express Interest" in other profiles. If mutual interest is established, the designated church lead will be notified to facilitate further steps.
+
+- Leadership Dashboard (Initial Version)
+  A secure, dedicated section for the church lead to review and manage pending matches and profile photos. This initial dashboard provides essential tools for administrative oversight.
