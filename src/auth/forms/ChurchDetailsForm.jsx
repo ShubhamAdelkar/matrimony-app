@@ -37,7 +37,7 @@ const churchDetailsSchema = z
   .object({
     churchName: z
       .string()
-      .min(2, "Church name must be at least 2 characters")
+      .min(4, "Church name must be at least 4 characters")
       .max(100, "Church name must not exceed 100 characters")
       .regex(
         /^[a-zA-Z\s'-]+$/,
@@ -62,7 +62,7 @@ const churchDetailsSchema = z
     pastorPhone: z
       .string()
       .min(10, "Phone number must be at least 10 digits")
-      .max(15, "Phone number must not exceed 15 digits")
+      .max(10, "Phone number must not exceed 10 digits")
       .regex(/^[+]?[\d\s()-]+$/, "Please enter a valid phone number")
       .refine((val) => {
         const digitsOnly = val.replace(/\D/g, "");
@@ -306,6 +306,8 @@ function ChurchDetailsForm() {
                       placeholder="Enter contact number"
                       {...field}
                       className={"text-sm"}
+                      inputMode="numeric"
+                      pattern="[0-9]*"
                     />
                   </FormControl>
                   <FormMessage />
