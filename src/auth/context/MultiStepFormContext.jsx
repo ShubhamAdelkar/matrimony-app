@@ -175,6 +175,7 @@ export const MultiStepFormProvider = ({ children }) => {
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useMultiStepForm = () => {
   const context = useContext(MultiStepFormContext);
   if (context === undefined) {
