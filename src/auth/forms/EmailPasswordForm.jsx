@@ -97,8 +97,7 @@ const getStep2Schema = (gender) => {
 };
 
 function EmailPasswordForm() {
-  const { formData, updateFormData, nextStep, prevStep } =
-    useMultiStepForm();
+  const { formData, updateFormData, nextStep, prevStep } = useMultiStepForm();
   const [isLoading, setIsLoading] = useState(false);
   useAuth(); // ⭐ Import login from AuthContext
   const [showPassword, setShowPassword] = useState(false);
@@ -275,15 +274,16 @@ function EmailPasswordForm() {
                 control={form.control}
                 name="religion"
                 render={({ field }) => (
-                  <FormItem className="w-full">
+                  <FormItem className="w-full cursor-pointer">
                     {" "}
                     {/* ⭐ Added w-full to FormItem */}
                     <FormLabel>Religion</FormLabel>
                     <select.Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
+                      className={"cursor-pointer"}
                     >
-                      <select.SelectTrigger className="w-full">
+                      <select.SelectTrigger className="w-full cursor-pointer">
                         <select.SelectValue placeholder="Select religion" />
                       </select.SelectTrigger>
                       <select.SelectContent>
@@ -316,7 +316,7 @@ function EmailPasswordForm() {
                       defaultValue={field.value}
                       // className="w-full" // This is already good
                     >
-                      <select.SelectTrigger className="w-full">
+                      <select.SelectTrigger className="w-full cursor-pointer">
                         {" "}
                         {/* ⭐ Added w-full to SelectTrigger */}
                         <select.SelectValue placeholder="Select caste" />
