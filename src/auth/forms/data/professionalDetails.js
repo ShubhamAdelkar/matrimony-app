@@ -108,6 +108,9 @@ export const annualIncomeOptions = [
     { value: '50k-1L', label: '₹50,000 to ₹1 Lakh' },
     { value: '1L-2L', label: '₹1 Lakh to ₹2 Lakhs' },
     { value: '2L-4L', label: '₹2 Lakh to ₹4 Lakhs' },
+    { value: '4L-6L', label: '₹4 Lakh to ₹6 Lakhs' },
+    { value: '6L-8L', label: '₹6 Lakh to ₹8 Lakhs' },
+    { value: '8-10L', label: '₹8 Lakh to ₹10 Lakhs' },
     { value: 'not_applicable', label: 'Do not wish to specify' },
 ];
 
