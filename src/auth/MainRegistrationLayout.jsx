@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom"; // For redirection
 
 //form components for each step
 import EmailPasswordForm from "../auth/forms/EmailPasswordForm"; // Step 2 form
-import { GalleryVerticalEnd } from "lucide-react";
+import { Heart } from "lucide-react";
 import PersonalDetailsForm from "./forms/PersonalDetailsForm";
 import ProfessionalDetailsForm from "./forms/ProfessionalDetailsForm";
 import AboutForm from "./forms/AboutForm";
@@ -65,18 +65,21 @@ function MainRegistrationLayout() {
         // This case should ideally not be hit if useEffect handles step 1
         // For now, let's just show a message or redirect to home if somehow here
         return (
-          <div className="text-center text-lg text-red-500">
-            Invalid registration step. <br />
-            <button
-              onClick={() => {
-                resetForm();
-                navigate("/register");
-              }}
-              className="text-blue-500 underline mt-4"
-            >
-              Start Over
-            </button>
-          </div>
+          <Card className={"max-w-fit"}>
+            <div className="flex flex-col justify-center items-center text-center text-lg text-black font-googleFont p-6">
+              <h3 className="text-2xl font-bold">Invalid registration step.</h3>
+              <br />
+              <Button
+                onClick={() => {
+                  resetForm();
+                  navigate("/register");
+                }}
+                className="shadcn cursor-pointer"
+              >
+                Start Over
+              </Button>
+            </div>
+          </Card>
         );
     }
   };
@@ -89,18 +92,14 @@ function MainRegistrationLayout() {
             href="#"
             className="flex items-center gap-2 font-medium text-black justify-center text-center"
           >
-            <div className="bg-primary text-primary-foreground flex size-7 items-center justify-center rounded-md">
-              <GalleryVerticalEnd className="size-4" />
+            <div className="bg-primary text-primary-foreground flex size-8 items-center justify-center rounded-md pl-1 pr-1">
+              <Heart className="size-5.5 self-center" />
             </div>
-            <h3 className="text-xl font-bold">NLGM Matrimony</h3>
+            <h3 className="text-xl font-bold">Rename</h3>
           </a>
         </div>
         <div className="">
-          <CircularProgressBar
-            percentage={completionPercentage}
-            progressColor="black"
-            strokeWidth={"3"}
-          />
+          <CircularProgressBar percentage={completionPercentage} />
         </div>
       </nav>
       <div className="flex flex-col gap-4 p-4 md:pt-2 md:p-10 flex-1 items-center justify-center">

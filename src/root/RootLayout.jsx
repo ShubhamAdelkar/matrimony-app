@@ -1,6 +1,6 @@
 // src/_root/RootLayout.jsx (Create this file if it doesn't exist, or adapt your existing one)
 import { useAuth } from "@/auth/context/AuthContext";
-import { GalleryVerticalEnd } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import React from "react";
 import { Outlet, Navigate } from "react-router-dom";
 
@@ -13,10 +13,10 @@ function RootLayout() {
       <div className="min-h-svh flex items-center justify-center">
         <div className="flex justify-center gap-2 md:justify-start">
           <a href="#" className="flex items-center gap-2 font-medium">
-            <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
+            {/* <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
               <GalleryVerticalEnd className="size-4" />
-            </div>
-            Loading...
+            </div> */}
+            <Loader2 className="animate-spin size-9 text-black" />
           </a>
         </div>
       </div>

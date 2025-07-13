@@ -42,7 +42,7 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Toaster position="bottom-right" richColors />
+        <Toaster position="top-center" richColors />
         {/* ⭐ Wrap your entire application with AuthProvider */}
         <Routes>
           {/* Public Routes using AuthLayout */}

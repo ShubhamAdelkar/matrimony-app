@@ -2,14 +2,6 @@
  * @description Comprehensive options for the "Highest Education" dropdown.
  */
 export const highestEducationOptions = [
-    // Doctoral & Post-Graduate
-    { value: 'phd', label: 'Ph.D / Doctorate' },
-    { value: 'post_graduate_diploma', label: 'Post Graduate Diploma (PGD)' },
-    { value: 'masters_eng_tech', label: 'M.E. / M.Tech / M.S.' },
-    { value: 'masters_medical', label: 'M.D. / M.S. / M.Ch.' },
-    { value: 'masters_arts_science_commerce', label: 'M.A. / M.Sc. / M.Com.' },
-    { value: 'masters_management', label: 'MBA / PGDM' },
-    { value: 'masters_law', label: 'Masters in Law (LL.M.)' },
 
     // Bachelor's Degrees
     { value: 'bachelors_eng_tech', label: 'B.E. / B.Tech' },
@@ -23,11 +15,15 @@ export const highestEducationOptions = [
     // Diplomas & Vocational
     { value: 'diploma', label: 'Diploma in Engineering' },
     { value: 'iti_vocational', label: 'ITI / Vocational Training' },
-
     // School Level
     { value: 'high_school_12th', label: 'Higher Secondary (12th Pass)' },
     { value: 'secondary_10th', label: 'Secondary School (10th Pass)' },
     { value: 'less_than_10th', label: 'Less than 10th Pass' },
+    // Doctoral & Post-Graduate
+    { value: 'masters_eng_tech', label: 'M.E. / M.Tech / M.S.' },
+    { value: 'masters_arts_science_commerce', label: 'M.A. / M.Sc. / M.Com.' },
+    { value: 'masters_law', label: 'Masters in Law (LL.M.)' },
+
 ];
 
 /**
@@ -48,11 +44,17 @@ export const employmentOptions = [
  * @description Comprehensive options for the "Occupation" dropdown.
  */
 export const occupationOptions = [
-    // IT & Software
-    { value: 'software_professional', label: 'Software Engineer' },
-    // Engineering (Non-IT)
-    { value: 'engineer_civil', label: 'Civil Engineer' },
-    { value: 'engineer_mechanical', label: 'Mechanical Engineer' },
+    // Finance & Business
+    { value: 'accountant_finance', label: 'Accountant' },
+    { value: 'banker', label: 'Banker' },
+    { value: 'business_owner', label: 'Business Owner' },
+
+    // Legal
+    { value: 'lawyer_legal', label: 'Lawyer / Legal Professional' },
+
+    // Hospitality & Tourism (Relevant to Goa)
+    { value: 'hotel_management', label: 'Hotel Management / Hospitality' },
+    { value: 'chef_cook', label: 'Chef / Cook' },
 
     // Medical & Healthcare
     { value: 'doctor_medical', label: 'Doctor / Physician' },
@@ -61,15 +63,16 @@ export const occupationOptions = [
     { value: 'dentist', label: 'Dentist' },
     { value: 'medical_technician', label: 'Lab Assistant' },
 
+    // IT & Software
+    { value: 'software_professional', label: 'Software Engineer' },
+    // Engineering (Non-IT)
+    { value: 'engineer_civil', label: 'Civil Engineer' },
+    { value: 'engineer_mechanical', label: 'Mechanical Engineer' },
 
     // Education & Academia
     { value: 'teacher_professor', label: 'Teacher / Professor' },
     { value: 'lecturer', label: 'Lecturer' },
 
-    // Finance & Business
-    { value: 'accountant_finance', label: 'Accountant' },
-    { value: 'banker', label: 'Banker' },
-    { value: 'business_owner', label: 'Business Owner' },
 
     // Government & Public Service
     { value: 'government_employee_state', label: 'Government Employee (State)' },
@@ -82,13 +85,6 @@ export const occupationOptions = [
     { value: 'designer', label: 'Designer (Graphic/Fashion etc.)' },
     { value: 'photographer_videographer', label: 'Photographer / Videographer' },
 
-    // Legal
-    { value: 'lawyer_legal', label: 'Lawyer / Legal Professional' },
-
-    // Hospitality & Tourism (Relevant to Goa)
-    { value: 'hotel_management', label: 'Hotel Management / Hospitality' },
-    { value: 'travel_tourism', label: 'Travel & Tourism Professional' },
-    { value: 'chef_cook', label: 'Chef / Cook' },
 
     // Agriculture & Allied
     { value: 'farmer_agriculturist', label: 'Farmer / Agriculturist' },
@@ -107,12 +103,11 @@ export const occupationOptions = [
  * @description Comprehensive options for the "Annual Income" dropdown (in INR).
  */
 export const annualIncomeOptions = [
+    { value: '0-25k', label: 'Upto ₹25,000' },
     { value: '0-50k', label: 'Upto ₹50,000' },
     { value: '50k-1L', label: '₹50,000 to ₹1 Lakh' },
     { value: '1L-2L', label: '₹1 Lakh to ₹2 Lakhs' },
     { value: '2L-4L', label: '₹2 Lakh to ₹4 Lakhs' },
-    { value: '4L-6L', label: '₹4 Lakh to ₹6 Lakhs' },
-    { value: '6L-8L', label: '₹6 Lakh to ₹8 Lakhs' },
     { value: 'not_applicable', label: 'Do not wish to specify' },
 ];
 

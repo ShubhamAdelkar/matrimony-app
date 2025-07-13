@@ -1,3 +1,4 @@
+import { Check } from "lucide-react";
 import React from "react";
 
 /**
@@ -13,15 +14,16 @@ import React from "react";
  */
 const CircularProgressBar = ({
   percentage,
-  size = 35,
-  strokeWidth = 4,
+  size = 34,
+  strokeWidth = 3,
   circleColor = "rgba(255, 255, 255, 0.3)", // Light transparent white for glassmorphism
-  progressColor = "#3b82f6", // Tailwind blue-500
+  progressColor = "#000", // Tailwind blue-500
   textColor = "#000", // White text for contrast
 }) => {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (percentage / 100) * circumference;
+  const isComplete = percentage >= 100;
 
   return (
     <div
@@ -59,12 +61,18 @@ const CircularProgressBar = ({
         />
       </svg>
       {/* Percentage Text */}
-      <span
-        className="absolute text-sm font-bold text-center"
-        style={{ color: textColor }}
-      >
-        {Math.round(percentage)}
-      </span>
+      <div className="absolute flex justify-center items-center">
+        {isComplete ? (
+          <Check className="text-black" strokeWidth={3} size={20}/>
+        ) : (
+          <span
+            className="text-sm font-bold text-center"
+            style={{ color: textColor }}
+          >
+            {Math.round(percentage)}
+          </span>
+        )}
+      </div>
     </div>
   );
 };

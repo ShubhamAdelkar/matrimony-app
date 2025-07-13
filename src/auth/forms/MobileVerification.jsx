@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/form";
 
 import { useMultiStepForm } from "../context/MultiStepFormContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as z from "zod";
 import {
   Card,
@@ -142,6 +142,8 @@ function MobileVerification() {
                       maxLength={6}
                       {...field}
                       className="w-full flex justify-center"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
                     >
                       {/* InputOTPGroup and InputOTPSlot classes remain the same for internal distribution */}
                       <InputOTPGroup className="w-full space-x-2">
@@ -194,6 +196,12 @@ function MobileVerification() {
                 </FormItem>
               )}
             />
+            <div className="text-center text-sm">
+              Didn&apos;t recieve code?{" "}
+              <Link to="" className="underline underline-offset-4">
+                Resend
+              </Link>
+            </div>
             {form.formState.errors.root?.serverError && (
               <p className="text-sm font-medium text-red-500 text-center">
                 {form.formState.errors.root.serverError.message}
