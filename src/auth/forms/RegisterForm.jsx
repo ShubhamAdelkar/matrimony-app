@@ -131,7 +131,13 @@ function RegisterForm() {
                 <FormItem>
                   <FormLabel>Phone no.</FormLabel>
                   <FormControl>
-                    <Input placeholder="" {...field} disabled={isLoading} />
+                    <Input
+                      placeholder=""
+                      {...field}
+                      disabled={isLoading}
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
