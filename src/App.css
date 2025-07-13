@@ -179,8 +179,3 @@ summary::-webkit-details-marker {
   }
 }
 
-/* Layer for the backdrop-filter and SVG filter */
-.glass-effect-layer {
-  filter: url("https://img.freepik.com/free-photo/abstract-background-with-patterned-glass-texture_53876-139928.jpg?t=st=1752336170~exp=1752339770~hmac=b30b1926c2ae6fcafe98a3481ea280156b2c43f4bcf8d5c354c71cd8fb6ce54a&w=1380"); /* Apply the SVG filter for distortion */
-  overflow: hidden; /* Important for the filter to work correctly */
-}

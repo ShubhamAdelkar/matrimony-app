@@ -88,7 +88,7 @@ function MainRegistrationLayout() {
 
   return (
     <div className="flex flex-col min-h-svh">
-      <nav className="flex justify-between sticky top-0 z-50 w-full p-3.5 md:p-6 backdrop-blur-sm bg-white/10 glass-effect-layer inset-shadow-black">
+      <nav className="flex justify-between sticky top-0 z-50 w-full p-3.5 md:p-6 backdrop-blur-sm bg-white/10 inset-shadow-black">
         <div className="flex items-center gap-2">
           <a
             href="#"
