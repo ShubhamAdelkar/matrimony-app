@@ -1,6 +1,4 @@
-// src/auth/forms/AboutForm.jsx
-
-import React, { useState, useEffect } from "react"; // ⭐ Added useEffect
+import { useState, useEffect } from "react"; // ⭐ Added useEffect
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -15,7 +13,6 @@ import {
 } from "@/components/ui/form";
 
 import { useMultiStepForm } from "../context/MultiStepFormContext";
-import { useNavigate } from "react-router-dom";
 import * as z from "zod";
 import {
   Card,
@@ -29,7 +26,6 @@ import { Textarea } from "@/components/ui/textarea";
 
 // ⭐ Import location data and helper functions
 import {
-  locations, // The full locations object
   getAllStates,
   getDistrictsByState,
   getCitiesByDistrict,
@@ -92,10 +88,9 @@ const aboutSchema = z
 function AboutForm() {
   const { formData, updateFormData, nextStep, prevStep } = useMultiStepForm();
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
 
   // ⭐ State for dynamic options
-  const [currentStates, setCurrentStates] = useState(getAllStates());
+  const [currentStates] = useState(getAllStates());
   const [currentDistricts, setCurrentDistricts] = useState([]);
   const [currentCities, setCurrentCities] = useState([]);
 
@@ -244,7 +239,7 @@ function AboutForm() {
                   </FormControl>
                   <div className="leading-none">
                     <FormLabel className={"text-sm text-gray-700"}>
-                      I'll add this later
+                      I&apos;ll add this later
                     </FormLabel>
                     <FormDescription className={"text-sm"}>
                       You can always update your bio from your profile settings.

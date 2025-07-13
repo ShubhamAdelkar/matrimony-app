@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/form";
 
 import { useMultiStepForm } from "../context/MultiStepFormContext";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import * as z from "zod";
 import {
   Card,
@@ -36,9 +36,8 @@ const mobileVerificationSchema = z.object({
 });
 
 function MobileVerification() {
-  const { formData, updateFormData, nextStep, prevStep } = useMultiStepForm();
+  const { updateFormData, prevStep } = useMultiStepForm();
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
 
   const form = useForm({
     resolver: zodResolver(mobileVerificationSchema), // ⭐ Use mobileVerificationSchema

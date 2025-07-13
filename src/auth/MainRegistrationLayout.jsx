@@ -1,5 +1,5 @@
 // src/auth/layouts/MainRegistrationLayout.jsx
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useMultiStepForm } from "../auth/context/MultiStepFormContext";
 import { useNavigate } from "react-router-dom"; // For redirection
 
@@ -12,9 +12,11 @@ import AboutForm from "./forms/AboutForm";
 import MobileVerification from "./forms/MobileVerification";
 import ChurchDetailsForm from "./forms/ChurchDetailsForm";
 import CircularProgressBar from "@/components/CircularProgressBar";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 function MainRegistrationLayout() {
-  const { currentStep, setCurrentStep, resetForm } = useMultiStepForm();
+  const { currentStep, resetForm } = useMultiStepForm();
   const navigate = useNavigate();
 
   console.log("MainRegistrationLayout: currentStep on render =", currentStep);

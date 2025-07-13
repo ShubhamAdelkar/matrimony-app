@@ -1,7 +1,6 @@
 // src/_root/RootLayout.jsx (Create this file if it doesn't exist, or adapt your existing one)
 import { useAuth } from "@/auth/context/AuthContext";
 import { Loader2 } from "lucide-react";
-import React from "react";
 import { Outlet, Navigate } from "react-router-dom";
 
 function RootLayout() {

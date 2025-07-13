@@ -14,7 +14,7 @@ import MainRegistrationLayout from "./auth/MainRegistrationLayout"; // New orche
 // Root/Authenticated related imports
 import RootLayout from "./root/RootLayout";
 import RegistrationSuccessPage from "./auth/pages/RegistrationSuccessPage";
-import { AuthProvider, useAuth } from "./auth/context/AuthContext";
+import { AuthProvider } from "./auth/context/AuthContext";
 import HomePage from "./root/pages/HomePage";
 import { Toaster } from "./components/ui/sonner";
 

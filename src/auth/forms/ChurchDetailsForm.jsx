@@ -1,6 +1,6 @@
 // src/auth/forms/ChurchDetailsForm.jsx
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -19,10 +19,9 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { File, Image, Info, LoaderCircleIcon, X } from "lucide-react";
+import { Image, Info, LoaderCircleIcon, X } from "lucide-react";
 
 import { useMultiStepForm } from "../context/MultiStepFormContext";
-import { useNavigate } from "react-router-dom";
 import * as z from "zod";
 import {
   Card,
@@ -122,7 +121,6 @@ function ChurchDetailsForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [previewUrls, setPreviewUrls] = useState([]);
-  const navigate = useNavigate();
 
   const form = useForm({
     resolver: zodResolver(churchDetailsSchema),
@@ -319,7 +317,7 @@ function ChurchDetailsForm() {
             <FormField
               control={form.control}
               name="churchServicePhotos"
-              render={({ field, fieldState }) => (
+              render={({ fieldState }) => (
                 <FormItem>
                   <div className="flex gap-2">
                     <FormLabel>Church Service Photos</FormLabel>
@@ -428,7 +426,7 @@ function ChurchDetailsForm() {
                   </FormControl>
                   <div className="space-y-1 leading-none">
                     <FormLabel className={"text-sm text-gray-700"}>
-                      I'll add photos later
+                      I&apos;ll add photos later
                     </FormLabel>
                     <FormDescription className={"text-sm"}>
                       You can always add photos from your profile settings.

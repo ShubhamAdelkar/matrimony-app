@@ -1,5 +1,5 @@
 // src/auth/forms/EmailPasswordForm.jsx
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/form";
 
 import { useMultiStepForm } from "../context/MultiStepFormContext";
-import { useNavigate } from "react-router-dom"; // For redirection after success
 import z from "zod";
 import {
   Card,
@@ -84,7 +83,6 @@ const personalDetailsSchema = z.object({
 function PersonalDetailsForm() {
   const { formData, updateFormData, nextStep, prevStep } = useMultiStepForm();
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate(); // For redirection
 
   const form = useForm({
     resolver: zodResolver(personalDetailsSchema), // ⭐ Use the new schema

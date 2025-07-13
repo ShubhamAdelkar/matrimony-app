@@ -1,5 +1,5 @@
 // src/auth/context/MultiStepFormContext.jsx
-import React, {
+import {
   createContext,
   useState,
   useContext,
@@ -9,6 +9,7 @@ import React, {
 
 const MultiStepFormContext = createContext(undefined);
 
+// eslint-disable-next-line react/prop-types
 export const MultiStepFormProvider = ({ children }) => {
   // Initialize state from localStorage or default
   const [formData, setFormData] = useState(() => {

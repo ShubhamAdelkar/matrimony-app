@@ -1,5 +1,5 @@
 // src/auth/forms/EmailPasswordForm.jsx
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -12,9 +12,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { registrationSchema } from "@/lib/validation"; // Full schema with all fields
 import { useMultiStepForm } from "../context/MultiStepFormContext";
-import { useNavigate } from "react-router-dom"; // For redirection after success
 import z from "zod";
 import {
   Card,
@@ -99,14 +97,13 @@ const getStep2Schema = (gender) => {
 };
 
 function EmailPasswordForm() {
-  const { formData, updateFormData, nextStep, prevStep, resetForm } =
+  const { formData, updateFormData, nextStep, prevStep } =
     useMultiStepForm();
   const [isLoading, setIsLoading] = useState(false);
-  const { login } = useAuth(); // ⭐ Import login from AuthContext
+  useAuth(); // ⭐ Import login from AuthContext
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
-  const navigate = useNavigate(); // For redirection
 
   // Get the gender from the form data
   const gender = formData.gender; // e.g., 'male' or 'female'

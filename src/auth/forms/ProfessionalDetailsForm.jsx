@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/form";
 
 import { useMultiStepForm } from "../context/MultiStepFormContext";
-import { useNavigate } from "react-router-dom"; // For redirection after success
 import z from "zod";
 import {
   Card,
@@ -84,7 +83,6 @@ function ProfessionalDetailsForm() {
   // Exported as named export as per your previous code
   const { formData, updateFormData, nextStep, prevStep } = useMultiStepForm();
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
 
   const form = useForm({
     resolver: zodResolver(professionalDetailsSchema), // ⭐ Using the new schema

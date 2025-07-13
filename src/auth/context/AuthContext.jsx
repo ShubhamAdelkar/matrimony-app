@@ -1,7 +1,8 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 
 const AuthContext = createContext(null);
 
+// eslint-disable-next-line react/prop-types
 export const AuthProvider = ({ children }) => {
   // Initialize state based on a quick check (e.g., if a token exists in localStorage)
   // In a real app, you'd verify the token or session with your backend.

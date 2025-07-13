@@ -1,5 +1,5 @@
 // src/auth/forms/RegisterForm.jsx
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -27,7 +27,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { registrationSchema } from "@/lib/validation"; // Full schema
 import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
 import { useMultiStepForm } from "../context/MultiStepFormContext"; // Import the custom hook
 import z from "zod";
