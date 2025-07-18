@@ -28,8 +28,8 @@ import {
   highestEducationOptions,
   occupationOptions,
 } from "./data/professionalDetails";
-import { LoaderCircleIcon } from "lucide-react";
-// import { createUserAccount } from '../../lib/appwrite/client'; // <--- Import your Appwrite function here
+import { GraduationCap, LoaderCircleIcon } from "lucide-react";
+import { appwriteConfig, databases } from "@/lib/appwrite";
 
 // --- NEW Zod Schema for Professional Details ---
 const professionalDetailsSchema = z.object({
@@ -100,16 +100,30 @@ function ProfessionalDetailsForm() {
     setIsLoading(true);
     console.log("Professional Details (Page 4) data submitted:", values);
 
-    // Combine current step's data with existing form data
-    const updatedFormData = { ...formData, ...values };
-    console.log(
-      "Combined form data after Professional Details:",
-      updatedFormData
-    );
+    const userId = formData.userId;
 
+    if (!userId) {
+      console.log("No userId found in formData, cannot update profile.");
+      form.setError("root.serverError", {
+        message: "User not identified. please go back to registration",
+      });
+      setIsLoading(false);
+      return;
+    }
     try {
-      // Simulate API call or processing for this step
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const updatedProfile = await databases.updateDocument(
+        appwriteConfig.databaseId,
+        appwriteConfig.profilesCollectionId,
+        userId,
+        {
+          highestEducation: values.highestEducation,
+          employedIn: values.employedIn,
+          occupation: values.occupation,
+          annualIncome: values.annualIncome,
+        }
+      );
+
+      console.log("Appwrite profile document updated:", updatedProfile);
 
       // ⭐ Update the global form data context
       updateFormData(values);
@@ -129,9 +143,10 @@ function ProfessionalDetailsForm() {
 
   return (
     <Form {...form}>
-      <Card>
-        <CardHeader className="text-center">
-          <CardTitle className="text-xl">
+      <Card className={"md:border-0 md:shadow-transparent"}>
+        <CardHeader className="flex flex-col items-center text-center">
+          <GraduationCap size={60} strokeWidth={1.5} />
+          <CardTitle className="md:text-2xl text-xl">
             Professional Details for Matches
           </CardTitle>
           <CardDescription>

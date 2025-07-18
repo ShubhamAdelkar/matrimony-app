@@ -1,5 +1,5 @@
-import { Check } from "lucide-react";
-import React from "react";
+/* eslint-disable react/prop-types */
+import { CloudCheck } from "lucide-react";
 
 /**
  * Renders a circular progress bar with percentage display.
@@ -15,14 +15,11 @@ import React from "react";
 const CircularProgressBar = ({
   percentage,
   size = 34,
-  strokeWidth = 3,
-  circleColor = "rgba(255, 255, 255, 0.3)", // Light transparent white for glassmorphism
-  progressColor = "#000", // Tailwind blue-500
-  textColor = "#000", // White text for contrast
+  textColor = "var(--foreground)", // White text for contrast
 }) => {
-  const radius = (size - strokeWidth) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (percentage / 100) * circumference;
+  // const radius = (size - strokeWidth) / 2;
+  // const circumference = 2 * Math.PI * radius;
+  // const offset = circumference - (percentage / 100) * circumference;
   const isComplete = percentage >= 100;
 
   return (
@@ -30,14 +27,14 @@ const CircularProgressBar = ({
       className="relative flex items-center justify-center"
       style={{ width: size, height: size }}
     >
-      <svg
-        className="transform -rotate-90" // Rotate to start progress from the top
+      {/* <svg
+        className="transform -rotate-90" 
         width={size}
         height={size}
         viewBox={`0 0 ${size} ${size}`}
-      >
-        {/* Background Circle */}
-        <circle
+      > */}
+      {/* Background Circle */}
+      {/* <circle
           stroke={circleColor}
           fill="transparent"
           strokeWidth={strokeWidth}
@@ -45,9 +42,9 @@ const CircularProgressBar = ({
           className="stroke-primary/20"
           cx={size / 2}
           cy={size / 2}
-        />
-        {/* Progress Arc */}
-        <circle
+        /> */}
+      {/* Progress Arc */}
+      {/* <circle
           stroke={progressColor}
           fill="transparent"
           strokeWidth={strokeWidth}
@@ -56,20 +53,24 @@ const CircularProgressBar = ({
           cy={size / 2}
           strokeDasharray={circumference}
           strokeDashoffset={offset}
-          strokeLinecap="round" // Makes the end of the progress arc rounded
-          className="transition-all duration-500 ease-in-out" // Smooth transition for progress changes
+          strokeLinecap="round"
+          className="transition-all duration-500 ease-in-out"
         />
-      </svg>
+      </svg> */}
+
       {/* Percentage Text */}
-      <div className="absolute flex justify-center items-center">
+      <div className="absolute flex justify-center items-center text-center">
         {isComplete ? (
-          <Check className="text-black" strokeWidth={3} size={20}/>
+          <CloudCheck
+            className="text-primary size-8 md:size-10"
+            strokeWidth={2}
+          />
         ) : (
           <span
-            className="text-sm font-bold text-center"
+            className="text-xl md:text-[26px] font-bold text-center"
             style={{ color: textColor }}
           >
-            {Math.round(percentage)}
+            {Math.round(percentage)}%
           </span>
         )}
       </div>

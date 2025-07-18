@@ -29,7 +29,8 @@ import {
   heightOptions,
   maritalStatuses,
 } from "./data/personalDetailsOptions";
-import { LoaderCircleIcon } from "lucide-react";
+import { LoaderCircleIcon, Users } from "lucide-react";
+import { appwriteConfig, databases } from "@/lib/appwrite";
 // import { createUserAccount } from '../../lib/appwrite/client'; // <--- Import your Appwrite function here
 
 // --- NEW Zod Schema for Personal Details ---
@@ -90,7 +91,10 @@ function PersonalDetailsForm() {
     defaultValues: {
       // ⭐ Initialize new fields from formData
       maritalStatus: formData.maritalStatus || "",
-      height: formData.height || "",
+      height: formData.height
+        ? heightOptions.find((opt) => opt.cmValue === formData.height)?.value ||
+          ""
+        : "",
       familyType: formData.familyType || "",
       disability: formData.disability || "",
     },
@@ -100,16 +104,44 @@ function PersonalDetailsForm() {
     setIsLoading(true);
     console.log("Personal Details (Page 3) data submitted:", values);
 
-    // Combine current step's data with existing form data
-    const updatedFormData = { ...formData, ...values };
-    console.log("Combined form data after Personal Details:", updatedFormData);
+    // Ensure userId is available from formData (set during EmailPasswordForm)
+    const userId = formData.userId;
+
+    // ⭐ Find the selected height object to get its cmValue
+    const selectedHeightOption = heightOptions.find(
+      (option) => option.value === values.height
+    );
+
+    // ⭐ Get the numerical height (cmValue)
+    const heightCm = selectedHeightOption ? selectedHeightOption.cmValue : null;
+
+    if (heightCm === null) {
+      console.error("Invalid height selected. Cannot update profile.");
+      form.setError("root.serverError", {
+        message: "Invalid height selected. Please choose a valid height.",
+      });
+      setIsLoading(false);
+      return;
+    }
 
     try {
       // Simulate API call or processing for this step
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const updatedProfile = await databases.updateDocument(
+        appwriteConfig.databaseId,
+        appwriteConfig.profilesCollectionId,
+        userId,
+        {
+          maritalStatus: values.maritalStatus,
+          height: heightCm,
+          familyType: values.familyType,
+          disability: values.disability,
+        }
+      );
 
-      // ⭐ Update the global form data context
-      updateFormData(values);
+      console.log("Appwrite profile document updated", updatedProfile);
+
+      // ⭐ Update the global form data context with the new values, including the numerical height
+      updateFormData({ ...values, height: heightCm });
 
       // ⭐ Move to the next step in the multi-step form
       nextStep();
@@ -126,13 +158,14 @@ function PersonalDetailsForm() {
 
   return (
     <Form {...form}>
-      <Card>
-        <CardHeader className="text-center">
-          <CardTitle className="text-xl">
-            Personal Details for Matches
+      <Card className={"md:border-0 md:shadow-transparent"}>
+        <CardHeader className="flex flex-col items-center text-center">
+          <Users size={58} strokeWidth={1.5} />
+          <CardTitle className="md:text-2xl text-xl">
+            Personal Details for Ideal Matches
           </CardTitle>
           <CardDescription>
-            Share your core personal details for ideal matches
+            Share your personal details for ideal matches
           </CardDescription>
         </CardHeader>
         <CardContent>

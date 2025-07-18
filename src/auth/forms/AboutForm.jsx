@@ -31,7 +31,8 @@ import {
   getCitiesByDistrict,
 } from "./data/locations"; // Adjust path if needed
 import { Checkbox } from "@/components/ui/checkbox";
-import { LoaderCircleIcon } from "lucide-react";
+import { LoaderCircleIcon, User } from "lucide-react";
+import { appwriteConfig, databases } from "@/lib/appwrite";
 
 // --- Zod Schema for About Form ---
 const aboutSchema = z
@@ -157,19 +158,35 @@ function AboutForm() {
     setIsLoading(true);
     console.log("About Form (Page 5) data submitted:", values);
 
-    const updatedFormData = { ...formData, ...values };
-    console.log("Combined form data after About Form:", updatedFormData);
+    const userId = formData.userId;
+
+    if (!userId) {
+      console.log("No userId found in formData, cannot update profile.");
+      form.setError("root.serverError", {
+        message: "User not identified. please go back to registration",
+      });
+      setIsLoading(false);
+      return;
+    }
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const updatedProfile = await databases.updateDocument(
+        appwriteConfig.databaseId,
+        appwriteConfig.profilesCollectionId,
+        userId,
+        {
+          bio: values.bio,
+          state: values.state,
+          district: values.district,
+          city: values.city,
+          skipBio: values.skipBio,
+        }
+      );
+
+      console.log("Appwrite profile document updated:", updatedProfile);
       updateFormData(values);
       nextStep();
       console.log("AboutForm: Moved to next step.");
-
-      // ⭐ IMPORTANT CHANGES HERE:
-      // 1. Simulate successful login immediately after "user creation"
-      //const dummyToken = "my_super_secret_dummy_auth_token_from_registration";
-      //login(dummyToken); // Log the user in
     } catch (error) {
       console.error("Error submitting about details:", error);
       form.setError("root.serverError", {
@@ -182,11 +199,12 @@ function AboutForm() {
 
   return (
     <Form {...form}>
-      <Card>
-        <CardHeader className="text-center">
-          <CardTitle className="text-xl">About Yourself</CardTitle>
+      <Card className={"md:border-0 md:shadow-transparent"}>
+        <CardHeader className="flex flex-col items-center text-center">
+          <User size={58} strokeWidth={1.5} />
+          <CardTitle className="md:text-2xl text-xl">About Yourself</CardTitle>
           <CardDescription>
-            Tell us something about yourself to get to know you better.
+            Tell us something about yourself to get to know you better
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -206,7 +224,7 @@ function AboutForm() {
                   <FormControl>
                     <Textarea
                       placeholder="Tell us a little bit about yourself (e.g., your personality, and what you're looking for)..."
-                      className="text-sm"
+                      className="text-sm placeholder:md:text-[15px]"
                       rows={5}
                       {...field}
                       disabled={skipBioChecked} // ⭐ Disable if checkbox is checked
@@ -223,11 +241,11 @@ function AboutForm() {
               control={form.control}
               name="skipBio"
               render={({ field }) => (
-                <FormItem className="hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-3 has-[[aria-checked=true]]:border-gray-300 has-[[aria-checked=true]]:bg-blue-50">
+                <FormItem className="hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-3 has-[[aria-checked=true]]:border-gray-300  has-[[aria-checked=true]]:bg-blue-50 dark:has-[[aria-checked=true]]:text-black">
                   <FormControl>
                     <Checkbox
                       checked={field.value}
-                      className="cursor-pointer border-gray-300"
+                      className="cursor-pointer"
                       onCheckedChange={(checked) => {
                         field.onChange(checked);
                         if (checked) {
@@ -238,7 +256,7 @@ function AboutForm() {
                     />
                   </FormControl>
                   <div className="leading-none">
-                    <FormLabel className={"text-sm text-gray-700"}>
+                    <FormLabel className={"text-sm"}>
                       I&apos;ll add this later
                     </FormLabel>
                     <FormDescription className={"text-sm"}>
