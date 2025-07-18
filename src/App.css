@@ -1,5 +1,3 @@
-/* src/index.css */
-
 /*
   ⭐ IMPORTANT: @font-face rules MUST come before @import "tailwindcss"
   and any other @import statements (like tw-animate-css).
@@ -31,7 +29,7 @@
 @import "tw-animate-css";
 
 /* Your custom variant (if needed) */
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:where(.dark, .dark *));
 
 summary::-webkit-details-marker {
   display: none;

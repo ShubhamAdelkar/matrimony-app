@@ -30,7 +30,7 @@ import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
 import { useMultiStepForm } from "../context/MultiStepFormContext"; // Import the custom hook
 import z from "zod";
-import { LoaderCircleIcon } from "lucide-react";
+import { LoaderCircleIcon, UserPlus } from "lucide-react";
 
 // For Page 1, we only need a subset of the schema for validation
 const step1Schema = z.object({
@@ -44,10 +44,13 @@ const step1Schema = z.object({
     ),
   phone: z
     .string()
-    .min(10, "Phone number must be at least 10 digits.")
-    .max(15, "Phone number cannot exceed 15 digits.")
-    .regex(/^\d+$/, "Phone number must contain only digits.")
-    .nonempty("Phone number is required."),
+    .min(10, "Phone number must be at least 10 digits")
+    .max(10, "Phone number must not exceed 10 digits")
+    .regex(/^[+]?[\d\s()-]+$/, "Please enter a valid phone number")
+    .refine((val) => {
+      const digitsOnly = val.replace(/\D/g, "");
+      return digitsOnly.length >= 10 && digitsOnly.length <= 15;
+    }, "Phone number must contain 10-15 digits"),
   gender: z.enum(["Male", "Female"], {
     errorMap: (issue, ctx) => {
       if (issue.code === z.ZodIssueCode.invalid_enum_value) {
@@ -97,8 +100,11 @@ function RegisterForm() {
   return (
     <Form {...form}>
       <Card>
-        <CardHeader className="text-center">
-          <CardTitle className="text-xl">Register your account</CardTitle>
+        <CardHeader className="flex flex-col items-center text-center">
+          <UserPlus size={58} strokeWidth={1.5} />
+          <CardTitle className="md:text-2xl text-xl">
+            Register your account
+          </CardTitle>
           <CardDescription>Enter your details to register</CardDescription>
         </CardHeader>
         <CardContent>
@@ -117,6 +123,7 @@ function RegisterForm() {
                       type="text"
                       className="shad-input"
                       {...field}
+                      placeholder="Enter your full name"
                       disabled={isLoading}
                     />
                   </FormControl>
@@ -132,7 +139,7 @@ function RegisterForm() {
                   <FormLabel>Phone no.</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder=""
+                      placeholder="Enter your phone number"
                       {...field}
                       disabled={isLoading}
                       inputMode="numeric"

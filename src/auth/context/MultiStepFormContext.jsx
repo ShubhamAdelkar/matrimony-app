@@ -18,13 +18,15 @@ export const MultiStepFormProvider = ({ children }) => {
       return storedData
         ? JSON.parse(storedData)
         : {
+            skipBio: false,
+            skipPhotos: false,
             bio: "",
             state: "",
             district: "",
             city: "",
             churchName: "",
             churchLocation: "",
-            churchServicePhotos: "",
+            churchServicePhotos: [],
             pastorName: "",
             pastorPhone: "",
             dob: "",
@@ -37,24 +39,29 @@ export const MultiStepFormProvider = ({ children }) => {
             password: "",
             confirmPassword: "",
             maritalStatus: "",
-            height: "",
+            height: 0,
             familyType: "",
             disability: "",
             employedIn: "",
             occupation: "",
             annualIncome: "",
             highestEducation: "",
+            mobileVerified: false,
+            emailVerified: false,
+            role: "user",
           };
     } catch (error) {
       console.error("Failed to parse stored form data:", error);
       return {
+        skipBio: false,
+        skipPhotos: false,
         bio: "",
         state: "",
         district: "",
         city: "",
         churchName: "",
         churchLocation: "",
-        churchServicePhotos: "",
+        churchServicePhotos: [],
         pastorName: "",
         pastorPhone: "",
         caste: "",
@@ -67,14 +74,16 @@ export const MultiStepFormProvider = ({ children }) => {
         password: "",
         confirmPassword: "",
         maritalStatus: "",
-        mobileVerified: "",
-        height: "",
+        height: 0,
         familyType: "",
         disability: "",
         employedIn: "",
         occupation: "",
         annualIncome: "",
         highestEducation: "",
+        mobileVerified: false,
+        emailVerified: false,
+        role: "user",
       };
     }
   });
@@ -122,13 +131,15 @@ export const MultiStepFormProvider = ({ children }) => {
   // Function to reset the form data and step (e.g., after successful registration)
   const resetForm = useCallback(() => {
     setFormData({
+      skipBio: false,
+      skipPhotos: false,
       bio: "",
       state: "",
       district: "",
       city: "",
       churchName: "",
       churchLocation: "",
-      churchServicePhotos: "",
+      churchServicePhotos: [],
       pastorName: "",
       pastorPhone: "",
       caste: "",
@@ -141,13 +152,16 @@ export const MultiStepFormProvider = ({ children }) => {
       password: "",
       confirmPassword: "",
       maritalStatus: "",
-      height: "",
+      height: 0,
       familyType: "",
       disability: "",
       employedIn: "",
       occupation: "",
       annualIncome: "",
       highestEducation: "",
+      mobileVerified: false,
+      emailVerified: false,
+      role: "user",
     });
     setCurrentStep(1);
     try {

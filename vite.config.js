@@ -9,6 +9,7 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: { // <-- Add this resolve section
     alias: {
+      // eslint-disable-next-line no-undef
       "@": path.resolve(__dirname, "./src"), // Maps @ to your src directory
     },
   },

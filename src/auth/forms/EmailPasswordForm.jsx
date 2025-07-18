@@ -27,14 +27,20 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon, Eye, EyeOff, LoaderCircleIcon } from "lucide-react";
+import {
+  CalendarIcon,
+  Contact,
+  Eye,
+  EyeOff,
+  LoaderCircleIcon,
+} from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import * as select from "@/components/ui/select";
 import religions from "./data/religions";
 import marathiCastes from "./data/marathiCastes";
-import { useAuth } from "../context/AuthContext";
-// import { createUserAccount } from '../../lib/appwrite/client'; // <--- Import your Appwrite function here
+import { account, databases, ID, appwriteConfig } from "../../lib/appwrite";
+import { toast } from "sonner"; // Import toast for user feedback
 
 // --- Dynamic Zod Schema Generation Function ---
 const getStep2Schema = (gender) => {
@@ -71,7 +77,6 @@ const getStep2Schema = (gender) => {
         .min(8, "Password must be at least 8 characters.")
         .nonempty("Password is required."),
       confirmPassword: z.string().nonempty("Confirm password is required."),
-      // ⭐ NEW: Religion field validation
       religion: z.enum(religions, {
         errorMap: (issue, ctx) => {
           if (issue.code === z.ZodIssueCode.invalid_enum_value) {
@@ -80,15 +85,17 @@ const getStep2Schema = (gender) => {
           return { message: ctx.defaultError };
         },
       }),
-      // ⭐ NEW: Caste field validation
-      caste: z.enum(marathiCastes, {
-        errorMap: (issue, ctx) => {
-          if (issue.code === z.ZodIssueCode.invalid_enum_value) {
-            return { message: "Please select your caste." };
-          }
-          return { message: ctx.defaultError };
-        },
-      }),
+      caste: z.enum(
+        marathiCastes.map((e) => e.value),
+        {
+          errorMap: (issue, ctx) => {
+            if (issue.code === z.ZodIssueCode.invalid_enum_value) {
+              return { message: "Please select your caste." };
+            }
+            return { message: ctx.defaultError };
+          },
+        }
+      ),
     })
     .refine((data) => data.password === data.confirmPassword, {
       message: "Passwords don't match!",
@@ -99,15 +106,12 @@ const getStep2Schema = (gender) => {
 function EmailPasswordForm() {
   const { formData, updateFormData, nextStep, prevStep } = useMultiStepForm();
   const [isLoading, setIsLoading] = useState(false);
-  useAuth(); // ⭐ Import login from AuthContext
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
-  // Get the gender from the form data
-  const gender = formData.gender; // e.g., 'male' or 'female'
+  const gender = formData.gender;
 
-  // ⭐ Use the dynamic schema generator to create the schema based on gender
   const formSchema = getStep2Schema(gender);
 
   const form = useForm({
@@ -122,15 +126,15 @@ function EmailPasswordForm() {
       confirmPassword: formData.confirmPassword || "",
     },
   });
-  // This mirrors the logic in the Zod schema to ensure visual consistency.
+
   const today = new Date();
-  let calendarRequiredAge = 0; // Separate variable for clarity in Calendar logic
+  let calendarRequiredAge = 0;
   if (gender === "Male") {
     calendarRequiredAge = 21;
   } else if (gender === "Female") {
     calendarRequiredAge = 18;
   } else {
-    calendarRequiredAge = 18; // Default for calendar as well
+    calendarRequiredAge = 18;
   }
   const maxAllowedBirthDateForCalendar = new Date(
     today.getFullYear() - calendarRequiredAge,
@@ -143,58 +147,158 @@ function EmailPasswordForm() {
     setIsLoading(true);
     console.log("Page 2 data submitted:", values);
 
-    // Combine all data from context and current form
-    const finalData = { ...formData, ...values };
-    console.log("Final data for user creation:", finalData);
+    const combinedData = { ...formData, ...values };
 
     try {
-      // **THIS IS WHERE THE USER ACCOUNT IS ACTUALLY CREATED**
-      // Replace with your actual Appwrite createUserAccount call
-      // const newUser = await createUserAccount(finalData);
-      await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate API call
+      // ⭐ Step 1: Check for and delete any existing active session
+      try {
+        const currentSession = await account.get(); // Check if a session is active
+        if (currentSession) {
+          console.log(
+            "Existing session found, attempting to log out:",
+            currentSession.$id
+          );
+          await account.deleteSession("current"); // Log out the current session
+          toast.info("Logged out existing session", {
+            description:
+              "An active session was found and logged out to proceed with new registration.",
+          });
+        }
+        // eslint-disable-next-line no-unused-vars
+      } catch (sessionError) {
+        // This catch block handles cases where no session exists or it's invalid, which is fine.
+        console.log(
+          "No active session or session invalid, proceeding with new registration."
+        );
+      }
 
-      // if (!newUser) {
-      //     // Handle specific Appwrite error here if needed
-      //     form.setError("root.serverError", {
-      //         message: "Account creation failed. Please try again.",
-      //     });
-      //     return;
-      // }
-
-      updateFormData(values); // Save email/password to context as well
-
-      nextStep();
-      console.log(
-        "RegisterForm: currentStep after nextStep call:",
-        form.getValues()
+      // ⭐ Step 2: Create Appwrite User Account
+      const newUserAccount = await account.create(
+        ID.unique(),
+        combinedData.email,
+        combinedData.password,
+        combinedData.name || combinedData.email.split("@")[0]
       );
+
+      console.log("Appwrite User Account Created:", newUserAccount);
+
+      // ⭐ Step 3: Log in the newly created user to establish a session
+      // This will now only be called after any previous session is explicitly deleted or if none existed.
+      await account.createEmailPasswordSession(
+        combinedData.email,
+        combinedData.password
+      );
+      console.log("User session created for new user.");
+
+      // ⭐ Step 4: Create User Profile Document in Appwrite Database
+      const newProfileDocument = await databases.createDocument(
+        appwriteConfig.databaseId,
+        appwriteConfig.profilesCollectionId,
+        newUserAccount.$id, // Use the user's ID as the document ID
+        {
+          userId: newUserAccount.$id,
+          email: combinedData.email,
+          dob: combinedData.dob.toISOString(), // Store Date as ISO string
+          religion: combinedData.religion,
+          caste: combinedData.caste,
+          mobileVerified: false, // Initial status: not verified
+          gender: combinedData.gender,
+          name:
+            combinedData.name ||
+            newUserAccount.name ||
+            combinedData.email.split("@")[0],
+          // Initialize other fields that might be empty at this stage but exist in schema
+          bio: formData.bio || "",
+          state: formData.state || "",
+          district: formData.district || "",
+          city: formData.city || "",
+          maritalStatus: formData.maritalStatus || "",
+          height: Number(formData.height), // Corrected: Explicitly convert to Number
+          familyType: formData.familyType || "",
+          disability: formData.disability || "",
+          highestEducation: formData.highestEducation || "",
+          employedIn: formData.employedIn || "",
+          occupation: formData.occupation || "",
+          annualIncome: formData.annualIncome || "",
+          churchName: formData.churchName || "",
+          churchLocation: formData.churchLocation || "",
+          pastorName: formData.pastorName || "",
+          pastorPhone: formData.pastorPhone || "",
+          churchServicePhotos: formData.churchServicePhotos || [], // Ensure it's an array
+          skipBio: formData.skipBio || false,
+          skipPhotos: formData.skipPhotos || false,
+          phone: formData.phone || "",
+          emailVerified: formData.emailVerified || false,
+          role: formData.role || "user",
+        }
+      );
+
+      console.log("Appwrite Profile Document Created:", newProfileDocument);
+
+      // ⭐ Step 5: Update MultiStepForm Context
+      updateFormData({
+        ...values, // Keep current page values
+        userId: newUserAccount.$id, // Store the Appwrite User ID
+        mobileVerified: false, // Initial status
+      });
+
+      // ⭐ Step 6: Set a flag in sessionStorage for one-time toast on MobileVerification page
+      sessionStorage.setItem("registrationSuccess", "true");
+      console.log(
+        "EmailPasswordForm: Registration successful, flag set in sessionStorage."
+      );
+
+      // ⭐ Step 7: Proceed to the next step in the multi-step form flow
+      nextStep();
     } catch (error) {
-      console.error("Account creation error:", error);
+      console.error("Appwrite Account/Profile operation error:", error);
+      let errorMessage = "Operation failed. Please try again.";
+
+      // Handle specific Appwrite errors
+      if (error.code === 409) {
+        // 409 Conflict - User with this ID/email already exists
+        errorMessage =
+          "An account with this email already exists. Please try logging in or use a different email.";
+      } else if (error.message && error.message.includes("Invalid password")) {
+        errorMessage =
+          "Password is too weak or invalid. Please choose a stronger password.";
+      } else if (
+        error.message &&
+        error.message.includes(
+          "Creation of a session is prohibited when a session is active."
+        )
+      ) {
+        // This specific error should ideally be caught by the initial `account.get()` and `deleteSession` logic.
+        // If it still occurs here, it indicates a very specific race condition or a scenario not fully covered.
+        // For robustness, we'll keep this error message as a fallback.
+        errorMessage =
+          "You are already logged in. Please log out to register a new account, or proceed to your profile.";
+      }
+
       form.setError("root.serverError", {
-        message: "Account creation failed: " + error.message,
+        message: errorMessage,
       });
     } finally {
       setIsLoading(false);
     }
   }
 
-  // Watch the password and confirmPassword fields
   const passwordValue = form.watch("password");
   const confirmPasswordValue = form.watch("confirmPassword");
   const confirmPasswordError = form.formState.errors.confirmPassword;
 
-  // ⭐ Determine if passwords match AND there's no validation error on the confirmPassword field
   const showPasswordMatchSuccess =
-    passwordValue && // Ensure password field has content
-    confirmPasswordValue && // Ensure confirmPassword field has content
-    passwordValue === confirmPasswordValue && // Check if they are equal
+    passwordValue &&
+    confirmPasswordValue &&
+    passwordValue === confirmPasswordValue &&
     !confirmPasswordError;
 
   return (
     <Form {...form}>
-      <Card>
-        <CardHeader className="text-center">
-          <CardTitle className="text-xl">
+      <Card className="md:border-0 md:shadow-transparent">
+        <CardHeader className="flex flex-col items-center text-center">
+          <Contact size={58} strokeWidth={1.5} />
+          <CardTitle className="md:text-2xl text-xl">
             Basic Details for Your Match
           </CardTitle>
           <CardDescription>
@@ -223,16 +327,16 @@ function EmailPasswordForm() {
                         <Button
                           variant={"outline"}
                           className={cn(
-                            "w-full justify-start text-left font-normal cursor-pointer", // Ensures button spans full width
-                            !field.value && "text-muted-foreground" // Styles placeholder text
+                            "w-full justify-start text-left font-normal cursor-pointer",
+                            !field.value && "text-muted-foreground"
                           )}
                         >
                           {field.value ? (
-                            format(field.value, "PPP") // Displays selected date
+                            format(field.value, "PPP")
                           ) : (
-                            <span>Pick a date</span> // Placeholder text
+                            <span>Pick a birth date</span>
                           )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-90 dark:text-white" />
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
@@ -248,14 +352,12 @@ function EmailPasswordForm() {
                           field.onChange(selectedDate);
                           setIsPopoverOpen(false);
                         }}
-                        // ⭐ Apply dynamic disabled logic for the calendar
-                        disabled={
-                          (date) =>
-                            date > maxAllowedBirthDateForCalendar ||
-                            date.getFullYear() < minAllowedYear // Disable dates before 1970
+                        disabled={(date) =>
+                          date > maxAllowedBirthDateForCalendar ||
+                          date.getFullYear() < minAllowedYear
                         }
                         captionLayout="dropdown"
-                        fromYear={minAllowedYear} // Restrict dropdown start year
+                        fromYear={minAllowedYear}
                         toYear={maxAllowedBirthDateForCalendar.getFullYear()}
                         reverseMonthAndYearDropdowns={true}
                       />
@@ -268,20 +370,15 @@ function EmailPasswordForm() {
 
             {/* religion & caste */}
             <div className="w-full grid grid-cols-2 gap-3">
-              {" "}
-              {/* ⭐ Changed from flex to grid, added gap */}
               <FormField
                 control={form.control}
                 name="religion"
                 render={({ field }) => (
-                  <FormItem className="w-full cursor-pointer">
-                    {" "}
-                    {/* ⭐ Added w-full to FormItem */}
+                  <FormItem className="w-full">
                     <FormLabel>Religion</FormLabel>
                     <select.Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
-                      className={"cursor-pointer"}
                     >
                       <select.SelectTrigger className="w-full cursor-pointer">
                         <select.SelectValue placeholder="Select religion" />
@@ -298,7 +395,6 @@ function EmailPasswordForm() {
                         ))}
                       </select.SelectContent>
                     </select.Select>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -308,32 +404,26 @@ function EmailPasswordForm() {
                 name="caste"
                 render={({ field }) => (
                   <FormItem className="w-full">
-                    {" "}
-                    {/* ⭐ Added w-full to FormItem */}
                     <FormLabel>Caste</FormLabel>
                     <select.Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
-                      // className="w-full" // This is already good
                     >
                       <select.SelectTrigger className="w-full cursor-pointer">
-                        {" "}
-                        {/* ⭐ Added w-full to SelectTrigger */}
                         <select.SelectValue placeholder="Select caste" />
                       </select.SelectTrigger>
                       <select.SelectContent>
-                        {marathiCastes.map((caste, index) => (
+                        {marathiCastes.map((caste) => (
                           <select.SelectItem
                             className="cursor-pointer"
-                            key={index}
-                            value={caste.replace(/\s/g, "")}
+                            key={caste.value}
+                            value={caste.value}
                           >
-                            {caste}
+                            {caste.label}
                           </select.SelectItem>
                         ))}
                       </select.SelectContent>
                     </select.Select>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -367,34 +457,29 @@ function EmailPasswordForm() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <div className="relative">
-                    {/* Wrapper for positioning */}
                     <FormControl>
                       <Input
-                        // ⭐ Toggle type based on showPassword state
                         type={showPassword ? "text" : "password"}
                         {...field}
                         disabled={isLoading}
-                        className="pr-10" // Add padding to make space for the icon
+                        className="pr-10"
                       />
                     </FormControl>
                     <Button
-                      type="button" // Important: Prevent this button from submitting the form
+                      type="button"
                       variant="ghost"
                       size="sm"
                       className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                      onClick={() => setShowPassword((prev) => !prev)} // Toggle state
+                      onClick={() => setShowPassword((prev) => !prev)}
                       disabled={isLoading}
                     >
                       <span className="cursor-pointer">
-                        {" "}
                         {showPassword ? (
-                          <EyeOff className="h-4 w-4" /> // Show EyeOff when password is visible
+                          <EyeOff className="h-4 w-4" />
                         ) : (
-                          <Eye className="h-4 w-4" /> // Show Eye when password is hidden
+                          <Eye className="h-4 w-4" />
                         )}
                       </span>
-
-                      {/* For accessibility, screen readers should announce the state */}
                       <span className="sr-only">
                         {showPassword ? "Hide password" : "Show password"}
                       </span>
@@ -413,23 +498,20 @@ function EmailPasswordForm() {
                 <FormItem>
                   <FormLabel>Confirm Password</FormLabel>
                   <div className="relative">
-                    {" "}
-                    {/* Wrapper for positioning */}
                     <FormControl>
                       <Input
-                        // ⭐ Toggle type based on showConfirmPassword state
                         type={showConfirmPassword ? "text" : "password"}
                         {...field}
                         disabled={isLoading}
-                        className="pr-10" // Add padding to make space for the icon
+                        className="pr-10"
                       />
                     </FormControl>
                     <Button
-                      type="button" // Important: Prevent this button from submitting the form
+                      type="button"
                       variant="ghost"
                       size="sm"
                       className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                      onClick={() => setShowConfirmPassword((prev) => !prev)} // Toggle state
+                      onClick={() => setShowConfirmPassword((prev) => !prev)}
                       disabled={isLoading}
                     >
                       <span className="cursor-pointer">
@@ -439,7 +521,6 @@ function EmailPasswordForm() {
                           <Eye className="h-4 w-4 " />
                         )}
                       </span>
-
                       <span className="sr-only">
                         {showConfirmPassword
                           ? "Hide password"
