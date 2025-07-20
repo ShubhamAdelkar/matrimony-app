@@ -1,7 +1,20 @@
 import { useAuth } from "@/auth/context/AuthContext";
 import { AppSidebar } from "@/components/app-sidebar";
-import { SiteHeader } from "@/components/site-header"; // Assuming SiteHeader is a separate component
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { ModeToggle } from "@/components/mode-toggle";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { Separator } from "@/components/ui/separator";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 import { Loader2 } from "lucide-react";
 import { Outlet, Navigate } from "react-router-dom";
 
@@ -10,12 +23,7 @@ function RootLayout() {
   const { isAuthenticated, isLoadingAuth, userRole } = useAuth();
 
   // Determine if the current user is an admin
-  const isAdmin = userRole === "admin"; // Assuming 'admin' is the role for administrators
-
-  // ⭐ Define dynamic header height based on isAdmin
-  const headerHeight = isAdmin
-    ? "calc(var(--spacing) * 14)" // Taller header for admin
-    : "calc(var(--spacing) * 16)"; // Default header height for regular users
+  const isAdmin = userRole === "admin";
 
   // Show loading state while authentication is being checked
   if (isLoadingAuth) {
@@ -34,24 +42,33 @@ function RootLayout() {
   }
 
   // If authenticated, render the main application content
-  return (
-    <SidebarProvider
-      style={{
-        "--sidebar-width": "calc(var(--spacing) * 72)", // Example: 72 units * 4px/unit = 288px
-        "--header-height": headerHeight, // Example: 12 units * 4px/unit = 48px
-      }}
-    >
-      {/* ⭐ Conditionally render AppSidebar only for admins */}
-      {isAdmin && <AppSidebar variant="inset" />}
-
-      {/* SidebarInset wraps the main content area */}
+  return isAdmin ? (
+    <SidebarProvider>
+      <AppSidebar />
       <SidebarInset>
-        {/* SiteHeader component */}
-        {/* SiteHeader needs to decide if it shows SidebarTrigger based on isAdmin */}
-        <SiteHeader isAdmin={isAdmin} />
-        {/* ⭐ Pass isAdmin prop to SiteHeader */}
-        {/* Main content area for routes */}
-        {/* ⭐ Adjust margin-left based on isAdmin to make space for the sidebar */}
+        <header className="flex h-16 shrink-0 items-center gap-2 justify-between p-4">
+          <div className="flex items-center gap-2 px-4">
+            <SidebarTrigger className="-ml-1 cursor-pointer" />
+            <Separator
+              orientation="vertical"
+              className="mr-2 data-[orientation=vertical]:h-4"
+            />
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem className="hidden md:block">
+                  <BreadcrumbLink href="#">
+                    Building Your Application
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator className="hidden md:block" />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
+          <ModeToggle />
+        </header>
         <div
           className={`flex flex-1 flex-col bg-background text-foreground ${
             isAdmin ? "" : ""
@@ -65,6 +82,14 @@ function RootLayout() {
         </div>
       </SidebarInset>
     </SidebarProvider>
+  ) : (
+    <div className={`flex flex-1 flex-col bg-background text-foreground`}>
+      <div className="@container/main flex flex-1 flex-col gap-2">
+        <div className="flex flex-col gap-4 md:gap-6">
+          <Outlet />
+        </div>
+      </div>
+    </div>
   );
 }
 
