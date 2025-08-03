@@ -2,8 +2,8 @@ import * as React from "react";
 import {
   BookOpen,
   Bot,
-  Command,
   Frame,
+  Heart,
   LifeBuoy,
   Map,
   PieChart,
@@ -12,9 +12,9 @@ import {
   SquareTerminal,
 } from "lucide-react";
 
-import { NavMain } from "@/components/nav-main";
-import { NavProjects } from "@/components/nav-projects";
-import { NavSecondary } from "@/components/nav-secondary";
+// import { NavMain } from "@/components/nav-main";
+// import { NavProjects } from "@/components/nav-projects";
+// import { NavSecondary } from "@/components/nav-secondary";
 import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
@@ -150,20 +150,29 @@ const data = {
   ],
 };
 
-export function AppSidebar({ ...props }) {
+export function AppSidebar({ isAdmin, ...props }) {
   return (
-    <Sidebar variant="inset" {...props}>
+    <Sidebar
+      variant="inset"
+      {...props}
+      className={`${isAdmin ? "w-62" : "w-18"}`}
+    >
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <a href="#">
-                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <Command className="size-4" />
+                <div className="text-sidebar-primary-foreground flex aspect-square size-7 items-center justify-center rounded-lg">
+                  <Heart
+                    className="self-center size-7"
+                    fill="#fd356e"
+                    stroke="var(--foreground)"
+                    strokeWidth={1.5}
+                  />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">Rename</span>
-                  <span className="truncate text-xs">Enterprise</span>
+                  <span className="truncate text-xs">Leader</span>
                 </div>
               </a>
             </SidebarMenuButton>
@@ -171,9 +180,9 @@ export function AppSidebar({ ...props }) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        {/* <NavProjects projects={data.projects} /> */}
-        {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
+        {/* <NavMain items={data.navMain} />
+        <NavProjects projects={data.projects} />
+        <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

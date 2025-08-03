@@ -201,7 +201,7 @@ function AboutForm() {
     <Form {...form}>
       <Card className={"md:border-0 md:shadow-transparent"}>
         <CardHeader className="flex flex-col items-center text-center">
-          <User size={58} strokeWidth={1.5} />
+          <User size={36} strokeWidth={1.5} />
           <CardTitle className="md:text-2xl text-xl">About Yourself</CardTitle>
           <CardDescription>
             Tell us something about yourself to get to know you better

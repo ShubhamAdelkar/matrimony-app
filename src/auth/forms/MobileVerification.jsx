@@ -222,7 +222,7 @@ function MobileVerification() {
         {" "}
         {/* Added liquid-glass-card */}
         <CardHeader className="flex flex-col items-center text-center">
-          <Smartphone size={62} className="text-foreground mb-2" />{" "}
+          <Smartphone size={38} className="text-foreground mb-2" />{" "}
           {/* ⭐ Changed icon color to text-foreground */}
           <CardTitle className="md:text-2xl text-xl">
             Verify Your Phone Number

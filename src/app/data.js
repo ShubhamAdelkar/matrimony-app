@@ -14,7 +14,7 @@ export const navMain = [
     },
     {
         title: "Search",
-        url: "#",
+        url: "/search",
         icon: Search,
     },
     {
@@ -42,7 +42,7 @@ export const navBottmBar = [
     },
     {
         title: "Search",
-        url: "#",
+        url: "/search",
         icon: Search,
     },
     {

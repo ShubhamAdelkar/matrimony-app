@@ -199,7 +199,7 @@ function EmailVerification() {
     <Form {...form}>
       <Card className={"md:border-0 md:shadow-transparent"}>
         <CardHeader className="flex flex-col items-center text-center">
-          <MailCheck size={62} className="text-primary mb-2" />
+          <MailCheck size={38} className="text-primary mb-2" />
           <CardTitle className="md:text-2xl text-xl">
             Verify Your Email Address
           </CardTitle>

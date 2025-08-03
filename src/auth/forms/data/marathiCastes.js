@@ -1,5 +1,4 @@
 const marathiCastes = [
-    { value: "prefer_not_to_say", label: "Prefer Not to Say" },
     { value: "others", label: "Others" },
     { value: "adi_dravida", label: "Adi Dravida" },
     { value: "adi_karnataka", label: "Adi Karnataka" },

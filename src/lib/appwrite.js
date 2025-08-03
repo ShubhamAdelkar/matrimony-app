@@ -8,7 +8,7 @@ export const appwriteConfig = {
     databaseId: import.meta.env.VITE_APPWRITE_DATABASE_ID,
     profilesCollectionId: import.meta.env.VITE_APPWRITE_PROFILES_COLLECTION_ID,
     adminsCollectionId: import.meta.env.VITE_APPWRITE_ADMINS_COLLECTION_ID,
-    churchPhotosBucketId: import.meta.env.VITE_APPWRITE_CHURCH_PHOTOS_BUCKET_ID,
+    photoBucket: import.meta.env.VITE_APPWRITE_PHOTOS_BUCKET_ID,
 };
 
 const client = new Client();

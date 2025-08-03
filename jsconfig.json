@@ -17,6 +17,6 @@
     "resolveJsonModule": true,
     "noEmit": true // Don't emit any output files (handled by Vite)
   },
-  "include": ["src"], // Include your source files
+  "include": ["src", "deleteDummyUsers.js", "dummyUserGenerator.js"], // Include your source files
   "exclude": ["node_modules", "dist"] // Exclude these folders
 }

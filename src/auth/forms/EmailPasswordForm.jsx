@@ -230,6 +230,7 @@ function EmailPasswordForm() {
           phone: formData.phone || "",
           emailVerified: formData.emailVerified || false,
           role: formData.role || "user",
+          membershipTier: formData.membershipTier || ["Free"],
         }
       );
 
@@ -297,7 +298,7 @@ function EmailPasswordForm() {
     <Form {...form}>
       <Card className="md:border-0 md:shadow-transparent">
         <CardHeader className="flex flex-col items-center text-center">
-          <Contact size={58} strokeWidth={1.5} />
+          <Contact size={36} strokeWidth={1.5} />
           <CardTitle className="md:text-2xl text-xl">
             Basic Details for Your Match
           </CardTitle>

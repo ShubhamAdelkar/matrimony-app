@@ -92,8 +92,6 @@ export const occupationOptions = [
 
     // Other Categories
     { value: 'tradesperson', label: 'Tradesperson (Electrician, Plumber)' },
-    { value: 'skilled_worker', label: 'Skilled Worker' },
-    { value: 'homemaker', label: 'Homemaker' },
     { value: 'student', label: 'Student' },
     { value: 'unemployed', label: 'Unemployed' },
     { value: 'other', label: 'Other' },

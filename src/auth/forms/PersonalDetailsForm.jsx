@@ -160,7 +160,7 @@ function PersonalDetailsForm() {
     <Form {...form}>
       <Card className={"md:border-0 md:shadow-transparent"}>
         <CardHeader className="flex flex-col items-center text-center">
-          <Users size={58} strokeWidth={1.5} />
+          <Users size={36} strokeWidth={1.5} />
           <CardTitle className="md:text-2xl text-xl">
             Personal Details for Ideal Matches
           </CardTitle>

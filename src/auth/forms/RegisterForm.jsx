@@ -101,7 +101,7 @@ function RegisterForm() {
     <Form {...form}>
       <Card>
         <CardHeader className="flex flex-col items-center text-center">
-          <UserPlus size={58} strokeWidth={1.5} />
+          <UserPlus size={36} strokeWidth={1.5} />
           <CardTitle className="md:text-2xl text-xl">
             Register your account
           </CardTitle>

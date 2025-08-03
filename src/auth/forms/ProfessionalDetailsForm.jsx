@@ -145,7 +145,7 @@ function ProfessionalDetailsForm() {
     <Form {...form}>
       <Card className={"md:border-0 md:shadow-transparent"}>
         <CardHeader className="flex flex-col items-center text-center">
-          <GraduationCap size={60} strokeWidth={1.5} />
+          <GraduationCap size={36} strokeWidth={1.5} />
           <CardTitle className="md:text-2xl text-xl">
             Professional Details for Matches
           </CardTitle>

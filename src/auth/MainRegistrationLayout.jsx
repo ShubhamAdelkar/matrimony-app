@@ -91,7 +91,7 @@ function MainRegistrationLayout() {
   return (
     // ⭐ Use bg-background and text-foreground for theme-aware background and default text
     <div className="flex flex-col min-h-svh scrollbar bg-background text-foreground">
-      <nav className="flex justify-between sticky top-0 z-50 w-full pt-3 pb-3 p-5 md:pl-12 md:pr-12 md:pt-4 md:pb-4.5 backdrop-blur-sm bg-background/10 inset-shadow-black border-1 border-border shadow-xs md:shadow-transparent">
+      <nav className="flex justify-between sticky top-0 z-50 w-full pt-3 pb-3 p-5 md:pl-12 md:pr-12 md:pt-4 md:pb-4.5 backdrop-blur-sm bg-background/50 inset-shadow-black border-1 border-border shadow-xs md:shadow-transparent">
         {" "}
         {/* ⭐ Changed bg-white/10 to bg-background/10 */}
         <div className="flex items-center gap-2">

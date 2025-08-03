@@ -49,6 +49,7 @@ export const MultiStepFormProvider = ({ children }) => {
             mobileVerified: false,
             emailVerified: false,
             role: "user",
+            membershipTier: ["Free"],
           };
     } catch (error) {
       console.error("Failed to parse stored form data:", error);
@@ -84,6 +85,7 @@ export const MultiStepFormProvider = ({ children }) => {
         mobileVerified: false,
         emailVerified: false,
         role: "user",
+        membershipTier: ["Free"],
       };
     }
   });
@@ -162,6 +164,7 @@ export const MultiStepFormProvider = ({ children }) => {
       mobileVerified: false,
       emailVerified: false,
       role: "user",
+      membershipTier: ["Free"],
     });
     setCurrentStep(1);
     try {

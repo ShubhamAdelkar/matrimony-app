@@ -9,15 +9,13 @@ function AuthLayout() {
   // This prevents flickering where the auth layout briefly appears before redirecting
   if (isLoadingAuth) {
     return (
-      <div className="min-h-svh flex items-center justify-center bg-background text-foreground">
-        <div className="flex justify-center gap-2 md:justify-start">
-          <a href="#" className="flex items-center gap-2 font-medium">
-            <Loader2
-              className="animate-spin size-10"
-              stroke="var(--foreground)"
-            />
-          </a>
-        </div>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-background">
+        <Heart
+          className="self-center size-8"
+          fill="#fd356e"
+          stroke="var(--foreground)"
+          strokeWidth={1.5}
+        />
       </div>
     );
   }

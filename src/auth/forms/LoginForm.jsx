@@ -121,7 +121,7 @@ function LoginForm() {
     <Form {...form} className="">
       <Card>
         <CardHeader className="flex flex-col items-center text-center">
-          <UserCircle2 size={58} strokeWidth={1.5} />
+          <UserCircle2 size={36} strokeWidth={1.5} />
           <CardTitle className="md:text-2xl text-xl">
             Log in to your account
           </CardTitle>

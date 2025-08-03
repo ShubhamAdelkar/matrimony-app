@@ -1,5 +1,3 @@
-// src/auth/forms/ChurchDetailsForm.jsx
-
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -167,10 +165,7 @@ function ChurchDetailsForm() {
           // Generate preview URLs for existing files
           const urls = fetchedFileIds.map(
             (fileId) =>
-              storage.getFilePreview(
-                appwriteConfig.churchPhotosBucketId,
-                fileId
-              ).href
+              storage.getFileView(appwriteConfig.photoBucket, fileId).href
           );
           setPreviewUrls(urls);
 
@@ -200,7 +195,7 @@ function ChurchDetailsForm() {
     // This cleanup function uses the 'previewUrls' from the closure, not as a dependency for re-running the effect.
     return () => {
       // Only revoke URLs that were created by URL.createObjectURL
-      // URLs from storage.getFilePreview do not need to be revoked.
+      // URLs from storage.getFileView do not need to be revoked.
       // This is a simplification; a more robust solution would track which URLs are Blob URLs.
       // For now, assuming previewUrls contains only Blob URLs from handleFileSelect.
       previewUrls.forEach((url) => URL.revokeObjectURL(url));
@@ -266,10 +261,7 @@ function ChurchDetailsForm() {
 
       const newPreviewUrls = allRemainingFiles.map((item) => {
         if (item.type === "existing") {
-          return storage.getFilePreview(
-            appwriteConfig.churchPhotosBucketId,
-            item.id
-          ).href;
+          return storage.getFileView(appwriteConfig.photoBucket, item.id).href;
         } else {
           return URL.createObjectURL(item.file);
         }
@@ -290,10 +282,7 @@ function ChurchDetailsForm() {
       if (fileIdToRemove) {
         setIsLoading(true); // Show overall loading for deletion
         try {
-          await storage.deleteFile(
-            appwriteConfig.churchPhotosBucketId,
-            fileIdToRemove
-          );
+          await storage.deleteFile(appwriteConfig.photoBucket, fileIdToRemove);
           console.log(`Deleted file ${fileIdToRemove} from Appwrite Storage.`);
 
           // The state (existingFileIds) is already updated above
@@ -346,11 +335,7 @@ function ChurchDetailsForm() {
       try {
         // ⭐ Upload new files to Appwrite Storage
         const uploadPromises = selectedFiles.map((file) =>
-          storage.createFile(
-            appwriteConfig.churchPhotosBucketId,
-            ID.unique(),
-            file
-          )
+          storage.createFile(appwriteConfig.photoBucket, ID.unique(), file)
         );
         const uploadedFiles = await Promise.all(uploadPromises);
         const newFileIds = uploadedFiles.map((file) => file.$id);
@@ -375,7 +360,7 @@ function ChurchDetailsForm() {
         setIsUploadingPhotos(true); // ⭐ Start photo upload loading for deletion
         try {
           const deletePromises = existingFileIds.map((fileId) =>
-            storage.deleteFile(appwriteConfig.churchPhotosBucketId, fileId)
+            storage.deleteFile(appwriteConfig.photoBucket, fileId)
           );
           await Promise.all(deletePromises);
           console.log(
@@ -449,7 +434,7 @@ function ChurchDetailsForm() {
     <Form {...form}>
       <Card className={"md:border-0 md:shadow-transparent"}>
         <CardHeader className="flex flex-col items-center text-center">
-          <Church size={58} strokeWidth={1.5} />
+          <Church size={36} strokeWidth={1.5} />
           <CardTitle className="md:text-2xl text-xl">Church Details</CardTitle>
           <CardDescription>
             Please provide your church information to complete your profile.
@@ -610,8 +595,8 @@ function ChurchDetailsForm() {
                               >
                                 <img
                                   src={
-                                    storage.getFilePreview(
-                                      appwriteConfig.churchPhotosBucketId,
+                                    storage.getFileView(
+                                      appwriteConfig.photoBucket,
                                       fileId
                                     ).href
                                   }
