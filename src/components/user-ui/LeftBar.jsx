@@ -4,6 +4,7 @@ import {
   Command,
   Heart,
   Menu,
+  MenuIcon,
   Moon,
   Settings,
   Sun,
@@ -46,9 +47,21 @@ import { useAuth } from "@/auth/context/AuthContext";
 function LeftBar({ isAdmin, currentUserProfile, ...props }) {
   const { logout } = useAuth();
   const { pathname } = useLocation();
-  const { setTheme } = useTheme();
+
   const navigate = useNavigate();
   const { activeNavSource, setActiveNavSource } = useNavSource();
+
+  // * Determine the profile photo source
+  const profilePhotoIDs = currentUserProfile?.profilePhotoID || [];
+  const profilePhotoURLs = currentUserProfile?.profilePhotoURL || [];
+
+  const userAvatarSrc = profilePhotoIDs[0]
+    ? storage.getFileView(appwriteConfig.photoBucket, profilePhotoIDs[0]).href
+    : profilePhotoURLs[0];
+
+  const userAvatarFallback = currentUserProfile?.name
+    ? currentUserProfile.name.charAt(0).toUpperCase()
+    : "CN";
   return (
     <Sidebar
       variant="inset"
@@ -83,7 +96,7 @@ function LeftBar({ isAdmin, currentUserProfile, ...props }) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent className={"flex flex-col items-center justify-around"}>
-        <ul className="flex flex-col gap-4 justify-center items-center overflow-x-hidden w-full">
+        <ul className="flex flex-col gap-4 justify-center items-center overflow-x-hidden w-full scrollbar-none">
           {navMain.map((link) => {
             // Check if the current pathname is one of the main navigation links
             const isCurrentPathAMainNavLink = navMain.some(
@@ -132,7 +145,7 @@ function LeftBar({ isAdmin, currentUserProfile, ...props }) {
                         >
                           {link.icon && (
                             <link.icon
-                              className={`size-6.5 ${finalIsActiveForIcon ? "dark:text-foreground text-foreground" : "text-[#737373]"} cursor-pointer`}
+                              className={`size-7 ${finalIsActiveForIcon ? "dark:text-foreground text-foreground" : "text-[#737373]"} cursor-pointer`}
                             />
                           )}
                         </li>
@@ -148,50 +161,25 @@ function LeftBar({ isAdmin, currentUserProfile, ...props }) {
           })}
         </ul>
       </SidebarContent>
-      <SidebarFooter
-        className={"flex flex-col items-center gap-3 justify-center"}
-      >
-        {/* theme toggle */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild className={"cursor-pointer shadow-sm"}>
-            <Button variant="outline" size="icon" className={""}>
-              <Sun className="h-[1.5rem] w-[1.5rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-120" />
-              <Moon className="absolute h-[1.5rem] w-[1.5rem] scale-0 rotate-120 transition-all dark:scale-100 dark:rotate-0" />
-              <span className="sr-only">Toggle theme</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" sideOffset={8} side="right">
-            <DropdownMenuItem
-              onClick={() => setTheme("light")}
-              className={"cursor-pointer"}
-            >
-              Light
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => setTheme("dark")}
-              className={"cursor-pointer"}
-            >
-              Dark
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => setTheme("system")}
-              className={"cursor-pointer"}
-            >
-              System
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+      <SidebarFooter className={"flex flex-col items-center justify-center"}>
         {/* user profile */}
         <DropdownMenu>
-          <DropdownMenuTrigger asChild className={""}>
-            <Avatar
+          <DropdownMenuTrigger asChild className={"mb-2"}>
+            {/* <Avatar
               className={
-                "cursor-pointer border-2 border-foreground h-9 w-9 rounded-full active:scale-90 transition-all"
+                "cursor-pointer border-2 border-ring shadow-sm h-9 w-9 rounded-full "
               }
             >
-              <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-              <AvatarFallback className="rounded-lg">CN</AvatarFallback>
-            </Avatar>
+              <AvatarImage
+                src={userAvatarSrc}
+                alt={currentUserProfile?.name || "user"}
+                className={"object-cover w-full"}
+              />
+              <AvatarFallback className="rounded-lg bg-gray-200 text-gray-500 text-lg">
+                {userAvatarFallback}
+              </AvatarFallback>
+            </Avatar> */}
+            <MenuIcon className="cursor-pointer size-7" />
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="w-(--radix-dropdown-menu-trigger-width) min-w-54 rounded-lg md:min-w-56 backdrop-blur-xl bg-background/70"
@@ -205,11 +193,15 @@ function LeftBar({ isAdmin, currentUserProfile, ...props }) {
                 <DropdownMenuLabel className="p-0 font-normal">
                   <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                     <Avatar className="h-8 w-8 rounded-full">
+                      {/* * FIX: Dynamically set AvatarImage src based on profile data */}
                       <AvatarImage
-                        src="https://github.com/shadcn.png"
-                        alt="user"
+                        src={userAvatarSrc}
+                        alt={currentUserProfile?.name || "user"}
                       />
-                      <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                      {/* * FIX: Dynamically set AvatarFallback text based on user's name */}
+                      <AvatarFallback className="rounded-lg">
+                        {userAvatarFallback}
+                      </AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
                       <span className="truncate font-medium">
@@ -239,9 +231,9 @@ function LeftBar({ isAdmin, currentUserProfile, ...props }) {
                     Settings
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
+                <DropdownMenuSeparator />
               </>
             )}
-            <DropdownMenuSeparator />
             <DropdownMenuItem
               className={
                 "cursor-pointer text-destructive hover:text-destructive"

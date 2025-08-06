@@ -43,26 +43,21 @@ const PhotoDisplayGridOrStack = ({ photos, onPhotoClick }) => {
     const visiblePhotos = photos.slice(0, maxStackedPhotos);
 
     return (
-      <div
-        className="relative w-35 h-35 cursor-pointer pl-1"
-        style={{ perspective: "10000px" }} // For a subtle 3D effect
-      >
+      <div className="relative md:w-40 md:h-46 h-40 w-35 cursor-pointer pl-1.5 perspective-origin-center perspective-[10000px] p-1.5">
         {visiblePhotos.map((url, index) => (
           <div
             key={url} // Use URL as key, assuming unique
-            className="absolute w-full h-35 rounded-lg overflow-hidden shadow-sm border transition-all duration-300 ease-in-out"
+            className="absolute w-full md:h-40 h-35 rounded-lg overflow-hidden md:shadow-lg shadow-sm transition-all duration-300 ease-in-out backdrop-blur-3xl bg-ring border border-ring"
             style={{
-              transform: `rotateZ(${index * 5 - 5}deg) translateY(${index * -5}px)`, // Slight rotation and vertical offset
+              transform: `rotateZ(${index * 6 - 6}deg) translateY(${index * -2}px)`, // Slight rotation and vertical offset
               zIndex: maxStackedPhotos - index, // Ensure correct stacking order
-              backgroundColor: "rgba(0,0,0,0.1)",
-              backdropFilter: "blur(2px)",
             }}
             onClick={() => onPhotoClick(index)} // Pass the index of the clicked photo
           >
             <img
               src={url}
               alt={`Church photo ${index + 1}`}
-              className="w-full h-35 object-cover"
+              className="w-full md:h-40 object-cover h-35"
               onError={(e) => {
                 e.target.onerror = null;
                 e.target.src =
@@ -73,7 +68,7 @@ const PhotoDisplayGridOrStack = ({ photos, onPhotoClick }) => {
         ))}
         {photos.length > maxStackedPhotos && (
           <div
-            className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded-full shadow-md z-10"
+            className="absolute bottom-7 right-0 bg-black/60 text-white lg:text-xs text-[10px] lg:px-2 p-1 rounded-full shadow-md z-10"
             style={{ zIndex: maxStackedPhotos + 1 }}
             onClick={() => onPhotoClick(0)} // Click to open carousel from first photo
           >
@@ -86,13 +81,13 @@ const PhotoDisplayGridOrStack = ({ photos, onPhotoClick }) => {
     // Single photo display (no stack needed)
     return (
       <div
-        className="relative group overflow-hidden rounded-lg shadow-sm cursor-pointer"
+        className="relative h-40 rounded-lg overflow-hidden shadow-lg border transition-all duration-300 ease-in-out bg-transparent w-fit border-ring"
         onClick={() => onPhotoClick(0)} // Open carousel from the first (only) photo
       >
         <img
           src={photos[0]}
           alt="Church service photo"
-          className="w-full h-40 object-cover transform transition-transform duration-300 hover:scale-105 rounded-xl"
+          className="h-40 object-contain transform transition-transform duration-300 hover:scale-105 rounded-lg cursor-pointer"
           onError={(e) => {
             e.target.onerror = null;
             e.target.src =
@@ -102,10 +97,10 @@ const PhotoDisplayGridOrStack = ({ photos, onPhotoClick }) => {
       </div>
     );
   } else {
-    // No photos available
+    //Photos are not being posted.
     return (
       <div className="w-full h-full flex items-center justify-center text-muted-foreground text-center border-2 border-dashed rounded-lg p-4">
-        No photos available
+        Not Available
       </div>
     );
   }
@@ -186,7 +181,7 @@ const ChurchPhotosSection = ({ profile }) => {
 
       {/* Photo Carousel Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-[600px] bg-transparent border-none shadow-none p-0 text-foreground">
+        <DialogContent className="sm:max-w-[550px] bg-transparent border-none shadow-none p-0 text-foreground">
           {churchServicePhotoUrls.length > 0 ? (
             <Carousel
               className="w-full h-full flex items-center justify-center p-0 border-none bg-transparent"
@@ -194,16 +189,16 @@ const ChurchPhotosSection = ({ profile }) => {
                 startIndex: initialSlideIndex, // ⭐ Start carousel at the clicked index
               }}
             >
-              <CarouselContent className="h-full">
+              <CarouselContent>
                 {churchServicePhotoUrls.map((url, index) => (
                   <CarouselItem
                     key={index}
-                    className="flex items-center justify-center h-full"
+                    className="flex items-center justify-center"
                   >
                     <img
                       src={url}
                       alt={`Church service photo ${index + 1}`}
-                      className="rounded-xl object-contain w-full max-h-[80vh]"
+                      className="rounded-lg object-contain w-full max-w-[90vh]"
                       onError={(e) => {
                         e.target.onerror = null;
                         e.target.src =

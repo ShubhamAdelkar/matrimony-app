@@ -31,7 +31,7 @@ import InterestPage from "./root/user/pages/InterestPage";
 import MessagePage from "./root/user/pages/MessagePage";
 import PreferencePage from "./root/user/pages/PreferencePage";
 // import SpotifySlider from "./root/user/pages/SpotifySlider"; // If this is a distinct page, uncomment and add route
-import { databases, appwriteConfig } from "@/lib/appwrite";
+import { databases, appwriteConfig, client } from "@/lib/appwrite";
 import { Heart, Loader2 } from "lucide-react";
 
 // ADMIN IMPORTS
@@ -109,36 +109,77 @@ function AppContent() {
   const [needsProfileCompletion, setNeedsProfileCompletion] = useState(false);
   const location = useLocation();
 
+  // Helper function to update the user's lastActive timestamp
+  // This is a common function that can be used by the session heartbeat.
+  const updateLastActive = async (userId) => {
+    if (!userId) return;
+    try {
+      await databases.updateDocument(
+        appwriteConfig.databaseId,
+        appwriteConfig.profilesCollectionId,
+        userId,
+        { lastActive: new Date().toISOString() }
+      );
+      console.log("Last active timestamp updated successfully.");
+    } catch (error) {
+      console.error("Error updating last active timestamp:", error);
+    }
+  };
+
+  // Effect to manage the current user's online session heartbeat
+  // This is the core logic for the "session-based" last seen status
+  useEffect(() => {
+    // Only run this for authenticated, non-admin users
+    if (isAuthenticated && !isAdmin && user) {
+      const userId = user.$id;
+      // Update the timestamp immediately to mark user as online
+      updateLastActive(userId);
+
+      // Set up a timer to update the timestamp periodically
+      // This "heartbeat" signals that the user is still active in the app
+      const intervalId = setInterval(() => {
+        updateLastActive(userId);
+      }, 345600000); // 4 days
+
+      // Cleanup function to clear the interval when the component unmounts
+      // This is crucial for marking the user as "offline" by stopping the heartbeat
+      return () => clearInterval(intervalId);
+    }
+  }, [isAuthenticated, isAdmin, user]); // Dependencies: runs when auth state changes
+
   // Effect to fetch the current user's full profile after authentication
   useEffect(() => {
-    const fetchCurrentUserProfileData = async () => {
-      // Don't try to fetch profile if not authenticated or still loading auth
-      if (!isAuthenticated || isLoadingAuth || !user) {
-        setIsLoadingCurrentUserProfile(false);
-        setCurrentUserProfile(null);
-        setNeedsProfileCompletion(false);
-        return;
-      }
+    // Don't try to fetch profile if not authenticated or still loading auth
+    if (!isAuthenticated || isLoadingAuth || !user) {
+      setIsLoadingCurrentUserProfile(false);
+      setCurrentUserProfile(null);
+      setNeedsProfileCompletion(false);
+      return;
+    }
 
-      // Admins typically don't have a 'user profile' document in the same collection
-      // so we skip fetching it for them to avoid the 404 error.
-      if (isAdmin) {
-        setIsLoadingCurrentUserProfile(false);
-        setCurrentUserProfile(null); // Explicitly null for admins
-        setNeedsProfileCompletion(false);
-        return;
-      }
+    // Admins typically don't have a 'user profile' document in the same collection
+    // so we skip fetching it for them to avoid the 404 error.
+    if (isAdmin) {
+      setIsLoadingCurrentUserProfile(false);
+      setCurrentUserProfile(null); // Explicitly null for admins
+      setNeedsProfileCompletion(false);
+      return;
+    }
 
-      setIsLoadingCurrentUserProfile(true); // Start loading profile data for regular users
+    setIsLoadingCurrentUserProfile(true); // Start loading profile data for regular users
+    const fetchProfile = async () => {
       try {
-        const profile = await databases.getDocument(
+        const fetchedProfile = await databases.getDocument(
           appwriteConfig.databaseId,
           appwriteConfig.profilesCollectionId,
           user.$id // Attempt to fetch using user ID
         );
-        setCurrentUserProfile(profile);
+        setCurrentUserProfile(fetchedProfile);
         setNeedsProfileCompletion(false); // Profile found
-        console.log("AppContent: Current user profile fetched:", profile);
+        console.log(
+          "AppContent: Current user profile fetched:",
+          fetchedProfile
+        );
       } catch (err) {
         if (err.code === 404) {
           console.warn(
@@ -159,7 +200,20 @@ function AppContent() {
       }
     };
 
-    fetchCurrentUserProfileData();
+    // Set up the real-time listener for the current user's profile
+    // This allows the UI to update if the profile document changes from another tab or action
+    const unsubscribe = client.subscribe(
+      `databases.${appwriteConfig.databaseId}.collections.${appwriteConfig.profilesCollectionId}.documents.${user.$id}`,
+      (response) => {
+        if (response.payload) {
+          setCurrentUserProfile(response.payload);
+        }
+      }
+    );
+
+    fetchProfile();
+
+    return () => unsubscribe();
   }, [user, isLoadingAuth, isAuthenticated, isAdmin]); // Dependencies to re-run on relevant state changes
 
   // ⭐ GLOBAL LOADING SCREEN ⭐

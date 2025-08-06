@@ -1,6 +1,6 @@
 // ProfilePage.jsx
 import React, { useState, useEffect } from "react";
-import { databases, appwriteConfig, storage } from "@/lib/appwrite";
+import { databases, appwriteConfig, storage, client } from "@/lib/appwrite";
 import { useAuth } from "@/auth/context/AuthContext"; // Import useAuth
 import { Button } from "@/components/ui/button";
 import {
@@ -34,7 +34,14 @@ import {
   Crown,
   AtSign,
   BadgeCheckIcon,
+  ChevronRight,
+  Info,
 } from "lucide-react";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { heightOptions } from "@/auth/forms/data/personalDetailsOptions";
 import {
   Dialog,
@@ -106,20 +113,42 @@ const calculateAge = (dobString) => {
 };
 
 // Helper for "Last seen" text
-const getLastSeenText = (timestamp) => {
-  if (!timestamp) return "Never";
+const getLastSeenText = (lastActiveTimestamp, createdAtTimestamp) => {
+  // If there's no lastActive timestamp, the user has never been active (or not since this feature was implemented).
+  // Use the profile creation time as a fallback.
+  if (!lastActiveTimestamp) {
+    if (!createdAtTimestamp) return "Never";
+
+    const now = new Date();
+    const creationTime = new Date(createdAtTimestamp);
+    const diffMs = now.getTime() - lastActive.getTime();
+    const diffMinutes = Math.round(diffMs / (1000 * 60));
+    const diffHours = Math.round(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
+
+    // If the user has been active within the last 4 days (matching heartbeat)
+    if (diffDays < 5) return "Active recently"; // Changed from "Online"
+    if (diffDays < 30) return `Last seen ${diffDays} days ago`;
+    if (diffDays < 365)
+      return `Last seen ${Math.round(diffDays / 30)} months ago`;
+    return `Last seen ${Math.round(diffDays / 365)} years ago`;
+  }
+
+  // If there is a lastActive timestamp, use it. This is the "heartbeat" logic.
   const now = new Date();
-  const lastActive = new Date(timestamp);
+  if (!lastActiveTimestamp) return "Never";
+  const lastActive = new Date(lastActiveTimestamp);
   const diffMs = now.getTime() - lastActive.getTime();
   const diffMinutes = Math.round(diffMs / (1000 * 60));
   const diffHours = Math.round(diffMs / (1000 * 60 * 60));
   const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
 
-  if (diffMinutes < 5) return "Online";
-  if (diffMinutes < 60) return `Last seen ${diffMinutes} mins ago`;
-  if (diffHours < 24) return `Last seen ${diffHours} hours ago`;
-  const day = diffDays > 1 ? "days" : "day";
-  return `Last seen ${diffDays} ${day} ago`;
+  // If the user has been active within the last 4 days (matching heartbeat)
+  if (diffDays < 5) return "Active recently"; // Changed from "Online"
+  if (diffDays < 30) return `Last seen ${diffDays} days ago`;
+  if (diffDays < 365)
+    return `Last seen ${Math.round(diffDays / 30)} months ago`;
+  return `Last seen ${Math.round(diffDays / 365)} years ago`;
 };
 
 // ProfilePage now receives currentUserProfile from App.jsx
@@ -129,9 +158,7 @@ const ProfilePage = ({ currentUserProfile }) => {
   const [profile, setProfile] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  // This is a placeholder component for demonstration.
-  // You will replace this with your actual ProfilePage logic
-  // This assumes 'profile' is passed as a prop from a parent component.
+  const [lastSeenText, setLastSeenText] = useState("");
 
   // State to manage the dialog's open/close status
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -144,14 +171,38 @@ const ProfilePage = ({ currentUserProfile }) => {
     setIsModalOpen(true);
   };
 
-  // Fetch the specific profile being viewed
+  // Effect to update the "Last seen" text every minute for a dynamic display
   useEffect(() => {
+    // Only run this if a profile is loaded
+    if (profile) {
+      // Function to update the text
+      const updateText = () => {
+        // Pass both lastActive and creation date to the helper function
+        setLastSeenText(
+          getLastSeenText(profile.lastActive, profile.$createdAt)
+        );
+      };
+
+      // Update immediately
+      updateText();
+
+      // Set up a timer to update the text every minute
+      const intervalId = setInterval(updateText, 60000); // 0.10 minute
+
+      // Cleanup function to clear the interval
+      return () => clearInterval(intervalId);
+    }
+  }, [profile]); // Re-run if the profile object changes
+
+  // useEffect to fetch the profile data and set up the real-time listener
+  useEffect(() => {
+    if (!profileId) {
+      setError("No profile ID provided in URL.");
+      setIsLoading(false);
+      return;
+    }
+
     const fetchProfile = async () => {
-      if (!profileId) {
-        setError("No profile ID provided in URL.");
-        setIsLoading(false);
-        return;
-      }
       setIsLoading(true);
       setError(null);
       try {
@@ -172,7 +223,25 @@ const ProfilePage = ({ currentUserProfile }) => {
     };
 
     fetchProfile();
+
+    // Set up the real-time listener for the viewed profile
+    const unsubscribe = client.subscribe(
+      `databases.${appwriteConfig.databaseId}.collections.${appwriteConfig.profilesCollectionId}.documents.${profileId}`,
+      (response) => {
+        if (response.payload) {
+          // Update the profile state with the new data from the payload
+          setProfile(response.payload);
+        }
+      }
+    );
+
+    // Cleanup function to unsubscribe from the listener when the component unmounts
+    return () => {
+      unsubscribe();
+    };
   }, [profileId]); // Depend on profileId from URL
+
+  const isOnline = getLastSeenText(profile?.lastActive) === "Active recently";
 
   if (isLoading) {
     return (
@@ -206,10 +275,21 @@ const ProfilePage = ({ currentUserProfile }) => {
     );
   }
 
-  // Safely get the photo IDs and other related variables here
   const profilePhotoIDs = profile.profilePhotoID || [];
+  const profilePhotoURLs = profile.profilePhotoURL || [];
   const firstPhotoId = profilePhotoIDs[0];
-  const hasMultiplePhotos = profilePhotoIDs.length > 1;
+  const firstPhotoURL = profilePhotoURLs[0];
+
+  // Determine which image to display based on availability
+  // Priority is given to a photo ID from the bucket, then to a URL from the dummy data.
+  const primaryPhotoSrc = firstPhotoId
+    ? storage.getFileView(appwriteConfig.photoBucket, firstPhotoId).href
+    : firstPhotoURL;
+
+  const photosToDisplay =
+    profilePhotoIDs.length > 0 ? profilePhotoIDs : profilePhotoURLs;
+
+  const hasMultiplePhotos = photosToDisplay.length > 1;
 
   // Function to format enum-like strings (e.g., "never_married" to "Never Married")
   const formatEnum = (str) => {
@@ -231,6 +311,7 @@ const ProfilePage = ({ currentUserProfile }) => {
       >
         <ChevronLeft size={29} />
       </Button>
+
       {/* Profile Card Header */}
       <div className="lg:gap-6 flex flex-col gap-2 md:gap-3 md:mb-2">
         <div className="flex md:flex-row p-0 lg:gap-6 flex-col gap-2 md:gap-4">
@@ -244,69 +325,89 @@ const ProfilePage = ({ currentUserProfile }) => {
               className="cursor-pointer bg-transparent shadow-none"
             >
               {/* This Card serves as the trigger for the dialog */}
-              <Card className="lg:max-w-[292px] overflow-hidden lg:min-w-[292px] min-w-[220px] p-0 active:scale-98 transition-all cursor-pointer group/card flex-shrink-0 select-none border-none md:max-w-[220px]">
-                {firstPhotoId ? (
-                  <img
-                    src={
-                      storage.getFileView(
-                        appwriteConfig.photoBucket,
-                        firstPhotoId
-                      ).href
-                    }
-                    alt={profile.name}
-                    className="w-full aspect-square object-cover max-w-[100px] rounded-full md:max-w-[292px] md:rounded-xl lg:max-w-[292px] lg:rounded-xl shadow-sm"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src =
-                        "https://placehold.co/400x300/cccccc/333333?text=No+Pic";
-                    }}
-                  />
+              <Card className="lg:max-w-[292px] overflow-hidden lg:min-w-[292px] min-w-[220px] p-0 active:scale-98 transition-all cursor-pointer group/card flex-shrink-0 select-none border-none md:max-w-[220px] relative">
+                {primaryPhotoSrc ? (
+                  <div
+                    className={`w-full aspect-square object-cover max-w-[106px] rounded-full md:max-w-[292px] md:rounded-xl lg:max-w-[292px] lg:rounded-xl flex items-center justify-center border-3 p-[3px] ${isOnline ? "border-emerald-500" : "md:border-transparent"}`}
+                  >
+                    <img
+                      src={primaryPhotoSrc}
+                      alt={profile.name}
+                      className="w-full aspect-square object-cover max-w-[100px] rounded-full md:max-w-[292px] md:rounded-lg lg:max-w-[292px] lg:shadow-sm"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src =
+                          "https://placehold.co/400x300/cccccc/333333?text=No+Pic";
+                      }}
+                    />
+                  </div>
                 ) : (
-                  <div className="aspect-square bg-gray-800 flex items-center justify-center font-extrabold max-w-[100px] rounded-full text-3xl md:max-w-[220px] md:rounded-xl md:text-7xl lg:max-w-[292px] lg:rounded-xl lg:text-7xl text-gray-500 shadow-sm">
+                  <div className="aspect-square bg-gray-200 flex items-center justify-center font-extrabold max-w-[100px] rounded-full text-3xl md:max-w-[220px] md:rounded-xl md:text-7xl lg:max-w-[292px] lg:rounded-xl lg:text-7xl text-gray-500 shadow-sm">
                     {profile.name ? profile.name.charAt(0).toUpperCase() : "?"}
                   </div>
                 )}
                 {/* "+X more" badge overlay */}
                 {hasMultiplePhotos && (
-                  <Badge className="absolute bottom-2 right-2 md:bottom-4 md:right-4 bg-black/60 text-white rounded-full px-2 py-1">
-                    +{profilePhotoIDs.length - 1} more
+                  <Badge className="absolute bottom-2 left-16 lg:bottom-3 lg:left-54 bg-black/60 text-white rounded-full p-1 lg:text-xs text-[9px] lg:px-2 md:left-41 md:bottom-3">
+                    +{photosToDisplay.length - 1} more
                   </Badge>
                 )}
+                {Array.isArray(profile.membershipTier) &&
+                  profile.membershipTier.includes("Gold") && (
+                    <Tooltip delayDuration={300}>
+                      <TooltipTrigger className="cursor-pointer absolute top-1 left-1 md:top-3 md:left-3 lg:left-3 lg:top-3">
+                        <Badge
+                          variant="secondary"
+                          className="bg-[#EFBF04] text-white dark:bg-[#EFBF04] md:p-[7px] rounded-full p-1.5"
+                        >
+                          <Crown className="scale-126 align-middle" />
+                        </Badge>
+                      </TooltipTrigger>
+                      <TooltipContent side={"right"}>
+                        <p>Gold Member</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
               </Card>
             </DialogTrigger>
 
             {/* Dialog Content with the Carousel */}
-            <DialogContent className="sm:max-w-[600px] md:max-w-[700px] lg:max-w-[900px] bg-transparent border-none shadow-none p-0 text-foreground">
-              {profilePhotoIDs.length > 0 ? (
+            <DialogContent className="sm:max-w-[550px] bg-transparent border-none shadow-none p-0 text-foreground">
+              {photosToDisplay.length > 0 ? (
                 <Carousel
                   className="w-full h-full flex items-center justify-center p-0 border-none bg-transparent"
                   opts={{
                     startIndex: initialSlideIndex,
                   }}
                 >
-                  <CarouselContent className="h-full">
-                    {profilePhotoIDs.map((photoId, index) => (
-                      <CarouselItem
-                        key={index}
-                        className="flex items-center justify-center h-full"
-                      >
-                        <img
-                          src={
-                            storage.getFileView(
+                  <CarouselContent>
+                    {photosToDisplay.map((photo, index) => {
+                      // Determine the source based on whether it's a photo ID or a URL
+                      const photoSrc =
+                        profilePhotoIDs.length > 0
+                          ? storage.getFileView(
                               appwriteConfig.photoBucket,
-                              photoId
+                              photo
                             ).href
-                          }
-                          alt={`Profile photo ${index + 1}`}
-                          className="rounded-xl object-contain w-full max-h-[80vh]"
-                          onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src =
-                              "https://placehold.co/400x300/cccccc/333333?text=No+Pic";
-                          }}
-                        />
-                      </CarouselItem>
-                    ))}
+                          : photo;
+                      return (
+                        <CarouselItem
+                          key={index}
+                          className="flex items-center justify-center"
+                        >
+                          <img
+                            src={photoSrc}
+                            alt={`Profile photo ${index + 1}`}
+                            className="object-contain w-full rounded-xl max-h-[90vh]"
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src =
+                                "https://placehold.co/400x300/cccccc/333333?text=No+Pic";
+                            }}
+                          />
+                        </CarouselItem>
+                      );
+                    })}
                   </CarouselContent>
                   <CarouselPrevious className="cursor-pointer" />
                   <CarouselNext className="cursor-pointer" />
@@ -324,45 +425,39 @@ const ProfilePage = ({ currentUserProfile }) => {
               {profile.isIDVerified && (
                 <Badge
                   variant="secondary"
-                  className="bg-blue-500 text-white dark:bg-blue-600"
+                  className="bg-blue-500 text-white dark:bg-blue-600 text-xs flex items-center rounded-full px-[5px] text-center"
                 >
-                  <BadgeCheckIcon />
-                  Verified
+                  <BadgeCheckIcon className="self-center scale-98" />
+                  <span className="text-[10px] md:text-[10px] lg:text-[12px]">
+                    Verified
+                  </span>
                 </Badge>
               )}
-
-              {Array.isArray(profile.membershipTier) &&
-                profile.membershipTier.includes("Gold") && (
-                  <Tooltip delayDuration={300}>
-                    <TooltipTrigger className="cursor-pointer">
-                      <Badge
-                        variant="secondary"
-                        className="bg-[#EFBF04] text-white dark:bg-[#EFBF04]"
-                      >
-                        <Crown />
-                        Premium
-                      </Badge>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Gold Member</p>
-                    </TooltipContent>
-                  </Tooltip>
-                )}
             </span>
             <Card className="p-0 bg-background w-full min-w-full shadow-none flex border-0">
               <CardDescription className={"p-0 flex flex-col items-start"}>
-                <p className="lg:text-6xl font-extrabold md:text-4xl text-foreground md:pb-2 text-2xl flex items-center gap-1">
+                <p className="lg:text-3xl font-extrabold md:text-3xl text-foreground md:pb-2 text-xl flex items-center gap-1">
                   {profile.name}{" "}
                   {/* <span className="font-mono text-sm bg-white/10 px-2 py-1 rounded">
                   {profile.userId}
                 </span> */}
                 </p>
-                <p className="text-xs md:text-sm">
-                  {profile.lastActive
-                    ? getLastSeenText(profile.lastActive)
-                    : "Last seen: N/A"}{" "}
+                <p
+                  className={`text-xs md:text-sm ${isOnline ? "text-emerald-500" : ""} flex gap-1`}
+                >
+                  {profile.lastActive && lastSeenText}
+                  {lastSeenText === "Active recently" && (
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Info size={13} className="size-2.5 md:size-3" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Active within the last 4 days</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
                 </p>
-                <div className="flex flex-wrap items-center gap-x-1 text-sm lg:text-xl">
+                <div className="flex flex-wrap items-center gap-x-1 text-sm lg:text-lg">
                   <span className="">{formatEnum(profile.maritalStatus)}</span>
                   <span className="md:text-xl">·</span>
                   <span>{calculateAge(profile.dob)} yrs</span>
@@ -375,7 +470,7 @@ const ProfilePage = ({ currentUserProfile }) => {
                     )}
                   </span>
                 </div>
-                <p className="flex gap-x-1 lg:text-xl flex-col md:flex-row">
+                <p className="flex gap-x-1 lg:text-lg flex-col md:flex-row">
                   <span>
                     {formatEnum(profile.highestEducation)},{" "}
                     {formatEnum(profile.occupation)}
@@ -386,6 +481,119 @@ const ProfilePage = ({ currentUserProfile }) => {
                     {formatEnum(profile.state || "N/A State")}, India
                   </span>
                 </p>
+
+                {/* About Myself */}
+                {(profile.bio ||
+                  profile.aboutMe ||
+                  profile.highestEducation ||
+                  profile.employedIn ||
+                  profile.occupation ||
+                  profile.city) && (
+                  <div className="text-muted-foreground md:max-w-5xl max-w-xs">
+                    <div>
+                      <p className="text-foreground lg:text-lg">
+                        {profile.bio ||
+                          profile.aboutMe ||
+                          (() => {
+                            const dynamicBio = [];
+
+                            // Education
+                            if (profile.highestEducation) {
+                              dynamicBio.push(
+                                `I have completed my ${formatEnum(profile.highestEducation)}`
+                              );
+                            }
+
+                            // Employment and Occupation logic
+                            const employment = profile.employedIn
+                              ? formatEnum(profile.employedIn)
+                              : null;
+                            const occupation = profile.occupation
+                              ? formatEnum(profile.occupation)
+                              : null;
+
+                            if (employment) {
+                              if (
+                                employment.toLowerCase().includes("student")
+                              ) {
+                                dynamicBio.push(`I am currently a student`);
+                              } else if (
+                                employment.toLowerCase().includes("not") ||
+                                employment.toLowerCase().includes("unemployed")
+                              ) {
+                                dynamicBio.push(`I am currently not working`);
+                              } else {
+                                // For employed cases
+                                let workString = `I am currently employed`;
+
+                                // Add occupation if it exists and is different from employment status
+                                if (
+                                  occupation &&
+                                  !occupation
+                                    .toLowerCase()
+                                    .includes("student") &&
+                                  !occupation
+                                    .toLowerCase()
+                                    .includes("unemployed")
+                                ) {
+                                  workString += ` as a ${occupation}`;
+                                }
+
+                                // Add employment type
+                                if (
+                                  employment
+                                    .toLowerCase()
+                                    .includes("government")
+                                ) {
+                                  workString += ` in the government sector`;
+                                } else if (
+                                  employment.toLowerCase().includes("private")
+                                ) {
+                                  workString += ` in the private sector`;
+                                } else if (
+                                  employment
+                                    .toLowerCase()
+                                    .includes("business") ||
+                                  employment.toLowerCase().includes("self")
+                                ) {
+                                  workString += ` and am self-employed`;
+                                } else if (
+                                  employment.toLowerCase().includes("defence")
+                                ) {
+                                  workString += ` in defence/civil services`;
+                                }
+
+                                dynamicBio.push(workString);
+                              }
+                            } else if (occupation) {
+                              // If no employment status but occupation exists
+                              if (
+                                occupation.toLowerCase().includes("student")
+                              ) {
+                                dynamicBio.push(`I am currently a student`);
+                              } else if (
+                                !occupation.toLowerCase().includes("unemployed")
+                              ) {
+                                dynamicBio.push(`I work as a ${occupation}`);
+                              }
+                            }
+
+                            // Location
+                            if (profile.city || profile.state) {
+                              const location = [profile.city, profile.state]
+                                .filter(Boolean)
+                                .join(", ");
+                              dynamicBio.push(`I live in ${location}`);
+                            }
+
+                            return dynamicBio.length > 0
+                              ? dynamicBio.join(". ") + "."
+                              : "No information available.";
+                          })()}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </CardDescription>
             </Card>
           </div>
@@ -405,7 +613,7 @@ const ProfilePage = ({ currentUserProfile }) => {
             variant={"outline"}
             size={"sm"}
             className={
-              "lg:text-[18px] md:text-[15px] text-sm cursor-pointer lg:max-w-[292px] font-bold active:scale-98 transition-all border-ring md:p-5"
+              "lg:text-[18px] md:text-[15px] text-sm cursor-pointer lg:max-w-[292px] font-bold active:scale-98 transition-all border-ring md:p-5 "
             }
           >
             <Bookmark className="size-4 md:size-5" strokeWidth={2.5} />
@@ -458,22 +666,30 @@ const ProfilePage = ({ currentUserProfile }) => {
         </div>
       </div>
 
-      <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-0 md:text-[16px]">
+      <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 p-0 md:text-[16px]">
         {/* Personal Information */}
         <div className="border-b pb-4 text-muted-foreground">
           <div className="flex gap-2 items-center pb-2 text-foreground">
             {/* <CircleUser className="md:size-7 size-6.5" /> */}
-            <h3 className="md:text-2xl font-medium text-xl ">
+            <h3 className="md:text-xl font-medium text-[15px] ">
               Personal Information
             </h3>
           </div>
           <Table className={"max-w-4xl"}>
             <TableBody className={"md:text-[16px] text-sm"}>
-              {profile.dob && calculateAge(profile.dob) && (
+              {/* {profile.dob && calculateAge(profile.dob) && (
                 <TableRow className={""}>
                   <TableCell className="">Age:</TableCell>
                   <TableCell className="text-foreground font-medium">
                     {calculateAge(profile.dob)} Years
+                  </TableCell>
+                </TableRow>
+              )} */}
+              {profile.maritalStatus && (
+                <TableRow>
+                  <TableCell className="">Marital Status:</TableCell>
+                  <TableCell className="text-foreground font-medium">
+                    {formatEnum(profile.maritalStatus)}
                   </TableCell>
                 </TableRow>
               )}
@@ -485,14 +701,14 @@ const ProfilePage = ({ currentUserProfile }) => {
                   </TableCell>
                 </TableRow>
               )}
-              {profile.weight && (
+              {/* {profile.weight && (
                 <TableRow>
                   <TableCell className="">Weight:</TableCell>
                   <TableCell className="text-foreground font-medium">
                     {profile.weight} Kg
                   </TableCell>
                 </TableRow>
-              )}
+              )} */}
               {profile.bodyType && formatEnum(profile.bodyType) && (
                 <TableRow>
                   <TableCell className="">Body Type:</TableCell>
@@ -503,52 +719,31 @@ const ProfilePage = ({ currentUserProfile }) => {
               )}
               {profile.motherTongue && (
                 <TableRow>
-                  <TableCell className="">Spoken Languages:</TableCell>
+                  <TableCell className="">Mother Tongue:</TableCell>
                   <TableCell className="text-foreground font-medium">
-                    {profile.motherTongue} (Mother Tongue)
+                    {profile.motherTongue}
                   </TableCell>
                 </TableRow>
               )}
-              {profile.maritalStatus && (
-                <TableRow>
-                  <TableCell className="">Marital Status:</TableCell>
-                  <TableCell className="text-foreground font-medium">
-                    {formatEnum(profile.maritalStatus)}
-                  </TableCell>
-                </TableRow>
-              )}
+
               <TableRow>
-                <TableCell className="">Lives In:</TableCell>
+                <TableCell className="align-top">Lives In:</TableCell>
                 <TableCell className="text-foreground font-medium">
                   {formatEnum(profile.city) || "N/A"},{" "}
                   {formatEnum(profile.state) || "N/A"}
                 </TableCell>
               </TableRow>
-              {profile.eatingHabits && formatEnum(profile.eatingHabits) && (
-                <TableRow>
-                  <TableCell className="">Eating Habits:</TableCell>
-                  <TableCell className="text-foreground font-medium">
-                    {formatEnum(profile.eatingHabits)}
-                  </TableCell>
-                </TableRow>
-              )}
+
               {profile.religion && (
                 <TableRow>
-                  <TableCell className="">Religion:</TableCell>
+                  <TableCell className="">Religion & Caste</TableCell>
                   <TableCell className="text-foreground font-medium">
-                    {profile.religion}
-                  </TableCell>
-                </TableRow>
-              )}
-              {profile.caste && (
-                <TableRow>
-                  <TableCell className="">Caste:</TableCell>
-                  <TableCell className="text-foreground font-medium">
-                    {formatEnum(profile.caste)}{" "}
+                    {profile.religion}, {formatEnum(profile.caste)}{" "}
                     {profile.casteNoBar ? "(Caste No Bar)" : ""}
                   </TableCell>
                 </TableRow>
               )}
+
               <TableRow>
                 <TableCell className="">Date Of Birth:</TableCell>
                 <TableCell className="text-foreground font-medium">
@@ -566,6 +761,7 @@ const ProfilePage = ({ currentUserProfile }) => {
                   )}
                 </TableCell>
               </TableRow>
+
               {profile.employedIn && formatEnum(profile.employedIn) && (
                 <TableRow>
                   <TableCell className="">Employment:</TableCell>
@@ -592,7 +788,7 @@ const ProfilePage = ({ currentUserProfile }) => {
                 </TableRow>
               )}
 
-              {profile.collegeInstitution && (
+              {/* {profile.collegeInstitution && (
                 <TableRow>
                   <TableCell className="">Studied at:</TableCell>
                   <TableCell className="text-foreground font-medium">
@@ -606,7 +802,7 @@ const ProfilePage = ({ currentUserProfile }) => {
                     )}
                   </TableCell>
                 </TableRow>
-              )}
+              )} */}
 
               {profile.organization && (
                 <TableRow>
@@ -631,24 +827,37 @@ const ProfilePage = ({ currentUserProfile }) => {
         <div className="border-b pb-4 text-muted-foreground">
           <div className="flex gap-2 items-center pb-2 text-foreground">
             {/* <House className="md:size-7" /> */}
-            <h3 className="md:text-2xl font-medium text-xl">
+            <h3 className="md:text-xl font-medium text-[15px]">
               Family Information
             </h3>
           </div>
           <Table className={"max-w-4xl"}>
             <TableBody className={"md:text-[16px] text-sm"}>
               <TableRow>
-                <TableCell className="align-top">Parents:</TableCell>
+                <TableCell className="">Family Type:</TableCell>
+                <TableCell className="text-foreground font-medium">
+                  {profile.familyType !== undefined &&
+                  profile.familyType !== null
+                    ? `${formatEnum(profile.familyType)} Family`
+                    : "Not Specified"}
+                </TableCell>
+              </TableRow>
+
+              <TableRow>
+                <TableCell className="align-top">Father Occupation:</TableCell>
                 <TableCell className="text-foreground font-medium">
                   {profile.fatherOccupation
                     ? `Father is a ${profile.fatherOccupation}`
                     : "Not specified for Father"}
-                  {profile.fatherOccupation && profile.motherOccupation && ", "}
-                  <span className="block">
-                    {profile.motherOccupation
-                      ? `Mother is a ${profile.motherOccupation}`
-                      : "Not specified for Mother"}
-                  </span>
+                </TableCell>
+              </TableRow>
+
+              <TableRow>
+                <TableCell className="align-top">Mother Occupation:</TableCell>
+                <TableCell className="text-foreground font-medium">
+                  {profile.motherOccupation
+                    ? `Mother is a ${profile.motherOccupation}`
+                    : "Not specified for Mother"}
                 </TableCell>
               </TableRow>
 
@@ -687,50 +896,11 @@ const ProfilePage = ({ currentUserProfile }) => {
           </Table>
         </div>
 
-        {/* Church Details (if applicable) */}
-        <div className="border-b pb-4 text-muted-foreground">
-          <div className="flex gap-2 items-center pb-2 text-foreground">
-            {/* <Church className="md:size-7" /> */}
-            <h3 className="md:text-2xl font-medium text-xl">Church Details</h3>
-          </div>
-          <Table className={"max-w-4xl"}>
-            <TableBody className={"md:text-[16px] text-sm"}>
-              {profile.churchName && (
-                <TableRow>
-                  <TableCell className="">Church Name:</TableCell>
-                  <TableCell className="text-foreground font-medium text-wrap">
-                    {profile.churchName}
-                  </TableCell>
-                </TableRow>
-              )}
-              {profile.churchLocation && (
-                <TableRow>
-                  <TableCell className="align-top">Church Location:</TableCell>
-                  <TableCell className="text-foreground font-medium">
-                    {profile.churchLocation}
-                  </TableCell>
-                </TableRow>
-              )}
-              {profile.pastorName && (
-                <TableRow>
-                  <TableCell className="">Pastor Name:</TableCell>
-                  <TableCell className="text-foreground font-medium">
-                    {profile.pastorName}
-                  </TableCell>
-                </TableRow>
-              )}
-
-              {/* ⭐ Displaying Church Service Photos */}
-              <ChurchPhotosSection profile={profile} />
-            </TableBody>
-          </Table>
-        </div>
-
         {/* Contact Information */}
         <div className="border-b pb-4 text-muted-foreground">
           <div className="flex gap-2 items-center pb-2 text-foreground">
             {/* <Phone className="md:size-7 size-6" /> */}
-            <h3 className="md:text-2xl font-medium text-xl">
+            <h3 className="md:text-xl font-medium text-[15px]">
               Contact Information
             </h3>
           </div>
@@ -772,123 +942,44 @@ const ProfilePage = ({ currentUserProfile }) => {
           </Table>
         </div>
 
-        {/* About Myself */}
-        {(profile.bio ||
-          profile.aboutMe ||
-          profile.highestEducation ||
-          profile.employedIn ||
-          profile.occupation ||
-          profile.city) && (
-          <div className="border-b pb-4 text-muted-foreground">
-            <div className="flex gap-2 items-center pb-2 text-foreground">
-              {/* <User className="md:size-8" /> */}
-              <h3 className="md:text-2xl font-medium text-xl">About</h3>
-            </div>
-            <div>
-              {profile.name && (
-                <h4 className="font-medium">About {profile.name}</h4>
-              )}
-              <p className="text-foreground">
-                {profile.bio ||
-                  profile.aboutMe ||
-                  (() => {
-                    const dynamicBio = [];
-
-                    // Education
-                    if (profile.highestEducation) {
-                      dynamicBio.push(
-                        `I have completed my ${formatEnum(profile.highestEducation)}`
-                      );
-                    }
-
-                    // Employment and Occupation logic
-                    const employment = profile.employedIn
-                      ? formatEnum(profile.employedIn)
-                      : null;
-                    const occupation = profile.occupation
-                      ? formatEnum(profile.occupation)
-                      : null;
-
-                    if (employment) {
-                      if (employment.toLowerCase().includes("student")) {
-                        dynamicBio.push(`I am currently a student`);
-                      } else if (
-                        employment.toLowerCase().includes("not") ||
-                        employment.toLowerCase().includes("unemployed")
-                      ) {
-                        dynamicBio.push(`I am currently not working`);
-                      } else {
-                        // For employed cases
-                        let workString = `I am currently employed`;
-
-                        // Add occupation if it exists and is different from employment status
-                        if (
-                          occupation &&
-                          !occupation.toLowerCase().includes("student") &&
-                          !occupation.toLowerCase().includes("unemployed")
-                        ) {
-                          workString += ` as a ${occupation}`;
-                        }
-
-                        // Add employment type
-                        if (employment.toLowerCase().includes("government")) {
-                          workString += ` in the government sector`;
-                        } else if (
-                          employment.toLowerCase().includes("private")
-                        ) {
-                          workString += ` in the private sector`;
-                        } else if (
-                          employment.toLowerCase().includes("business") ||
-                          employment.toLowerCase().includes("self")
-                        ) {
-                          workString += ` and am self-employed`;
-                        } else if (
-                          employment.toLowerCase().includes("defence")
-                        ) {
-                          workString += ` in defence/civil services`;
-                        }
-
-                        dynamicBio.push(workString);
-                      }
-                    } else if (occupation) {
-                      // If no employment status but occupation exists
-                      if (occupation.toLowerCase().includes("student")) {
-                        dynamicBio.push(`I am currently a student`);
-                      } else if (
-                        !occupation.toLowerCase().includes("unemployed")
-                      ) {
-                        dynamicBio.push(`I work as a ${occupation}`);
-                      }
-                    }
-
-                    // Location
-                    if (profile.city || profile.state) {
-                      const location = [profile.city, profile.state]
-                        .filter(Boolean)
-                        .join(", ");
-                      dynamicBio.push(`I live in ${location}`);
-                    }
-
-                    return dynamicBio.length > 0
-                      ? dynamicBio.join(". ") + "."
-                      : "No information available.";
-                  })()}
-              </p>
-            </div>
-          </div>
-        )}
-
         {/* Lifestyle */}
         <div className="border-b pb-4 text-muted-foreground">
           <div className="flex gap-2 items-center pb-2 text-foreground">
             {/* <SmilePlus className="md:size-8 size-6" /> */}
-            <h3 className="md:text-2xl font-medium text-xl">Lifestyle</h3>
+            <h3 className="md:text-xl font-medium text-[15px]">Lifestyle</h3>
           </div>
           <Table className={"max-w-4xl"}>
             <TableBody className={"md:text-[16px] text-sm"}>
               <TableRow>
-                <TableCell className="font-medium align-top">
-                  Hobbies:
+                <TableCell className="">Smoking Habits:</TableCell>
+                <TableCell className="text-foreground font-medium">
+                  <>
+                    {profile.smokingHabits.map((habit, index) => (
+                      <span key={index}>
+                        {formatEnum(habit)}
+                        {index < profile.smokingHabits.length - 1 ? ", " : ""}
+                      </span>
+                    ))}
+                  </>
+                </TableCell>
+              </TableRow>
+
+              <TableRow>
+                <TableCell className="">Drinking Habits:</TableCell>
+                <TableCell className="text-foreground font-medium">
+                  <>
+                    {profile.drinkingHabits.map((habit, index) => (
+                      <span key={index}>
+                        {formatEnum(habit)}
+                        {index < profile.drinkingHabits.length - 1 ? ", " : ""}
+                      </span>
+                    ))}
+                  </>
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-normal align-top">
+                  Interests:
                 </TableCell>
                 <TableCell className="text-foreground font-medium">
                   {profile.hobbiesInterests &&
@@ -899,7 +990,7 @@ const ProfilePage = ({ currentUserProfile }) => {
                         .map((hobby, index) => (
                           <Badge
                             key={index}
-                            className="rounded-full text-[13px] font-normal"
+                            className="rounded-full md:text-[13px] font-normal text-center self-center"
                           >
                             {hobby.trim()}
                           </Badge>
@@ -910,24 +1001,47 @@ const ProfilePage = ({ currentUserProfile }) => {
                   )}
                 </TableCell>
               </TableRow>
+            </TableBody>
+          </Table>
+        </div>
 
-              <TableRow>
-                <TableCell className="">Smoking Habits:</TableCell>
-                <TableCell className="text-foreground font-medium">
-                  {profile.smokingHabits && profile.smokingHabits
-                    ? profile.smokingHabits
-                    : "Not specified"}
-                </TableCell>
-              </TableRow>
+        {/* Church Details (if applicable) */}
+        <div className="border-b md:border-0 pb-4 text-muted-foreground">
+          <div className="flex gap-2 items-center pb-2 text-foreground">
+            {/* <Church className="md:size-7" /> */}
+            <h3 className="md:text-xl font-medium text-[15px]">
+              Church Details
+            </h3>
+          </div>
+          <Table className={"max-w-4xl"}>
+            <TableBody className={"md:text-[16px] text-sm"}>
+              {profile.churchName && (
+                <TableRow>
+                  <TableCell className="">Church Name:</TableCell>
+                  <TableCell className="text-foreground font-medium text-wrap">
+                    {profile.churchName}
+                  </TableCell>
+                </TableRow>
+              )}
+              {profile.churchLocation && (
+                <TableRow>
+                  <TableCell className="align-top">Church Location:</TableCell>
+                  <TableCell className="text-foreground font-medium">
+                    {profile.churchLocation}
+                  </TableCell>
+                </TableRow>
+              )}
+              {profile.pastorName && (
+                <TableRow>
+                  <TableCell className="">Pastor Name:</TableCell>
+                  <TableCell className="text-foreground font-medium">
+                    {profile.pastorName}
+                  </TableCell>
+                </TableRow>
+              )}
 
-              <TableRow>
-                <TableCell className="">Drinking Habits:</TableCell>
-                <TableCell className="text-foreground font-medium">
-                  {profile.drinkingHabits && profile.drinkingHabits
-                    ? profile.drinkingHabits
-                    : "Not specified"}
-                </TableCell>
-              </TableRow>
+              {/* ⭐ Displaying Church Service Photos */}
+              <ChurchPhotosSection profile={profile} />
             </TableBody>
           </Table>
         </div>
@@ -936,7 +1050,7 @@ const ProfilePage = ({ currentUserProfile }) => {
         <div className="pb-4 text-muted-foreground">
           <div className="flex gap-2 items-center pb-2 text-foreground">
             {/* <UserRoundCog className="md:size-7" /> */}
-            <h3 className="md:text-2xl font-medium text-xl">
+            <h3 className="md:text-xl font-medium text-[15px]">
               Partner Preferences
             </h3>
           </div>
@@ -1007,16 +1121,6 @@ const ProfilePage = ({ currentUserProfile }) => {
                   profile.prefPhysicalStatus.length > 0
                     ? profile.prefPhysicalStatus.map(formatEnum).join(", ")
                     : "Normal"}
-                </TableCell>
-              </TableRow>
-
-              <TableRow>
-                <TableCell className="">Eating Habits:</TableCell>
-                <TableCell className="text-foreground font-medium">
-                  {profile.prefEatingHabits &&
-                  profile.prefEatingHabits.length > 0
-                    ? profile.prefEatingHabits.map(formatEnum).join(", ")
-                    : "Any"}
                 </TableCell>
               </TableRow>
 
@@ -1104,20 +1208,15 @@ const ProfilePage = ({ currentUserProfile }) => {
               </TableRow>
 
               <TableRow>
-                <TableCell className="">State:</TableCell>
+                <TableCell className="">Location:</TableCell>
                 <TableCell className="text-foreground font-medium">
                   {profile.prefState && profile.prefState.length > 0
                     ? profile.prefState.join(", ")
-                    : "Any"}
-                </TableCell>
-              </TableRow>
-
-              <TableRow>
-                <TableCell className="">City:</TableCell>
-                <TableCell className="text-foreground font-medium">
+                    : "Any State"}
+                  {", "}
                   {profile.prefCity && profile.prefCity.length > 0
                     ? profile.prefCity.join(", ")
-                    : "Any"}
+                    : " Any City"}
                 </TableCell>
               </TableRow>
             </TableBody>

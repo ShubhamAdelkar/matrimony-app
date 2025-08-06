@@ -8,6 +8,8 @@ import {
   Play,
   Heart,
   MoreHorizontal,
+  Crown,
+  BadgeCheckIcon,
 } from "lucide-react";
 import {
   Card,
@@ -18,6 +20,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Skeleton } from "@/components/ui/skeleton";
 import { appwriteConfig, databases, storage } from "@/lib/appwrite";
 import { Query } from "appwrite";
@@ -69,9 +76,9 @@ const HomePage = ({ currentUserProfile }) => {
 
   // Effect to fetch other profiles based on current user's gender
   useEffect(() => {
-    // Only fetch profiles if user is authenticated, auth state is loaded,
-    // and current user's profile is loaded
-    if (!user || isLoadingAuth || !currentUserProfile) {
+    // Only fetch profiles if user is authenticated and auth state is loaded
+    if (!user || isLoadingAuth) {
+      // * FIX: Removed !currentUserProfile from this condition
       setIsLoadingProfiles(false);
       return;
     }
@@ -81,8 +88,9 @@ const HomePage = ({ currentUserProfile }) => {
       setError(null); // Clear previous errors
       try {
         // Determine the opposite gender for filtering
+        // * FIX: Ensure currentUserProfile is available before accessing its gender
         const oppositeGender =
-          currentUserProfile.gender === "Female" ? "Male" : "Female";
+          currentUserProfile?.gender === "Female" ? "Male" : "Female";
 
         const response = await databases.listDocuments(
           appwriteConfig.databaseId,
@@ -90,8 +98,10 @@ const HomePage = ({ currentUserProfile }) => {
           [
             // Exclude the current user's profile
             Query.notEqual("userId", user.$id),
-            // Filter by opposite gender
-            Query.equal("gender", oppositeGender),
+            // Filter by opposite gender (only if currentUserProfile is available)
+            ...(currentUserProfile
+              ? [Query.equal("gender", oppositeGender)]
+              : []), // * FIX: Conditionally add gender query
             // Order by creation date (newest first)
             Query.orderDesc("$createdAt"),
             // Limit the number of profiles shown (e.g., 20 per page)
@@ -107,8 +117,15 @@ const HomePage = ({ currentUserProfile }) => {
       }
     };
 
-    fetchProfiles();
-  }, [user, isLoadingAuth, currentUserProfile]); // Dependencies for this effect
+    // * FIX: Only fetch profiles if currentUserProfile is available,
+    // * as gender is needed for the query. This prevents an unnecessary fetch
+    // * before the user's profile is fully loaded.
+    if (currentUserProfile) {
+      fetchProfiles();
+    } else {
+      setIsLoadingProfiles(false); // If no currentUserProfile, stop loading profiles
+    }
+  }, [user, isLoadingAuth, currentUserProfile?.gender]); // * FIX: Changed dependency to currentUserProfile?.gender
 
   const checkScroll = () => {
     const container = scrollContainerRef.current;
@@ -221,7 +238,18 @@ const HomePage = ({ currentUserProfile }) => {
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {profiles.map((profile) => {
-            const firstPhotoId = profile.profilePhotoID?.[0];
+            const profilePhotoIDs = profile.profilePhotoID || [];
+            const profilePhotoURLs = profile.profilePhotoURL || [];
+            const firstPhotoId = profilePhotoIDs[0];
+            const firstPhotoURL = profilePhotoURLs[0];
+
+            // Determine which image to display based on availability
+            // Priority is given to a photo ID from the bucket, then to a URL from the dummy data.
+            const primaryPhotoSrc = firstPhotoId
+              ? storage.getFileView(appwriteConfig.photoBucket, firstPhotoId)
+                  .href
+              : firstPhotoURL;
+
             return (
               <Card
                 key={profile.$id}
@@ -232,15 +260,9 @@ const HomePage = ({ currentUserProfile }) => {
                 onClick={() => navigate(`/profile/${profile.$id}`)}
               >
                 <div className="relative">
-                  {firstPhotoId ? ( // ⭐ Using profilePhotoID
+                  {primaryPhotoSrc ? ( // ⭐ Using primaryPhotoSrc
                     <img
-                      src={
-                        // ⭐ Using appwriteConfig.photoBucket (general bucket for profile photos)
-                        storage.getFileView(
-                          appwriteConfig.photoBucket,
-                          firstPhotoId
-                        ).href
-                      }
+                      src={primaryPhotoSrc}
                       alt={profile.name} // ⭐ Using fullName as per schema
                       // ⭐ Updated image styling
                       className="rounded-t-xl object-cover h-73 overflow-hidden w-full"
@@ -252,7 +274,7 @@ const HomePage = ({ currentUserProfile }) => {
                     />
                   ) : (
                     // ⭐ Updated placeholder div styling
-                    <div className="w-full h-73 flex items-center justify-center text-gray-500 text-6xl font-bold rounded-xl bg-gray-800">
+                    <div className="w-full h-73 flex items-center justify-center text-gray-500 text-6xl font-bold rounded-xl bg-gray-200">
                       {profile.name
                         ? profile.name.charAt(0).toUpperCase()
                         : "?"}{" "}
@@ -261,19 +283,33 @@ const HomePage = ({ currentUserProfile }) => {
                   )}
                   {/* Overlay for Name, Age, Height for visual impact */}
                   {/* ⭐ Updated overlay styling */}
-                  <div className="absolute w-full bg-gradient-to-t from-black/90 to-transparent p-4 pt-8 bottom-0 flex flex-col items-start ">
+                  <div className="absolute w-full bg-gradient-to-t from-black/90 to-transparent p-4 pt-8 bottom-0 flex flex-col items-start">
                     <CardTitle className={"text-xl text-white font-medium"}>
-                      {/* ⭐ Formatting fullName as requested */}
-                      {profile.name
-                        ?.replace(/[*_]/g, " ")
-                        .split(" ")
-                        .map(
-                          (word) =>
-                            word.charAt(0).toUpperCase() +
-                            word.slice(1).toLowerCase()
-                        )
-                        .join(" ") || "Noname"}
-                      , {calculateAge(profile.dob)}
+                      <span className="flex items-center gap-1">
+                        {/* ⭐ Formatting fullName as requested */}
+                        <span className="truncate">
+                          {" "}
+                          {profile.name
+                            ?.replace(/[*_]/g, " ")
+                            .split(" ")
+                            .map(
+                              (word) =>
+                                word.charAt(0).toUpperCase() +
+                                word.slice(1).toLowerCase()
+                            )
+                            .join(" ") || "Noname"}
+                          ,
+                        </span>
+                        {calculateAge(profile.dob)}
+                        {profile.isIDVerified && (
+                          <Badge
+                            variant="secondary"
+                            className="bg-blue-500 text-white dark:bg-blue-600 p-1 rounded-full"
+                          >
+                            <BadgeCheckIcon className="scale-130" />
+                          </Badge>
+                        )}
+                      </span>
                     </CardTitle>
                     <CardDescription
                       className={"text-muted dark:text-white/70"}
@@ -295,11 +331,22 @@ const HomePage = ({ currentUserProfile }) => {
                   </div>
                   {/* ⭐ Moved CardHeader inside the relative div and updated its styling */}
                   <CardHeader className={"p-2 absolute top-0"}>
-                    <div className="text-muted-foreground">
-                      {profile.emailVerified && (
-                        <Badge className={"px-1"}>@</Badge>
+                    {Array.isArray(profile.membershipTier) &&
+                      profile.membershipTier.includes("Gold") && (
+                        <Tooltip delayDuration={300}>
+                          <TooltipTrigger className="cursor-pointer absolute top-2 left-2">
+                            <Badge
+                              variant="secondary"
+                              className="bg-[#EFBF04] text-white dark:bg-[#EFBF04] p-1.5 rounded-full"
+                            >
+                              <Crown className="scale-120 self-center" />
+                            </Badge>
+                          </TooltipTrigger>
+                          <TooltipContent side={"right"}>
+                            <p>Gold Member</p>
+                          </TooltipContent>
+                        </Tooltip>
                       )}
-                    </div>
                   </CardHeader>
                 </div>
               </Card>

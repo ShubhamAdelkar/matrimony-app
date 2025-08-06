@@ -74,6 +74,17 @@ const employedInOptions = [
   "Student",
   "Retired",
 ];
+const motherTongueOptions = [
+  { value: "marathi", label: "Marathi" },
+  { value: "hindi", label: "Hindi" },
+  { value: "english", label: "English" },
+  { value: "tamil", label: "Tamil" },
+  { value: "telugu", label: "Telugu" },
+  { value: "kannada", label: "Kannada" },
+  { value: "malayalam", label: "Malayalam" },
+  { value: "gujarati", label: "Gujarati" },
+  { value: "punjabi", label: "Punjabi" },
+];
 
 // --- Zod Schema for Personal Information Form ---
 const personalInfoSchema = (gender) => {
@@ -116,7 +127,6 @@ const personalInfoSchema = (gender) => {
       weight: z
         .string()
         .max(3, "Weight cannot be more than 2 digits.") // Limits the string length
-        .regex(/^\d+$/, "Weight must be a positive number.") // Ensures only digits are entered
         .refine((val) => {
           const num = Number(val);
           return val === "" || (num >= 20 && num <= 150);
@@ -132,7 +142,10 @@ const personalInfoSchema = (gender) => {
           },
         })
         .optional(),
-      motherTongue: z.string().max(50, "Mother tongue too long"),
+      motherTongue: z
+        .array(z.string())
+        .max(1, "Please select only one mother tongue.")
+        .optional(),
       maritalStatus: z.enum(
         maritalStatuses.map((s) => s.value),
         {
@@ -258,7 +271,9 @@ function EditPersonalInfoForm({ currentUserProfile, onSaveSuccess, onCancel }) {
         ? String(currentUserProfile.weight)
         : "",
       bodyType: currentUserProfile?.bodyType || undefined,
-      motherTongue: currentUserProfile?.motherTongue?.[0] || "",
+      motherTongue: Array.isArray(currentUserProfile?.motherTongue)
+        ? currentUserProfile.motherTongue
+        : [],
       maritalStatus: currentUserProfile?.maritalStatus || undefined,
       state: currentUserProfile?.state || "",
       district: currentUserProfile?.district || "",
@@ -286,7 +301,7 @@ function EditPersonalInfoForm({ currentUserProfile, onSaveSuccess, onCancel }) {
         ? String(currentUserProfile.weight)
         : "",
       bodyType: currentUserProfile?.bodyType || undefined,
-      motherTongue: currentUserProfile?.motherTongue?.[0] || "",
+      motherTongue: Array.isArray(currentUserProfile?.motherTongue) ? currentUserProfile.motherTongue : [],
       maritalStatus: currentUserProfile?.maritalStatus || undefined,
       state: currentUserProfile?.state || "",
       district: currentUserProfile?.district || "",
@@ -374,10 +389,6 @@ function EditPersonalInfoForm({ currentUserProfile, onSaveSuccess, onCancel }) {
       const formattedValues = { ...values };
       if (formattedValues.dob) {
         formattedValues.dob = formattedValues.dob.toISOString();
-      }
-
-      if (formattedValues.motherTongue) {
-        formattedValues.motherTongue = [formattedValues.motherTongue];
       }
 
       const updatedDocument = await databases.updateDocument(
@@ -536,7 +547,6 @@ function EditPersonalInfoForm({ currentUserProfile, onSaveSuccess, onCancel }) {
         />
 
         {/* Weight */}
-
         <FormField
           control={form.control}
           name="weight"
@@ -627,18 +637,35 @@ function EditPersonalInfoForm({ currentUserProfile, onSaveSuccess, onCancel }) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Mother Tongue</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <select.Select
+                // * FIX: Explicitly set value using form.setValue to ensure it's an array
+                onValueChange={(selectedValue) => {
+                  form.setValue(
+                    "motherTongue",
+                    selectedValue ? [selectedValue] : [],
+                    { shouldValidate: true, shouldDirty: true }
+                  );
+                }}
+                // * FIX: Display the first element of the array, or empty string if array is empty
+                value={
+                  Array.isArray(field.value) && field.value.length > 0
+                    ? field.value[0]
+                    : ""
+                }
+              >
                 <FormControl>
-                  <SelectTrigger className={"text-sm w-full"}>
-                    <SelectValue placeholder="Select a mother tongue" />
-                  </SelectTrigger>
+                  <select.SelectTrigger className={"text-sm w-full"}>
+                    <select.SelectValue placeholder="Select a mother tongue" />
+                  </select.SelectTrigger>
                 </FormControl>
-                <SelectContent>
-                  <SelectItem value="marathi">Marathi</SelectItem>
-                  <SelectItem value="hindi">Hindi</SelectItem>
-                  <SelectItem value="english">English</SelectItem>
-                </SelectContent>
-              </Select>
+                <select.SelectContent>
+                  {motherTongueOptions.map((option) => (
+                    <select.SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </select.SelectItem>
+                  ))}
+                </select.SelectContent>
+              </select.Select>
               <FormMessage />
             </FormItem>
           )}
@@ -814,7 +841,7 @@ function EditPersonalInfoForm({ currentUserProfile, onSaveSuccess, onCancel }) {
           name="organization"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Organization</FormLabel>
+              <FormLabel>Works At</FormLabel>
               <FormControl>
                 <Input
                   placeholder="eg., ABC Corp."

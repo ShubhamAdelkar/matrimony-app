@@ -11,7 +11,7 @@ export const appwriteConfig = {
     photoBucket: import.meta.env.VITE_APPWRITE_PHOTOS_BUCKET_ID,
 };
 
-const client = new Client();
+export const client = new Client();
 
 client.setEndpoint(appwriteConfig.endpoint).setProject(appwriteConfig.projectId);
 
