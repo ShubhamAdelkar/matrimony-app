@@ -1,4 +1,4 @@
-@font-face {
+/* @font-face {
   font-family: "googleFont";
   src: url("/fonts/GoogleSans-Bold.ttf") format("truetype");
   font-weight: 700;
@@ -17,11 +17,12 @@
   src: url("/fonts/GoogleSans-Regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
-}
+} */
 
 @font-face {
   font-family: "Geist";
   src: url("/fonts/Geist-Bold.ttf") format("truetype");
+  font-optical-sizing: auto;
   font-weight: 700;
   font-style: normal;
 }
@@ -30,6 +31,7 @@
   font-family: "Geist";
   src: url("/fonts/Geist-SemiBold.ttf") format("truetype");
   font-weight: 600;
+  font-optical-sizing: auto;
   font-style: normal;
 }
 
@@ -37,6 +39,7 @@
   font-family: "Geist";
   src: url("/fonts/Geist-Medium.ttf") format("truetype");
   font-weight: 500;
+  font-optical-sizing: auto;
   font-style: normal;
 }
 
@@ -44,6 +47,7 @@
   font-family: "Geist";
   src: url("/fonts/Geist-Regular.ttf") format("truetype");
   font-weight: 400;
+  font-optical-sizing: auto;
   font-style: normal;
 }
 
@@ -228,11 +232,39 @@ summary::-webkit-details-marker {
 @layer base {
   html {
     @apply font-Geist;
-    @apply scrollbar-w-1.5 scrollbar scrollbar-thumb-rounded scrollbar-thumb-[#fd356e] scrollbar-track-background;
+    @apply scrollbar-w-1.5 scrollbar scrollbar-thumb-rounded scrollbar-thumb-[#fd356e] scrollbar-track-background antialiased;
+    @apply text-foreground bg-background;
+    @apply selection:bg-foreground selection:text-background;
+    @apply !scroll-smooth;
+    /* Modern text rendering and aesthetic properties */
+    font-feature-settings:
+      "liga" 1,
+      "calt" 1;
+    text-rendering: optimizeLegibility;
+    overscroll-behavior-y: none;
+    touch-action: pan-y;
+    /* Focus styles for accessibility */
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    /* Use text-wrap for balanced headings */
+    text-wrap: balance;
+  }
+
+  p {
+    /* Use text-wrap for prettier paragraphs */
+    text-wrap: pretty;
   }
 
   body {
     @apply bg-background text-foreground;
+    @apply focus:outline-none focus-visible:outline-none;
     overflow-y: scroll !important;
     padding-right: 0 !important;
     margin-right: 0 !important;
@@ -248,8 +280,9 @@ summary::-webkit-details-marker {
   }
 
   * {
-    @apply font-Geist border-border outline-ring/50;
+    @apply font-Geist border-border outline-ring/50 focus-visible:outline-none;
     @apply scrollbar-w-1.5 scrollbar scrollbar-thumb-rounded scrollbar-thumb-[#fd356e] scrollbar-track-background;
+    @apply focus:outline-none focus-visible:outline-none;
   }
 
   /* Also target the data attribute that Radix adds */

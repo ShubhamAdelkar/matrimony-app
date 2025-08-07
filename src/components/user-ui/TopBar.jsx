@@ -127,7 +127,7 @@ function TopBar({ currentUserProfile }) {
                   size={"icon"}
                   className="text-muted-foreground hover:bg-tranparent hover:text-accent-foreground active:scale-90 transition-all"
                 >
-                  <MenuIcon className="cursor-pointer size-7" />
+                  <MenuIcon className="cursor-pointer size-7.5" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent

@@ -45,7 +45,7 @@ const PhotoDisplayGridOrStack = ({ photos, onPhotoClick }) => {
 
     return (
       <div
-        className={`relative md:w-40 md:h-46 h-40 w-35 cursor-pointer pl-1.5  perspective-origin-center perspective-[10000px] p-1.5`}
+        className={`relative md:w-40 md:h-46 h-40 w-35 cursor-pointer pl-2.5  perspective-origin-center perspective-[10000px] p-2.5`}
       >
         {visiblePhotos.map((url, index) => (
           <div
@@ -71,7 +71,7 @@ const PhotoDisplayGridOrStack = ({ photos, onPhotoClick }) => {
         ))}
         {photos.length > maxStackedPhotos && (
           <div
-            className="absolute bottom-7 right-0 bg-black/60 text-white rounded-full p-1 md:text-xs text-[9px] md:px-2 md:bottom-9 md:right-0 lg:bottom-8"
+            className="absolute bottom-7 right-0 bg-black/60 text-white rounded-full p-1 md:text-xs text-[10px] md:px-2 md:bottom-9 md:right-0 lg:bottom-8 px-2"
             style={{ zIndex: maxStackedPhotos + 1 }}
             onClick={() => onPhotoClick(0)} // Click to open carousel from first photo
           >

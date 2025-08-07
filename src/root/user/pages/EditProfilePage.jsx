@@ -200,7 +200,7 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
     : profilePhotoURLs[0];
 
   return (
-    <div className="px-4 lg:px-6 flex flex-col gap-3">
+    <div className="px-4 lg:px-6 flex flex-col gap-2 lg:gap-3">
       <Button
         onClick={() => navigate(-1)} // Use navigate(-1) for back
         variant="outline"
@@ -320,13 +320,15 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
 
           <div className="w-full flex flex-col justify-end md:gap-2">
             <span className="flex items-center gap-[5px]">
-              {currentUserProfile.isIDVerified && (
+              {!currentUserProfile.isIDVerified && (
                 <Badge
                   variant="secondary"
-                  className="bg-blue-500 text-white dark:bg-blue-600 px-1.5"
+                  className="bg-blue-500 text-white dark:bg-blue-600 text-xs flex items-center rounded-full px-[5px] text-center pr-2"
                 >
-                  <BadgeCheckIcon />
-                  Verified
+                  <BadgeCheckIcon className="self-center scale-98" />
+                  <span className="text-[10px] md:text-[10px] lg:text-[12px]">
+                    Verified
+                  </span>
                 </Badge>
               )}
             </span>
@@ -350,6 +352,8 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
                   </Tooltip>
                 </p>
                 <div className="flex flex-wrap items-center gap-x-1 text-sm lg:text-[16px] text-foreground">
+                  <span>{formatEnum(currentUserProfile.maritalStatus)}</span>
+                  <span className="md:text-xl">·</span>
                   <span>{calculateAge(currentUserProfile.dob)} yrs</span>
                   <span className="md:text-xl">·</span>
                   <span>
@@ -390,117 +394,103 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
                   currentUserProfile.employedIn ||
                   currentUserProfile.occupation ||
                   currentUserProfile.city) && (
-                  <div className="lg:border-0 border-t lg:pt-0 pt-1 text-muted-foreground md:max-w-5xl max-w-sm">
-                    <div>
-                      {/* {currentUserProfile.name && (
+                  <div className="md:border-0 border-t md:pt-0 pt-1 text-muted-foreground lg:max-w-5xl max-w-sm md:max-w-3xl">
+                    {/* {currentUserProfile.name && (
                         <h4 className="font-medium">About you</h4>
                       )} */}
-                      <p className="lg:text-[16px]">
-                        {currentUserProfile.bio ||
-                          (() => {
-                            const dynamicBio = [];
+                    <p className="lg:text-[16px]">
+                      {currentUserProfile.bio ||
+                        (() => {
+                          const dynamicBio = [];
 
-                            // Education
-                            if (currentUserProfile.highestEducation) {
-                              dynamicBio.push(
-                                `I have completed my ${formatEnum(currentUserProfile.highestEducation)}`
-                              );
-                            }
+                          // Education
+                          if (currentUserProfile.highestEducation) {
+                            dynamicBio.push(
+                              `I have completed my ${formatEnum(currentUserProfile.highestEducation)}`
+                            );
+                          }
 
-                            // Employment and Occupation logic
-                            const employment = currentUserProfile.employedIn
-                              ? formatEnum(currentUserProfile.employedIn)
-                              : null;
-                            const occupation = currentUserProfile.occupation
-                              ? formatEnum(currentUserProfile.occupation)
-                              : null;
+                          // Employment and Occupation logic
+                          const employment = currentUserProfile.employedIn
+                            ? formatEnum(currentUserProfile.employedIn)
+                            : null;
+                          const occupation = currentUserProfile.occupation
+                            ? formatEnum(currentUserProfile.occupation)
+                            : null;
 
-                            if (employment) {
+                          if (employment) {
+                            if (employment.toLowerCase().includes("student")) {
+                              dynamicBio.push(`I am currently a student`);
+                            } else if (
+                              employment.toLowerCase().includes("not") ||
+                              employment.toLowerCase().includes("unemployed")
+                            ) {
+                              dynamicBio.push(`I am currently not working`);
+                            } else {
+                              // For employed cases
+                              let workString = `I am currently employed`;
+
+                              // Add occupation if it exists and is different from employment status
                               if (
-                                employment.toLowerCase().includes("student")
-                              ) {
-                                dynamicBio.push(`I am currently a student`);
-                              } else if (
-                                employment.toLowerCase().includes("not") ||
-                                employment.toLowerCase().includes("unemployed")
-                              ) {
-                                dynamicBio.push(`I am currently not working`);
-                              } else {
-                                // For employed cases
-                                let workString = `I am currently employed`;
-
-                                // Add occupation if it exists and is different from employment status
-                                if (
-                                  occupation &&
-                                  !occupation
-                                    .toLowerCase()
-                                    .includes("student") &&
-                                  !occupation
-                                    .toLowerCase()
-                                    .includes("unemployed")
-                                ) {
-                                  workString += ` as a ${occupation}`;
-                                }
-
-                                // Add employment type
-                                if (
-                                  employment
-                                    .toLowerCase()
-                                    .includes("government")
-                                ) {
-                                  workString += ` in the government sector`;
-                                } else if (
-                                  employment.toLowerCase().includes("private")
-                                ) {
-                                  workString += ` in the private sector`;
-                                } else if (
-                                  employment
-                                    .toLowerCase()
-                                    .includes("business") ||
-                                  employment.toLowerCase().includes("self")
-                                ) {
-                                  workString += ` and am self-employed`;
-                                } else if (
-                                  employment.toLowerCase().includes("defence")
-                                ) {
-                                  workString += ` in defence/civil services`;
-                                }
-
-                                dynamicBio.push(workString);
-                              }
-                            } else if (occupation) {
-                              // If no employment status but occupation exists
-                              if (
-                                occupation.toLowerCase().includes("student")
-                              ) {
-                                dynamicBio.push(`I am currently a student`);
-                              } else if (
+                                occupation &&
+                                !occupation.toLowerCase().includes("student") &&
                                 !occupation.toLowerCase().includes("unemployed")
                               ) {
-                                dynamicBio.push(`I work as a ${occupation}`);
+                                workString += ` as a ${occupation}`;
                               }
-                            }
 
-                            // Location
-                            if (
-                              currentUserProfile.city ||
-                              currentUserProfile.state
+                              // Add employment type
+                              if (
+                                employment.toLowerCase().includes("government")
+                              ) {
+                                workString += ` in the government sector`;
+                              } else if (
+                                employment.toLowerCase().includes("private")
+                              ) {
+                                workString += ` in the private sector`;
+                              } else if (
+                                employment.toLowerCase().includes("business") ||
+                                employment.toLowerCase().includes("self")
+                              ) {
+                                workString += ` and am self-employed`;
+                              } else if (
+                                employment.toLowerCase().includes("defence")
+                              ) {
+                                workString += ` in defence/civil services`;
+                              }
+
+                              dynamicBio.push(workString);
+                            }
+                          } else if (occupation) {
+                            // If no employment status but occupation exists
+                            if (occupation.toLowerCase().includes("student")) {
+                              dynamicBio.push(`I am currently a student`);
+                            } else if (
+                              !occupation.toLowerCase().includes("unemployed")
                             ) {
-                              const location = [
-                                currentUserProfile.city,
-                                currentUserProfile.state,
-                              ]
-                                .filter(Boolean)
-                                .join(", ");
-                              dynamicBio.push(`I live in ${location}`);
+                              dynamicBio.push(`I work as a ${occupation}`);
                             }
+                          }
 
-                            return dynamicBio.length > 0
-                              ? dynamicBio.join(". ") + "."
-                              : "No information available.";
-                          })()}
-                      </p>
-                    </div>
+                          // Location
+                          if (
+                            currentUserProfile.city ||
+                            currentUserProfile.state
+                          ) {
+                            const location = [
+                              currentUserProfile.city,
+                              currentUserProfile.state,
+                            ]
+                              .filter(Boolean)
+                              .join(", ");
+                            dynamicBio.push(`I live in ${location}`);
+                          }
+
+                          return dynamicBio.length > 0
+                            ? dynamicBio.join(". ") + "."
+                            : "No information available.";
+                        })()}
+                    </p>
                   </div>
                 )}
               </CardDescription>

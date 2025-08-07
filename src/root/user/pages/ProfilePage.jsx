@@ -431,7 +431,7 @@ const ProfilePage = ({ currentUserProfile }) => {
               {profile.isIDVerified && (
                 <Badge
                   variant="secondary"
-                  className="bg-blue-500 text-white dark:bg-blue-600 text-xs flex items-center rounded-full px-[5px] text-center"
+                  className="bg-blue-500 text-white dark:bg-blue-600 text-xs flex items-center rounded-full px-[5px] text-center pr-2"
                 >
                   <BadgeCheckIcon className="self-center scale-98" />
                   <span className="text-[10px] md:text-[10px] lg:text-[12px]">
@@ -469,6 +469,10 @@ const ProfilePage = ({ currentUserProfile }) => {
                   <span className="md:text-xl">·</span>
                   <span>
                     {formatEnum(
+                      profile.religion ? `${profile.religion}` : "Religion: N/A"
+                    )}
+                    ,{" "}
+                    {formatEnum(
                       profile.caste ? `${profile.caste}` : "Caste: N/A"
                     )}
                   </span>
@@ -492,7 +496,7 @@ const ProfilePage = ({ currentUserProfile }) => {
                   profile.employedIn ||
                   profile.occupation ||
                   profile.city) && (
-                  <div className="lg:border-0 border-t lg:pt-0 pt-1 text-muted-foreground md:max-w-5xl max-w-sm">
+                  <div className="md:border-0 border-t md:pt-0 pt-1 text-muted-foreground lg:max-w-5xl max-w-sm md:max-w-3xl">
                     <div>
                       <p className="lg:text-[16px]">
                         {profile.bio ||
