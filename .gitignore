@@ -24,3 +24,6 @@ dist-ssr
 *.sw?
 
 .env
+src/root/user/pages/SpotifySlider.jsx
+dummyUserGenerator.js
+deleteDummyUsers.js
