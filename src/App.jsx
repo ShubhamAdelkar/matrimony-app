@@ -120,9 +120,9 @@ function AppContent() {
         userId,
         { lastActive: new Date().toISOString() }
       );
-      console.log("Last active timestamp updated successfully.");
+      // console.log("Last active timestamp updated successfully.");
     } catch (error) {
-      console.error("Error updating last active timestamp:", error);
+      // console.error("Error updating last active timestamp:", error);
     }
   };
 
@@ -176,10 +176,10 @@ function AppContent() {
         );
         setCurrentUserProfile(fetchedProfile);
         setNeedsProfileCompletion(false); // Profile found
-        console.log(
-          "AppContent: Current user profile fetched:",
-          fetchedProfile
-        );
+        // console.log(
+        //   "AppContent: Current user profile fetched:",
+        //   fetchedProfile
+        // );
       } catch (err) {
         if (err.code === 404) {
           console.warn(
@@ -247,9 +247,9 @@ function AppContent() {
         // Regular user needs to complete profile. Redirect to /onboarding.
         // Ensure we don't redirect if already on /onboarding
         if (location.pathname !== "/onboarding") {
-          console.log(
-            "AppContent: Authenticated user needs profile, redirecting to /onboarding."
-          );
+          // console.log(
+          //   "AppContent: Authenticated user needs profile, redirecting to /onboarding."
+          // );
           return <Navigate to="/onboarding" replace />;
         }
       } else {
@@ -272,9 +272,9 @@ function AppContent() {
 
         // If not on a user-specific route AND not on a public/auth route, redirect to /home
         if (!isUserSpecificRoute && !isPublicAuthRoute) {
-          console.log(
-            "AppContent: Authenticated regular user, redirecting to /home."
-          );
+          // console.log(
+          //   "AppContent: Authenticated regular user, redirecting to /home."
+          // );
           return <Navigate to="/home" replace />;
         }
       }
