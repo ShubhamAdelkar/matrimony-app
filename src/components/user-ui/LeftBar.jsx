@@ -164,7 +164,12 @@ function LeftBar({ isAdmin, currentUserProfile, ...props }) {
       <SidebarFooter className={"flex flex-col items-center justify-center"}>
         {/* user profile */}
         <DropdownMenu>
-          <DropdownMenuTrigger asChild className={"mb-2"}>
+          <DropdownMenuTrigger
+            asChild
+            className={
+              "mb-2 text-muted-foreground transition-all active:text-foreground hover:text-foreground"
+            }
+          >
             {/* <Avatar
               className={
                 "cursor-pointer border-2 border-ring shadow-sm h-9 w-9 rounded-full "
@@ -182,7 +187,7 @@ function LeftBar({ isAdmin, currentUserProfile, ...props }) {
             <MenuIcon className="cursor-pointer size-7" />
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-(--radix-dropdown-menu-trigger-width) min-w-54 rounded-lg md:min-w-56 backdrop-blur-xl bg-background/70"
+            className="w-(--radix-dropdown-menu-trigger-width) min-w-54 rounded-lg md:min-w-56"
             align="end"
             side="right"
             sideOffset={8}

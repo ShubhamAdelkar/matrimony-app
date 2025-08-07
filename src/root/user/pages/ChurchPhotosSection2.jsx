@@ -50,7 +50,7 @@ const PhotoDisplayGridOrStack = ({ photos, onPhotoClick }) => {
         {visiblePhotos.map((url, index) => (
           <div
             key={url} // Use URL as key, assuming unique
-            className={`absolute w-full md:h-40 h-35 rounded-lg overflow-hidden md:shadow-lg shadow-lg transition-all duration-300 ease-in-out backdrop-blur-3xl bg-ring border border-ring`}
+            className={`absolute w-full md:h-40 h-35 rounded-lg overflow-hidden md:shadow-lg shadow-lg transition-all duration-300 ease-in-out backdrop-blur-3xl bg-ring border-ring`}
             style={{
               transform: `rotateZ(${index * 6 - 6}deg) translateY(${index * -2}px)`, // Slight rotation and vertical offset
               zIndex: maxStackedPhotos - index, // Ensure correct stacking order
@@ -84,7 +84,7 @@ const PhotoDisplayGridOrStack = ({ photos, onPhotoClick }) => {
     // Single photo display (no stack needed)
     return (
       <div
-        className="relative h-40 rounded-lg overflow-hidden shadow-lg border transition-all duration-300 ease-in-out bg-transparent w-fit"
+        className="relative h-40 rounded-lg overflow-hidden shadow-lg border transition-all duration-300 ease-in-out bg-transparent w-fit border-ring"
         onClick={() => onPhotoClick(0)} // Open carousel from the first (only) photo
       >
         <img

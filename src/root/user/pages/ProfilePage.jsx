@@ -10,6 +10,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Lock,
@@ -313,7 +319,7 @@ const ProfilePage = ({ currentUserProfile }) => {
       </Button>
 
       {/* Profile Card Header */}
-      <div className="lg:gap-6 flex flex-col gap-2 md:gap-3 md:mb-2">
+      <div className="lg:gap-6 flex flex-col gap-2 md:gap-3">
         <div className="flex md:flex-row p-0 lg:gap-6 flex-col gap-2 md:gap-4">
           <Dialog
             open={isModalOpen}
@@ -436,11 +442,8 @@ const ProfilePage = ({ currentUserProfile }) => {
             </span>
             <Card className="p-0 bg-background w-full min-w-full shadow-none flex border-0">
               <CardDescription className={"p-0 flex flex-col items-start"}>
-                <p className="lg:text-3xl font-extrabold md:text-3xl text-foreground md:pb-2 text-xl flex items-center gap-1">
+                <p className="lg:text-3xl font-bold md:text-2xl text-foreground lg:pb-1 text-lg flex items-center">
                   {profile.name}{" "}
-                  {/* <span className="font-mono text-sm bg-white/10 px-2 py-1 rounded">
-                  {profile.userId}
-                </span> */}
                 </p>
                 <p
                   className={`text-xs md:text-sm ${isOnline ? "text-emerald-500" : ""} flex gap-1`}
@@ -457,7 +460,7 @@ const ProfilePage = ({ currentUserProfile }) => {
                     </Tooltip>
                   )}
                 </p>
-                <div className="flex flex-wrap items-center gap-x-1 text-sm lg:text-lg">
+                <div className="flex flex-wrap items-center gap-x-1 text-sm lg:text-[16px] text-foreground">
                   <span className="">{formatEnum(profile.maritalStatus)}</span>
                   <span className="md:text-xl">·</span>
                   <span>{calculateAge(profile.dob)} yrs</span>
@@ -470,28 +473,28 @@ const ProfilePage = ({ currentUserProfile }) => {
                     )}
                   </span>
                 </div>
-                <p className="flex gap-x-1 lg:text-lg flex-col md:flex-row">
+                <p className="flex gap-x-1 lg:text-[16px] flex-col lg:flex-row text-foreground pb-1">
                   <span>
                     {formatEnum(profile.highestEducation)},{" "}
                     {formatEnum(profile.occupation)}
                   </span>{" "}
-                  <span className="hidden md:flex">·</span>{" "}
+                  <span className="hidden lg:flex">·</span>{" "}
                   <span>
                     {formatEnum(profile.city || "N/A City")},{" "}
                     {formatEnum(profile.state || "N/A State")}, India
                   </span>
                 </p>
 
-                {/* About Myself */}
+                {/* About */}
                 {(profile.bio ||
                   profile.aboutMe ||
                   profile.highestEducation ||
                   profile.employedIn ||
                   profile.occupation ||
                   profile.city) && (
-                  <div className="text-muted-foreground md:max-w-5xl max-w-xs">
+                  <div className="lg:border-0 border-t lg:pt-0 pt-1 text-muted-foreground md:max-w-5xl max-w-sm">
                     <div>
-                      <p className="text-foreground lg:text-lg">
+                      <p className="lg:text-[16px]">
                         {profile.bio ||
                           profile.aboutMe ||
                           (() => {
@@ -600,20 +603,22 @@ const ProfilePage = ({ currentUserProfile }) => {
         </div>
         {/* actions */}
         <div className="flex flex-row md:gap-3 gap-2 items-center lg:gap-4 justify-start border-b pb-4">
+          {/* Send Interest */}
           <Button
             className={
-              "lg:text-[18px] md:text-[15px] text-sm cursor-pointer lg:max-w-[292px] font-bold active:scale-98 transition-all md:p-5"
+              "lg:text-[17px] md:text-[15px] text-sm cursor-pointer lg:max-w-[292px] font-medium md:font-semibold active:scale-98 transition-all md:p-5"
             }
             size={"sm"}
           >
             <Heart className="size-4 md:size-5" strokeWidth={2.5} />
             Send Interest
           </Button>
+          {/* Save */}
           <Button
             variant={"outline"}
             size={"sm"}
             className={
-              "lg:text-[18px] md:text-[15px] text-sm cursor-pointer lg:max-w-[292px] font-bold active:scale-98 transition-all border-ring md:p-5 "
+              "lg:text-[17px] md:text-[15px] text-sm cursor-pointer lg:max-w-[292px] font-medium md:font-semibold active:scale-98 transition-all border-ring md:p-5 "
             }
           >
             <Bookmark className="size-4 md:size-5" strokeWidth={2.5} />
@@ -634,7 +639,6 @@ const ProfilePage = ({ currentUserProfile }) => {
               <p>Call</p>
             </TooltipContent>
           </Tooltip>
-
           {/* message */}
           <Tooltip>
             <TooltipTrigger asChild>
@@ -651,6 +655,7 @@ const ProfilePage = ({ currentUserProfile }) => {
             </TooltipTrigger>
             <TooltipContent>Message</TooltipContent>
           </Tooltip>
+          {/* email */}
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
@@ -666,12 +671,12 @@ const ProfilePage = ({ currentUserProfile }) => {
         </div>
       </div>
 
-      <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 p-0 md:text-[16px]">
+      <CardContent className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4 p-0 md:text-[16px]">
         {/* Personal Information */}
         <div className="border-b pb-4 text-muted-foreground">
           <div className="flex gap-2 items-center pb-2 text-foreground">
             {/* <CircleUser className="md:size-7 size-6.5" /> */}
-            <h3 className="md:text-xl font-medium text-[15px] ">
+            <h3 className="md:text-xl font-medium text-[16px]">
               Personal Information
             </h3>
           </div>
@@ -827,7 +832,7 @@ const ProfilePage = ({ currentUserProfile }) => {
         <div className="border-b pb-4 text-muted-foreground">
           <div className="flex gap-2 items-center pb-2 text-foreground">
             {/* <House className="md:size-7" /> */}
-            <h3 className="md:text-xl font-medium text-[15px]">
+            <h3 className="md:text-xl font-medium text-[16px]">
               Family Information
             </h3>
           </div>
@@ -897,10 +902,10 @@ const ProfilePage = ({ currentUserProfile }) => {
         </div>
 
         {/* Contact Information */}
-        <div className="border-b pb-4 text-muted-foreground">
+        <div className="border-b pb-4 text-muted-foreground ">
           <div className="flex gap-2 items-center pb-2 text-foreground">
             {/* <Phone className="md:size-7 size-6" /> */}
-            <h3 className="md:text-xl font-medium text-[15px]">
+            <h3 className="md:text-xl font-medium text-[16px]">
               Contact Information
             </h3>
           </div>
@@ -924,7 +929,7 @@ const ProfilePage = ({ currentUserProfile }) => {
               </TableRow>
               <TableRow>
                 <TableCell className="">Email:</TableCell>
-                <TableCell className="text-foreground font-medium">
+                <TableCell className="text-foreground font-medium ">
                   {currentUserProfile.membershipTier === "Gold" ? (
                     profile.email ? (
                       `${profile.email}`
@@ -946,7 +951,7 @@ const ProfilePage = ({ currentUserProfile }) => {
         <div className="border-b pb-4 text-muted-foreground">
           <div className="flex gap-2 items-center pb-2 text-foreground">
             {/* <SmilePlus className="md:size-8 size-6" /> */}
-            <h3 className="md:text-xl font-medium text-[15px]">Lifestyle</h3>
+            <h3 className="md:text-xl font-medium text-[16px]">Lifestyle</h3>
           </div>
           <Table className={"max-w-4xl"}>
             <TableBody className={"md:text-[16px] text-sm"}>
@@ -1009,7 +1014,7 @@ const ProfilePage = ({ currentUserProfile }) => {
         <div className="border-b md:border-0 pb-4 text-muted-foreground">
           <div className="flex gap-2 items-center pb-2 text-foreground">
             {/* <Church className="md:size-7" /> */}
-            <h3 className="md:text-xl font-medium text-[15px]">
+            <h3 className="md:text-xl font-medium text-[16px]">
               Church Details
             </h3>
           </div>
@@ -1050,7 +1055,7 @@ const ProfilePage = ({ currentUserProfile }) => {
         <div className="pb-4 text-muted-foreground">
           <div className="flex gap-2 items-center pb-2 text-foreground">
             {/* <UserRoundCog className="md:size-7" /> */}
-            <h3 className="md:text-xl font-medium text-[15px]">
+            <h3 className="md:text-xl font-medium text-[16px]">
               Partner Preferences
             </h3>
           </div>

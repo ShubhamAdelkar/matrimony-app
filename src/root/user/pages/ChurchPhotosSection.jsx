@@ -155,7 +155,7 @@ const ChurchPhotosSection = ({ profile }) => {
       {/* You would have your Table and TableBody here, wrapping the TableRows */}
       {/* Example: */}
       {/* <Table className={"max-w-4xl"}>
-          <TableBody className={"md:text-[16px] text-sm"}> */}
+              <TableBody className={"md:text-[16px] text-sm"}> */}
       {/* Other TableRows for Church Name, Location, Pastor Name */}
       {/* ... */}
 
@@ -177,7 +177,7 @@ const ChurchPhotosSection = ({ profile }) => {
         </TableCell>
       </TableRow>
       {/* </TableBody>
-        </Table> */}
+            </Table> */}
 
       {/* Photo Carousel Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
@@ -198,7 +198,7 @@ const ChurchPhotosSection = ({ profile }) => {
                     <img
                       src={url}
                       alt={`Church service photo ${index + 1}`}
-                      className="rounded-lg object-contain w-full max-w-[90vh]"
+                      className="rounded-xl object-contain w-full max-h-[90vh]"
                       onError={(e) => {
                         e.target.onerror = null;
                         e.target.src =

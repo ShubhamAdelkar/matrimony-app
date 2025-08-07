@@ -332,7 +332,7 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
             </span>
             <Card className="p-0 bg-background w-full min-w-full shadow-none flex border-0">
               <CardDescription className={"p-0 flex flex-col items-start"}>
-                <p className="lg:text-3xl font-extrabold md:text-3xl text-foreground md:pb-2 text-xl flex items-center gap-1">
+                <p className="lg:text-3xl font-bold md:text-2xl text-foreground lg:pb-1 text-lg flex items-center">
                   {currentUserProfile.name}{" "}
                 </p>
                 <p
@@ -349,7 +349,7 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
                     </TooltipContent>
                   </Tooltip>
                 </p>
-                <div className="flex flex-wrap items-center gap-x-1 text-sm lg:text-lg">
+                <div className="flex flex-wrap items-center gap-x-1 text-sm lg:text-[16px] text-foreground">
                   <span>{calculateAge(currentUserProfile.dob)} yrs</span>
                   <span className="md:text-xl">·</span>
                   <span>
@@ -372,12 +372,12 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
                     )}
                   </span>
                 </div>
-                <p className="flex lg:text-lg flex-col md:flex-row">
+                <p className="flex gap-x-1 lg:text-[16px] flex-col lg:flex-row text-foreground pb-1">
                   <span>
                     {formatEnum(currentUserProfile.highestEducation)},{" "}
                     {formatEnum(currentUserProfile.occupation)}
                   </span>
-                  <span className="hidden md:flex">·</span>
+                  <span className="hidden lg:flex">·</span>
                   <span>
                     {formatEnum(currentUserProfile.city || "N/A City")},{" "}
                     {formatEnum(currentUserProfile.state || "N/A State")}, India
@@ -390,12 +390,12 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
                   currentUserProfile.employedIn ||
                   currentUserProfile.occupation ||
                   currentUserProfile.city) && (
-                  <div className="text-muted-foreground md:max-w-5xl max-w-xs">
+                  <div className="lg:border-0 border-t lg:pt-0 pt-1 text-muted-foreground md:max-w-5xl max-w-sm">
                     <div>
                       {/* {currentUserProfile.name && (
                         <h4 className="font-medium">About you</h4>
                       )} */}
-                      <p className="text-foreground lg:text-lg">
+                      <p className="lg:text-[16px]">
                         {currentUserProfile.bio ||
                           (() => {
                             const dynamicBio = [];
@@ -542,12 +542,12 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
         </div> */}
       </div>
 
-      <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 p-0 md:text-[16px] border-t pt-3">
+      <CardContent className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4 p-0 md:text-[16px] border-t pt-1 lg:pt-2">
         {/* Personal Information */}
         <div className="border-b pb-4 text-muted-foreground">
           <div className="flex gap-2 items-center pb-2 text-foreground">
             {/* <CircleUser className="md:size-7 size-6.5" /> */}
-            <h3 className="md:text-xl font-medium text-[15px] ">
+            <h3 className="md:text-xl font-medium text-[16px]">
               Personal Information
             </h3>
             <Dialog
@@ -726,7 +726,7 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
         <div className="border-b pb-4 text-muted-foreground">
           <div className="flex gap-2 items-center pb-2 text-foreground">
             {/* <House className="md:size-7" /> */}
-            <h3 className="md:text-xl font-medium text-[15px] ">
+            <h3 className="md:text-xl font-medium text-[16px]">
               Family Information
             </h3>
             <Dialog
@@ -824,7 +824,7 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
         <div className="border-b pb-4 text-muted-foreground">
           <div className="flex gap-2 items-center pb-2 text-foreground">
             {/* <Phone className="md:size-7 size-6" /> */}
-            <h3 className="md:text-xl font-medium text-[15px] ">
+            <h3 className="md:text-xl font-medium text-[16px]">
               Contact Information
             </h3>
           </div>
@@ -854,7 +854,7 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
         <div className="border-b pb-4 text-muted-foreground">
           <div className="flex gap-2 items-center pb-2 text-foreground">
             {/* <SmilePlus className="md:size-8 size-6" /> */}
-            <h3 className="md:text-xl font-medium text-[15px] ">Lifestyle</h3>
+            <h3 className="md:text-xl font-medium text-[16px]">Lifestyle</h3>
           </div>
           <Table className={"max-w-4xl"}>
             <TableBody className={"md:text-[16px] text-sm"}>
@@ -921,7 +921,7 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
         <div className="border-b md:border-0 pb-4 text-muted-foreground">
           <div className="flex gap-2 items-center pb-2 text-foreground">
             {/* <Church className="md:size-7" /> */}
-            <h3 className="md:text-xl font-medium text-[15px] ">
+            <h3 className="md:text-xl font-medium text-[16px]">
               Church Details
             </h3>
           </div>
@@ -962,7 +962,7 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
         <div className="pb-4 text-muted-foreground">
           <div className="flex gap-2 items-center pb-2 text-foreground">
             {/* <UserRoundCog className="md:size-7" /> */}
-            <h3 className="md:text-xl font-medium text-[15px] ">
+            <h3 className="md:text-xl font-medium text-[16px]">
               Partner Preferences
             </h3>
           </div>

@@ -95,7 +95,7 @@ function TopBar({ currentUserProfile }) {
                 href="#"
                 rel="noopener noreferrer"
                 target="_blank"
-                className="dark:text-foreground text-[13px]"
+                className="dark:text-foreground text-sm"
               >
                 Upgrade
               </a>
@@ -121,7 +121,14 @@ function TopBar({ currentUserProfile }) {
                     {userAvatarFallback}
                   </AvatarFallback>
                 </Avatar> */}
-                <MenuIcon size={32} />
+                <Button
+                  variant="ghost"
+                  onClick={""}
+                  size={"icon"}
+                  className="text-muted-foreground hover:bg-tranparent hover:text-accent-foreground active:scale-90 transition-all"
+                >
+                  <MenuIcon className="cursor-pointer size-7" />
+                </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 className="w-(--radix-dropdown-menu-trigger-width) min-w-54 rounded-lg md:min-w-56"
