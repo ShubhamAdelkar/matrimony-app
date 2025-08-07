@@ -28,8 +28,6 @@ import { account } from "../../lib/appwrite";
 // ⭐ Import useAuth from your AuthContext
 import { useAuth } from "../context/AuthContext";
 
-console.log("LoginForm: 'account' object after import:", account);
-
 function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
