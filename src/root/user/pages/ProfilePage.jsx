@@ -426,7 +426,7 @@ const ProfilePage = ({ currentUserProfile }) => {
                     <CarouselNext className="cursor-pointer" />
                   </Carousel>
                 ) : (
-                  <div className="w-full h-[400px] flex items-center justify-center text-gray-500 text-lg rounded-xl bg-gray-800 sm:h-[500px] md:h-[600px]">
+                  <div className="w-full h-[400px] flex items-center justify-center text-gray-800 text-lg rounded-xl bg-gray-400 sm:h-[500px] md:h-[600px]">
                     No Photos To display
                   </div>
                 )}
@@ -505,7 +505,7 @@ const ProfilePage = ({ currentUserProfile }) => {
                   profile.employedIn ||
                   profile.occupation ||
                   profile.city) && (
-                  <div className="md:border-0 border-t md:pt-0 pt-1 text-foreground/70 lg:max-w-5xl max-w-sm md:max-w-3xl">
+                  <div className="md:border-0 border-t md:pt-0 pt-1 text-foreground/70 lg:max-w-5xl max-w-sm md:max-w-xl hidden lg:flex">
                     <div>
                       <p className="lg:text-[16px]">
                         {profile.bio ||
@@ -619,7 +619,7 @@ const ProfilePage = ({ currentUserProfile }) => {
           {/* Send Interest */}
           <Button
             className={
-              "lg:text-[17px] md:text-[15px] text-sm cursor-pointer lg:max-w-[292px] font-medium md:font-semibold active:scale-98 transition-all md:p-5 w-full"
+              "lg:text-[17px] md:text-[15px] text-sm cursor-pointer lg:max-w-[292px] font-medium md:font-semibold active:scale-98 transition-all md:p-5 w-full md:max-w-[222px]"
             }
             size={"sm"}
           >
@@ -631,7 +631,7 @@ const ProfilePage = ({ currentUserProfile }) => {
             variant={"outline"}
             size={"sm"}
             className={
-              "lg:text-[17px] md:text-[15px] text-sm cursor-pointer lg:max-w-[292px] font-medium md:font-semibold active:scale-98 transition-all border-ring md:p-5 w-full"
+              "lg:text-[17px] md:text-[15px] text-sm cursor-pointer lg:max-w-[292px] md:max-w-[222px] font-medium  active:scale-98 transition-all border-ring md:p-5 w-full"
             }
           >
             <Bookmark className="size-4 md:size-5" strokeWidth={2.5} />
@@ -914,6 +914,113 @@ const ProfilePage = ({ currentUserProfile }) => {
               </TableRow>
             </TableBody>
           </Table>
+        </div>
+
+        {/* About */}
+        <div className="border-b pb-4 text-muted-foreground lg:hidden">
+          <div className="flex gap-2 items-center pb-2 text-foreground">
+            {/* <House className="md:size-7" /> */}
+            <h3 className="md:text-xl font-medium text-[16px]">
+              About {formatEnum(profile.name)}
+            </h3>
+          </div>
+          {(profile.bio ||
+            profile.aboutMe ||
+            profile.highestEducation ||
+            profile.employedIn ||
+            profile.occupation ||
+            profile.city) && (
+            <div className="text-foreground/70">
+              <div>
+                <p className="lg:text-[16px]">
+                  {profile.bio ||
+                    profile.aboutMe ||
+                    (() => {
+                      const dynamicBio = [];
+
+                      // Education
+                      if (profile.highestEducation) {
+                        dynamicBio.push(
+                          `I have completed my ${formatEnum(profile.highestEducation)}`
+                        );
+                      }
+
+                      // Employment and Occupation logic
+                      const employment = profile.employedIn
+                        ? formatEnum(profile.employedIn)
+                        : null;
+                      const occupation = profile.occupation
+                        ? formatEnum(profile.occupation)
+                        : null;
+
+                      if (employment) {
+                        if (employment.toLowerCase().includes("student")) {
+                          dynamicBio.push(`I am currently a student`);
+                        } else if (
+                          employment.toLowerCase().includes("not") ||
+                          employment.toLowerCase().includes("unemployed")
+                        ) {
+                          dynamicBio.push(`I am currently not working`);
+                        } else {
+                          // For employed cases
+                          let workString = `I am currently employed`;
+
+                          // Add occupation if it exists and is different from employment status
+                          if (
+                            occupation &&
+                            !occupation.toLowerCase().includes("student") &&
+                            !occupation.toLowerCase().includes("unemployed")
+                          ) {
+                            workString += ` as a ${occupation}`;
+                          }
+
+                          // Add employment type
+                          if (employment.toLowerCase().includes("government")) {
+                            workString += ` in the government sector`;
+                          } else if (
+                            employment.toLowerCase().includes("private")
+                          ) {
+                            workString += ` in the private sector`;
+                          } else if (
+                            employment.toLowerCase().includes("business") ||
+                            employment.toLowerCase().includes("self")
+                          ) {
+                            workString += ` and am self-employed`;
+                          } else if (
+                            employment.toLowerCase().includes("defence")
+                          ) {
+                            workString += ` in defence/civil services`;
+                          }
+
+                          dynamicBio.push(workString);
+                        }
+                      } else if (occupation) {
+                        // If no employment status but occupation exists
+                        if (occupation.toLowerCase().includes("student")) {
+                          dynamicBio.push(`I am currently a student`);
+                        } else if (
+                          !occupation.toLowerCase().includes("unemployed")
+                        ) {
+                          dynamicBio.push(`I work as a ${occupation}`);
+                        }
+                      }
+
+                      // Location
+                      if (profile.city || profile.state) {
+                        const location = [profile.city, profile.state]
+                          .filter(Boolean)
+                          .join(", ");
+                        dynamicBio.push(`I live in ${location}`);
+                      }
+
+                      return dynamicBio.length > 0
+                        ? dynamicBio.join(". ") + "."
+                        : "No information available.";
+                    })()}
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Contact Information */}
