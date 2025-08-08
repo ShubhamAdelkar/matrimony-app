@@ -43,7 +43,7 @@ const PhotoDisplayGridOrStack = ({ photos, onPhotoClick }) => {
     const visiblePhotos = photos.slice(0, maxStackedPhotos);
 
     return (
-      <div className="relative md:w-40 md:h-46 h-40 w-35 cursor-pointer pl-2.5 perspective-origin-center perspective-[10000px] p-2.5">
+      <div className="relative md:w-40 md:h-46 h-40 w-35 cursor-pointer pl-2.5 perspective-origin-center perspective-distant p-2.5">
         {visiblePhotos.map((url, index) => (
           <div
             key={url} // Use URL as key, assuming unique

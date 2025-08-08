@@ -45,7 +45,7 @@ const PhotoDisplayGridOrStack = ({ photos, onPhotoClick }) => {
 
     return (
       <div
-        className={`relative md:w-40 md:h-46 h-40 w-35 cursor-pointer pl-2.5  perspective-origin-center perspective-[10000px] p-2.5`}
+        className={`relative md:w-40 md:h-46 h-40 w-35 cursor-pointer pl-2.5  perspective-origin-center perspective-distant p-2.5`}
       >
         {visiblePhotos.map((url, index) => (
           <div
