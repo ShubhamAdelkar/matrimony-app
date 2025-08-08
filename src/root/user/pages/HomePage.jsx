@@ -273,7 +273,7 @@ const HomePage = ({ currentUserProfile }) => {
                     />
                   ) : (
                     // ⭐ Updated placeholder div styling
-                    <div className="w-full h-73 flex items-center justify-center text-gray-500 text-6xl font-bold rounded-xl bg-gray-200">
+                    <div className="w-full md:h-73 flex items-center justify-center text-gray-500 text-6xl font-bold rounded-xl bg-gray-200 h-56">
                       {profile.name
                         ? profile.name.charAt(0).toUpperCase()
                         : "?"}{" "}
@@ -315,7 +315,9 @@ const HomePage = ({ currentUserProfile }) => {
                       </span>
                     </CardTitle>
                     <CardDescription
-                      className={"text-muted/80 dark:text-white/70 md:text-sm text-[14px] font-normal"}
+                      className={
+                        "text-muted/80 dark:text-white/70 md:text-sm text-[14px] font-normal"
+                      }
                     >
                       {profile.city
                         ? profile.city.charAt(0).toUpperCase() +

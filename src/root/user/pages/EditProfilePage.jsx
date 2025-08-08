@@ -144,7 +144,7 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
 
   // Function to format enum-like strings (e.g., "never_married" to "Never Married")
   const formatEnum = (str) => {
-    if (!str) return <span>Not specified</span>;
+    if (!str) return "Not Specified";
     return str
       .replace(/_/g, " ")
       .split(" ")
@@ -535,7 +535,7 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
       <CardContent className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4 p-0 md:text-[16px] border-t pt-1 lg:pt-2">
         {/* Personal Information */}
         <div className="border-b pb-4 text-muted-foreground">
-          <div className="flex gap-2 items-center pb-2 text-foreground">
+          <div className="flex gap-2 items-center pb-2 text-foreground justify-between md:justify-start">
             {/* <CircleUser className="md:size-7 size-6.5" /> */}
             <h3 className="md:text-xl font-medium text-[16px]">
               Personal Information
@@ -714,7 +714,7 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
 
         {/* Family Information */}
         <div className="border-b pb-4 text-muted-foreground">
-          <div className="flex gap-2 items-center pb-2 text-foreground">
+          <div className="flex gap-2 items-center pb-2 text-foreground justify-between md:justify-start">
             {/* <House className="md:size-7" /> */}
             <h3 className="md:text-xl font-medium text-[16px]">
               Family Information
@@ -851,34 +851,37 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
               <TableRow>
                 <TableCell className="">Smoking Habits:</TableCell>
                 <TableCell className="text-foreground font-medium">
-                  <>
-                    {currentUserProfile.smokingHabits.map((habit, index) => (
-                      <span key={index}>
-                        {habit}
-                        {index < currentUserProfile.smokingHabits.length - 1
-                          ? ", "
-                          : ""}
-                      </span>
-                    ))}
-                  </>
+                  {/* Corrected logic for smoking habits with typo fixed and optional chaining */}
+                  {currentUserProfile?.smokingHabits?.length > 0
+                    ? currentUserProfile.smokingHabits.map((habit, index) => (
+                        <span key={index}>
+                          {formatEnum(habit)}
+                          {index < currentUserProfile.smokingHabits.length - 1
+                            ? ", "
+                            : ""}
+                        </span>
+                      ))
+                    : "Not Specified"}
                 </TableCell>
               </TableRow>
 
               <TableRow>
                 <TableCell className="">Drinking Habits:</TableCell>
                 <TableCell className="text-foreground font-medium">
-                  <>
-                    {currentUserProfile.drinkingHabits.map((habit, index) => (
-                      <span key={index}>
-                        {formatEnum(habit)}
-                        {index < currentUserProfile.drinkingHabits.length - 1
-                          ? ", "
-                          : ""}
-                      </span>
-                    ))}
-                  </>
+                  {/* Corrected logic for drinking habits using optional chaining */}
+                  {currentUserProfile?.drinkingHabits?.length > 0
+                    ? currentUserProfile.drinkingHabits.map((habit, index) => (
+                        <span key={index}>
+                          {formatEnum(habit)}
+                          {index < currentUserProfile.drinkingHabits.length - 1
+                            ? ", "
+                            : ""}
+                        </span>
+                      ))
+                    : "Not Specified"}
                 </TableCell>
               </TableRow>
+
               <TableRow>
                 <TableCell className="font-normal align-top">
                   Interests:

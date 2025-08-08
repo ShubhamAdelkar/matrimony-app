@@ -299,7 +299,7 @@ const ProfilePage = ({ currentUserProfile }) => {
 
   // Function to format enum-like strings (e.g., "never_married" to "Never Married")
   const formatEnum = (str) => {
-    if (!str) return "N/A";
+    if (!str) return "Not Specified";
     return str
       .replace(/_/g, " ")
       .split(" ")
@@ -718,19 +718,21 @@ const ProfilePage = ({ currentUserProfile }) => {
                   </TableCell>
                 </TableRow>
               )} */}
-              {profile.bodyType && formatEnum(profile.bodyType) && (
-                <TableRow>
-                  <TableCell className="">Body Type:</TableCell>
-                  <TableCell className="text-foreground font-medium">
-                    {formatEnum(profile.bodyType)}
-                  </TableCell>
-                </TableRow>
-              )}
+
+              <TableRow>
+                <TableCell className="">Body Type:</TableCell>
+                <TableCell className="text-foreground font-medium">
+                  {formatEnum(profile.bodyType)}
+                </TableCell>
+              </TableRow>
+
               {profile.motherTongue && (
                 <TableRow>
                   <TableCell className="">Mother Tongue:</TableCell>
                   <TableCell className="text-foreground font-medium">
-                    {profile.motherTongue}
+                    {profile.motherTongue && profile.motherTongue.length > 0
+                      ? profile.motherTongue.map(formatEnum).join(", ")
+                      : "Not Specified"}
                   </TableCell>
                 </TableRow>
               )}
@@ -962,28 +964,32 @@ const ProfilePage = ({ currentUserProfile }) => {
               <TableRow>
                 <TableCell className="">Smoking Habits:</TableCell>
                 <TableCell className="text-foreground font-medium">
-                  <>
-                    {profile.smokingHabits.map((habit, index) => (
-                      <span key={index}>
-                        {formatEnum(habit)}
-                        {index < profile.smokingHabits.length - 1 ? ", " : ""}
-                      </span>
-                    ))}
-                  </>
+                  {/* Corrected logic using optional chaining to prevent the TypeError */}
+                  {profile?.smokingHabits?.length > 0
+                    ? profile.smokingHabits.map((habit, index) => (
+                        <span key={index}>
+                          {formatEnum(habit)}
+                          {index < profile.smokingHabits.length - 1 ? ", " : ""}
+                        </span>
+                      ))
+                    : "Not Specified"}
                 </TableCell>
               </TableRow>
 
               <TableRow>
                 <TableCell className="">Drinking Habits:</TableCell>
                 <TableCell className="text-foreground font-medium">
-                  <>
-                    {profile.drinkingHabits.map((habit, index) => (
-                      <span key={index}>
-                        {formatEnum(habit)}
-                        {index < profile.drinkingHabits.length - 1 ? ", " : ""}
-                      </span>
-                    ))}
-                  </>
+                  {/* Corrected logic using optional chaining to prevent the TypeError */}
+                  {profile?.drinkingHabits?.length > 0
+                    ? profile.drinkingHabits.map((habit, index) => (
+                        <span key={index}>
+                          {formatEnum(habit)}
+                          {index < profile.drinkingHabits.length - 1
+                            ? ", "
+                            : ""}
+                        </span>
+                      ))
+                    : "Not Specified"}
                 </TableCell>
               </TableRow>
               <TableRow>

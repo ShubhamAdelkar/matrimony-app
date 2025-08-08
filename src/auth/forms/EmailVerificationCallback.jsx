@@ -119,22 +119,22 @@ function EmailVerificationCallback() {
   }, [searchParams, navigate, updateFormData, resetForm]); // Dependencies are correct
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-primary text-foreground">
+    <div className="flex items-center justify-center min-h-screen bg-background text-foreground">
       <Card className="w-full max-w-md p-6 text-center shadow-lg rounded-lg">
         <CardHeader>
           {status === "verifying" && (
             <LoaderCircleIcon
-              className="animate-spin mx-auto h-10 w-10"
+              className="animate-spin mx-auto size-7"
               stroke="var(--foreground)"
             />
           )}
           {status === "success" && (
-            <CheckCheckIcon className="mx-auto h-10 w-10 text-green-500" />
+            <CheckCheckIcon className="mx-auto size-9 text-green-500" />
           )}
           {status === "error" && (
-            <XCircleIcon className="mx-auto h-10 w-10 text-red-500" />
+            <XCircleIcon className="mx-auto size-9 text-red-500" />
           )}
-          <CardTitle className="mt-4 text-2xl font-bold">
+          <CardTitle className="mt-2 text-2xl font-bold">
             {status === "verifying"
               ? "Verifying..."
               : status === "success"
@@ -143,9 +143,7 @@ function EmailVerificationCallback() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <CardDescription className="text-gray-700 mb-4 dark:text-white">
-            {message}
-          </CardDescription>
+          <CardDescription>{message}</CardDescription>
           {status === "error" && (
             <Button
               onClick={() => navigate("/register")}
