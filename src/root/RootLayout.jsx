@@ -19,7 +19,7 @@ import {
 import BottomBar from "@/components/user-ui/BottomBar";
 import LeftBar from "@/components/user-ui/LeftBar";
 import TopBar from "@/components/user-ui/TopBar";
-import { Loader2, Home, Mail, Heart, Settings, User } from "lucide-react";
+import { Home, Mail, Heart, Settings, User } from "lucide-react";
 import { Outlet, Navigate, useLocation } from "react-router-dom"; // Import useLocation
 
 import React, { useEffect } from "react";
