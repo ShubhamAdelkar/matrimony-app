@@ -320,7 +320,7 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
 
           <div className="w-full flex flex-col justify-end md:gap-2">
             <span className="flex items-center gap-[5px]">
-              {!currentUserProfile.isIDVerified && (
+              {currentUserProfile.isIDVerified && (
                 <Badge
                   variant="secondary"
                   className="bg-blue-500 text-white dark:bg-blue-600 text-xs flex items-center rounded-full px-[5px] text-center pr-2"
