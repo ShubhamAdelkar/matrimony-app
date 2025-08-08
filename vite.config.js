@@ -1,15 +1,26 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
-
 import path from 'path'
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  resolve: { // <-- Add this resolve section
+  resolve: {
     alias: {
       // eslint-disable-next-line no-undef
-      "@": path.resolve(__dirname, "./src"), // Maps @ to your src directory
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          // This is the key part that creates the 'vendor' chunk
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
+        },
+      },
     },
   },
 })
