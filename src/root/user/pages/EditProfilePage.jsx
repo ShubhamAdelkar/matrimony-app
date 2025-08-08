@@ -38,6 +38,8 @@ import {
   SquarePen,
   ChevronRight,
   Info,
+  EllipsisVertical,
+  Ellipsis,
 } from "lucide-react";
 import {
   Carousel,
@@ -213,112 +215,115 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
       {/* Profile Card Header */}
       <div className="lg:gap-6 flex flex-col gap-2 md:gap-3 md:mb-2">
         <div className="flex md:flex-row p-0 lg:gap-6 flex-col gap-2 md:gap-4">
-          <Dialog
-            open={isModalOpen}
-            onOpenChange={setIsModalOpen}
-            className="bg-transparent shadow-none border-0 p-0"
-          >
-            <DialogTrigger
-              asChild
-              className="bg-transparent shadow-none border-0 cursor-pointer"
+          <div className="flex gap-2">
+            <Dialog
+              open={isModalOpen}
+              onOpenChange={setIsModalOpen}
+              className="bg-transparent shadow-none border-0 p-0"
             >
-              <Card
-                className="lg:max-w-[292px] overflow-hidden lg:min-w-[292px] md:min-w-[220px] p-0 active:scale-98 transition-all cursor-pointer group/card flex-shrink-0 select-none md:max-w-[220px] relative max-w-[112px] md:rounded-none"
-                onClick={() => handlePhotoClick(0)}
+              <DialogTrigger
+                asChild
+                className="bg-transparent shadow-none border-0 cursor-pointer"
               >
-                {primaryPhotoSrc ? (
-                  <div
-                    className={`w-full aspect-square object-cover max-w-[106px] rounded-full md:max-w-[292px] md:rounded-xl lg:max-w-[292px] lg:rounded-xl flex items-center justify-center border-3 p-[3px] ${isActive ? "border-emerald-500" : ""}`}
-                  >
-                    <img
-                      src={primaryPhotoSrc}
-                      alt={profileName}
-                      className="w-full aspect-square object-cover max-w-[100px] rounded-full md:max-w-[292px] md:rounded-lg lg:max-w-[292px] shadow-sm"
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src =
-                          "https://placehold.co/400x300/cccccc/333333?text=No+Pic";
-                      }}
-                    />
-                  </div>
-                ) : (
-                  <div
-                    className={`aspect-square bg-gray-200 flex items-center justify-center font-extrabold max-w-[100px] rounded-full text-3xl md:max-w-[220px] md:rounded-xl md:text-7xl lg:max-w-[292px]  border-3 lg:rounded-xl lg:text-7xl text-gray-500 shadow-sm ${isOnline ? "border-emerald-500" : "md:border-transparent"}`}
-                  >
-                    {profileName ? profileName.charAt(0).toUpperCase() : "?"}
-                  </div>
-                )}
-                {hasMultiplePhotos && (
-                  <Badge className="absolute bottom-2 left-16 lg:bottom-3 lg:left-54 bg-black/60 text-white rounded-full p-1 lg:text-xs text-[9px] lg:px-2 md:left-41 md:bottom-3">
-                    +{photosToDisplay.length - 1} more
-                  </Badge>
-                )}
-                {Array.isArray(currentUserProfile.membershipTier) &&
-                  currentUserProfile.membershipTier.includes("Gold") && (
-                    <Tooltip delayDuration={300}>
-                      <TooltipTrigger className="cursor-pointer absolute top-1 left-1 md:top-3 md:left-3 lg:left-3 lg:top-3">
-                        <Badge
-                          variant="secondary"
-                          className="bg-[#EFBF04] text-white dark:bg-[#EFBF04] p-1.5 rounded-full"
-                        >
-                          <Crown className="scale-130 self-center" />
-                        </Badge>
-                      </TooltipTrigger>
-                      <TooltipContent side={"right"}>
-                        <p>Gold Member</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  )}
-              </Card>
-            </DialogTrigger>
-
-            <DialogContent className="sm:max-w-[550px] bg-transparent border-none shadow-none p-0 text-foreground">
-              {photosToDisplay.length > 0 ? (
-                <Carousel
-                  className="w-full h-full flex items-center justify-center p-0 border-none bg-transparent"
-                  opts={{
-                    startIndex: initialSlideIndex,
-                  }}
+                <Card
+                  className="lg:max-w-[292px] overflow-hidden lg:min-w-[292px] md:min-w-[220px] p-0 active:scale-98 transition-all cursor-pointer group/card flex-shrink-0 select-none md:max-w-[220px] relative max-w-[112px] md:rounded-none"
+                  onClick={() => handlePhotoClick(0)}
                 >
-                  <CarouselContent>
-                    {photosToDisplay.map((photo, index) => {
-                      // Determine the source based on whether it's a photo ID or a URL
-                      const photoSrc =
-                        profilePhotoIDs.length > 0
-                          ? storage.getFileView(
-                              appwriteConfig.photoBucket,
-                              photo
-                            ).href
-                          : photo;
-                      return (
-                        <CarouselItem
-                          key={index}
-                          className="flex items-center justify-center"
-                        >
-                          <img
-                            src={photoSrc}
-                            alt={`Profile photo ${index + 1}`}
-                            className="rounded-xl object-contain w-full max-h-[90vh]"
-                            onError={(e) => {
-                              e.target.onerror = null;
-                              e.target.src =
-                                "https://placehold.co/400x300/cccccc/333333?text=No+Pic";
-                            }}
-                          />
-                        </CarouselItem>
-                      );
-                    })}
-                  </CarouselContent>
-                  <CarouselPrevious className="cursor-pointer" />
-                  <CarouselNext className="cursor-pointer" />
-                </Carousel>
-              ) : (
-                <div className="w-full h-[400px] flex items-center justify-center text-gray-500 text-lg rounded-xl bg-gray-800 sm:h-[500px] md:h-[600px]">
-                  No Photos To display
-                </div>
-              )}
-            </DialogContent>
-          </Dialog>
+                  {primaryPhotoSrc ? (
+                    <div
+                      className={`w-full aspect-square object-cover max-w-[106px] rounded-full md:max-w-[292px] md:rounded-xl lg:max-w-[292px] lg:rounded-xl flex items-center justify-center border-3 p-[3px] ${isActive ? "border-emerald-500" : ""}`}
+                    >
+                      <img
+                        src={primaryPhotoSrc}
+                        alt={profileName}
+                        className="w-full aspect-square object-cover max-w-[100px] rounded-full md:max-w-[292px] md:rounded-lg lg:max-w-[292px] shadow-sm"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src =
+                            "https://placehold.co/400x300/cccccc/333333?text=No+Pic";
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <div
+                      className={`aspect-square bg-gray-200 flex items-center justify-center font-extrabold max-w-[100px] rounded-full text-3xl md:max-w-[220px] md:rounded-xl md:text-7xl lg:max-w-[292px]  border-3 lg:rounded-xl lg:text-7xl text-gray-500 shadow-sm ${isOnline ? "border-emerald-500" : "md:border-transparent"}`}
+                    >
+                      {profileName ? profileName.charAt(0).toUpperCase() : "?"}
+                    </div>
+                  )}
+                  {hasMultiplePhotos && (
+                    <Badge className="absolute bottom-2 left-16 lg:bottom-3 lg:left-54 bg-black/60 text-white rounded-full p-1 lg:text-xs text-[9px] lg:px-2 md:left-41 md:bottom-3">
+                      +{photosToDisplay.length - 1} more
+                    </Badge>
+                  )}
+                  {Array.isArray(currentUserProfile.membershipTier) &&
+                    currentUserProfile.membershipTier.includes("Gold") && (
+                      <Tooltip delayDuration={300}>
+                        <TooltipTrigger className="cursor-pointer absolute top-1 left-1 md:top-3 md:left-3 lg:left-3 lg:top-3">
+                          <Badge
+                            variant="secondary"
+                            className="bg-[#EFBF04] text-white dark:bg-[#EFBF04] p-1.5 rounded-full"
+                          >
+                            <Crown className="scale-130 self-center" />
+                          </Badge>
+                        </TooltipTrigger>
+                        <TooltipContent side={"right"}>
+                          <p>Gold Member</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    )}
+                </Card>
+              </DialogTrigger>
+
+              <DialogContent className="sm:max-w-[550px] bg-transparent border-none shadow-none p-0 text-foreground">
+                {photosToDisplay.length > 0 ? (
+                  <Carousel
+                    className="w-full h-full flex items-center justify-center p-0 border-none bg-transparent"
+                    opts={{
+                      startIndex: initialSlideIndex,
+                    }}
+                  >
+                    <CarouselContent>
+                      {photosToDisplay.map((photo, index) => {
+                        // Determine the source based on whether it's a photo ID or a URL
+                        const photoSrc =
+                          profilePhotoIDs.length > 0
+                            ? storage.getFileView(
+                                appwriteConfig.photoBucket,
+                                photo
+                              ).href
+                            : photo;
+                        return (
+                          <CarouselItem
+                            key={index}
+                            className="flex items-center justify-center"
+                          >
+                            <img
+                              src={photoSrc}
+                              alt={`Profile photo ${index + 1}`}
+                              className="rounded-xl object-contain w-full max-h-[90vh]"
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src =
+                                  "https://placehold.co/400x300/cccccc/333333?text=No+Pic";
+                              }}
+                            />
+                          </CarouselItem>
+                        );
+                      })}
+                    </CarouselContent>
+                    <CarouselPrevious className="cursor-pointer" />
+                    <CarouselNext className="cursor-pointer" />
+                  </Carousel>
+                ) : (
+                  <div className="w-full h-[400px] flex items-center justify-center text-gray-500 text-lg rounded-xl bg-gray-800 sm:h-[500px] md:h-[600px]">
+                    No Photos To display
+                  </div>
+                )}
+              </DialogContent>
+            </Dialog>
+            <Ellipsis className="md:hidden" />
+          </div>
 
           <div className="w-full flex flex-col justify-end md:gap-2">
             <span className="flex items-center gap-[5px]">
@@ -353,7 +358,7 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
                     </TooltipContent>
                   </Tooltip>
                 </p>
-                <div className="flex flex-wrap items-center gap-x-1 text-sm lg:text-[16px] text-foreground">
+                <div className="flex flex-wrap items-center gap-x-1 text-sm lg:text-[16px] text-foreground/70">
                   <span>{formatEnum(currentUserProfile.maritalStatus)}</span>
                   <span className="md:text-xl">·</span>
                   <span>{calculateAge(currentUserProfile.dob)} yrs</span>
@@ -378,7 +383,7 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
                     )}
                   </span>
                 </div>
-                <p className="flex gap-x-1 lg:text-[16px] flex-col lg:flex-row text-foreground pb-1">
+                <p className="flex gap-x-1 lg:text-[16px] flex-col lg:flex-row text-foreground/70 pb-1">
                   <span>
                     {formatEnum(currentUserProfile.highestEducation)},{" "}
                     {formatEnum(currentUserProfile.occupation)}
@@ -396,7 +401,7 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
                   currentUserProfile.employedIn ||
                   currentUserProfile.occupation ||
                   currentUserProfile.city) && (
-                  <div className="md:border-0 border-t md:pt-0 pt-1 text-muted-foreground lg:max-w-5xl max-w-sm md:max-w-3xl">
+                  <div className="md:border-0 border-t md:pt-0 pt-1 text-foreground/70 lg:max-w-5xl max-w-sm md:max-w-3xl">
                     {/* {currentUserProfile.name && (
                         <h4 className="font-medium">About you</h4>
                       )} */}

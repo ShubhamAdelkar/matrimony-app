@@ -81,14 +81,14 @@ function TopBar({ currentUserProfile }) {
           <div className="flex md:gap-4 gap-3 items-center">
             {/* theme toggle */}
             <ModeToggle />
-            <Button
+            {/* <Button
               variant="ghost"
               onClick={""}
               size={"icon"}
               className="text-muted-foreground hover:bg-tranparent hover:text-accent-foreground active:scale-90 transition-all"
             >
               <Bell className="cursor-pointer size-7" />
-            </Button>
+            </Button> */}
 
             <Button variant="outline" asChild size="sm" className="">
               <a
