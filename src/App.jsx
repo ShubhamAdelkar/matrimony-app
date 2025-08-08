@@ -30,7 +30,6 @@ import { ThemeProvider } from "./components/theme-provider";
 import InterestPage from "./root/user/pages/InterestPage";
 import MessagePage from "./root/user/pages/MessagePage";
 import PreferencePage from "./root/user/pages/PreferencePage";
-// import SpotifySlider from "./root/user/pages/SpotifySlider"; // If this is a distinct page, uncomment and add route
 import { databases, appwriteConfig, client } from "@/lib/appwrite";
 import { Heart, Loader2 } from "lucide-react";
 
