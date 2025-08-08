@@ -242,7 +242,9 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
                     />
                   </div>
                 ) : (
-                  <div className="aspect-square bg-gray-800 flex items-center justify-center font-extrabold max-w-[100px] rounded-full text-3xl md:max-w-[220px] md:rounded-xl md:text-7xl lg:max-w-[292px] lg:rounded-xl lg:text-7xl text-gray-500 shadow-sm">
+                  <div
+                    className={`aspect-square bg-gray-200 flex items-center justify-center font-extrabold max-w-[100px] rounded-full text-3xl md:max-w-[220px] md:rounded-xl md:text-7xl lg:max-w-[292px]  border-3 lg:rounded-xl lg:text-7xl text-gray-500 shadow-sm ${isOnline ? "border-emerald-500" : "md:border-transparent"}`}
+                  >
                     {profileName ? profileName.charAt(0).toUpperCase() : "?"}
                   </div>
                 )}
