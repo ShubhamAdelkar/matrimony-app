@@ -157,7 +157,7 @@ const HomePage = ({ currentUserProfile }) => {
   const scroll = (direction) => {
     const container = scrollContainerRef.current;
     if (container) {
-      const cardWidth = 292 + 24; // Card width + gap
+      const cardWidth = 292 + 20; // Card width + gap
       const containerWidth = container.clientWidth;
       const visibleCards = Math.floor(containerWidth / cardWidth);
 
@@ -199,14 +199,13 @@ const HomePage = ({ currentUserProfile }) => {
     );
   }
   return (
-    <div className="px-4 lg:px-6 flex gap-4 justify-center md:justify-start flex-col">
-      <div className="flex justify-between items-center">
-        <h1 className="font-bold text-lg">Recommendations</h1>
-        <h1 className="font-normal text-sm md:pr-3 p-1 hover:underline cursor-pointer">
-          Show all
+    <div className="md:px-4 lg:px-6 flex md:gap-4  gap-2 justify-center md:justify-start flex-col pl-4">
+      <div className="flex gap-1 items-center">
+        <h1 className="font-bold md:text-lg flex items-center cursor-pointer text-[16px]">
+          Recommendations <ChevronRight size={20} />
         </h1>
       </div>
-      <div className="relative group">
+      <div className="relative group -ml-4 md:ml-0 md:px-0">
         {/* Left Arrow */}
         {showLeftArrow && (
           <div className="absolute left-0 top-[146px] -translate-y-1/2 z-10 bg-opacity-70 hover:bg-opacity-90 text-foreground md:flex items-center justify-center opacity-100 group-hover:opacity-100 transition-all duration-1000 bg-gradient-to-r from-background/60 to-transparent h-[292px] w-[80px] hidden">
@@ -234,7 +233,7 @@ const HomePage = ({ currentUserProfile }) => {
         {/* Slider Container */}
         <div
           ref={scrollContainerRef}
-          className="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-4 pr-1"
+          className="flex md:gap-5 overflow-x-auto scrollbar-hide scroll-smooth pb-4 md:pr-2 gap-3 px-4"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {profiles.map((profile) => {
@@ -254,7 +253,7 @@ const HomePage = ({ currentUserProfile }) => {
               <Card
                 key={profile.$id}
                 // ⭐ Updated Card styling for horizontal scroll
-                className="md:max-w-[292px] overflow-hidden md:min-w-[292px] min-w-[341px] p-0 active:scale-98 transition-all cursor-pointer group/card flex-shrink-0 select-none hover:border-ring"
+                className="md:max-w-[292px] overflow-hidden md:min-w-[292px] p-0 active:scale-98 transition-all cursor-pointer group/card flex-shrink-0 select-none hover:border-ring max-w-[220px] max-h-[220px] md:max-h-[292px] min-w-[220px] min-h-[220px]"
                 onMouseEnter={() => setHoveredCard(profile.$id)}
                 onMouseLeave={() => setHoveredCard(null)}
                 onClick={() => navigate(`/profile/${profile.$id}`)}
@@ -265,7 +264,7 @@ const HomePage = ({ currentUserProfile }) => {
                       src={primaryPhotoSrc}
                       alt={profile.name} // ⭐ Using fullName as per schema
                       // ⭐ Updated image styling
-                      className="rounded-t-xl object-cover h-73 overflow-hidden w-full"
+                      className="rounded-t-xl object-cover md:h-73 overflow-hidden w-full h-56"
                       onError={(e) => {
                         e.target.onerror = null;
                         e.target.src =
