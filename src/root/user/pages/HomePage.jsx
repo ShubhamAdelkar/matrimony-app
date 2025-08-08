@@ -283,7 +283,11 @@ const HomePage = ({ currentUserProfile }) => {
                   {/* Overlay for Name, Age, Height for visual impact */}
                   {/* ⭐ Updated overlay styling */}
                   <div className="absolute w-full bg-gradient-to-t from-black/90 to-transparent p-4 pt-8 bottom-0 flex flex-col items-start">
-                    <CardTitle className={"text-xl text-white font-medium"}>
+                    <CardTitle
+                      className={
+                        "md:text-xl text-white font-medium text-[16px]"
+                      }
+                    >
                       <span className="flex items-center gap-1">
                         {/* ⭐ Formatting fullName as requested */}
                         <span className="truncate">
@@ -303,15 +307,15 @@ const HomePage = ({ currentUserProfile }) => {
                         {profile.isIDVerified && (
                           <Badge
                             variant="secondary"
-                            className="bg-blue-500 text-white dark:bg-blue-600 p-1 rounded-full"
+                            className="bg-blue-500 text-white dark:bg-blue-600 md:p-1 rounded-full p-[2.5px]"
                           >
-                            <BadgeCheckIcon className="scale-130" />
+                            <BadgeCheckIcon className="md:scale-130 scale-110" />
                           </Badge>
                         )}
                       </span>
                     </CardTitle>
                     <CardDescription
-                      className={"text-muted dark:text-white/70"}
+                      className={"text-muted/80 dark:text-white/70 md:text-sm text-[14px] font-normal"}
                     >
                       {profile.city
                         ? profile.city.charAt(0).toUpperCase() +
