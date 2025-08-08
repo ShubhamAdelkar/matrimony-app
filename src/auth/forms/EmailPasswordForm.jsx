@@ -231,6 +231,7 @@ function EmailPasswordForm() {
           emailVerified: formData.emailVerified || false,
           role: formData.role || "user",
           membershipTier: formData.membershipTier || ["Free"],
+          isIDVerified: false,
         }
       );
 
