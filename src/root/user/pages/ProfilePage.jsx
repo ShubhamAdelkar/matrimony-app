@@ -334,7 +334,7 @@ const ProfilePage = ({ currentUserProfile }) => {
                 className="cursor-pointer bg-transparent shadow-none"
               >
                 {/* This Card serves as the trigger for the dialog */}
-                <Card className="lg:max-w-[292px] overflow-hidden lg:min-w-[292px] md:min-w-[220px] p-0 active:scale-98 transition-all cursor-pointer group/card flex-shrink-0 select-none border-none md:max-w-[220px] relative">
+                <Card className="lg:max-w-[292px] overflow-hidden lg:min-w-[292px] md:min-w-[220px] p-0 active:scale-98 transition-all cursor-pointer group/card flex-shrink-0 select-none md:max-w-[220px] relative min-w-[112px] border-0">
                   {primaryPhotoSrc ? (
                     <div
                       className={`w-full aspect-square object-cover max-w-[106px] rounded-full md:max-w-[292px] md:rounded-xl lg:max-w-[292px] lg:rounded-xl flex items-center justify-center border-3 p-[3px] ${isOnline ? "border-emerald-500" : "md:border-transparent"}`}

@@ -226,7 +226,7 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
                 className="bg-transparent shadow-none border-0 cursor-pointer"
               >
                 <Card
-                  className="lg:max-w-[292px] overflow-hidden lg:min-w-[292px] md:min-w-[220px] p-0 active:scale-98 transition-all cursor-pointer group/card flex-shrink-0 select-none md:max-w-[220px] relative max-w-[112px] md:rounded-none"
+                  className="lg:max-w-[292px] overflow-hidden lg:min-w-[292px] md:min-w-[220px] p-0 active:scale-98 transition-all cursor-pointer group/card flex-shrink-0 select-none md:max-w-[220px] relative min-w-[112px] md:rounded-none border-0"
                   onClick={() => handlePhotoClick(0)}
                 >
                   {primaryPhotoSrc ? (
