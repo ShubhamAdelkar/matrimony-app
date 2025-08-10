@@ -82,6 +82,7 @@ import ChurchPhotosSection2 from "./ChurchPhotosSection2";
 import EditPersonalInfoForm from "./forms/EditPersonalInfoForm";
 import { toast } from "sonner";
 import EditFamilyInfoForm from "./forms/EditFamilyInfoForm";
+import EditContactInfoForm from "./forms/EditContactInfoForm";
 
 // Helper function to format height from cm to feet/inches
 const formatHeightCmToFeetInches = (cmValue) => {
@@ -140,9 +141,10 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   // State to manage which image the carousel should start on
   const [initialSlideIndex, setInitialSlideIndex] = useState(0);
-  // ⭐ New state for controlling the Personal Info edit modal
+  // ⭐ New state for controlling the Info edit modals
   const [isPersonalInfoModalOpen, setIsPersonalInfoModalOpen] = useState(false);
   const [isFamilyInfoModalOpen, setIsFamilyInfoModalOpen] = useState(false);
+  const [isContactInfoModalOpen, setIsContactInfoModalOpen] = useState(false);
 
   // Function to format enum-like strings (e.g., "never_married" to "Never Married")
   const formatEnum = (str) => {
@@ -246,7 +248,7 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
                     </div>
                   ) : (
                     <div
-                      className={`aspect-square bg-gray-200 flex items-center justify-center font-extrabold max-w-[100px] rounded-full text-3xl md:max-w-[220px] md:rounded-xl md:text-7xl lg:max-w-[292px]  border-3 lg:rounded-xl lg:text-7xl text-gray-500 shadow-sm ${isOnline ? "border-emerald-500" : "md:border-transparent"}`}
+                      className={`aspect-square bg-gray-200 flex items-center justify-center font-extrabold max-w-[100px] rounded-full text-3xl md:max-w-[220px] md:rounded-xl md:text-7xl lg:max-w-[292px]  border-3 lg:rounded-xl lg:text-7xl text-gray-500 shadow-sm ${isOnline ? "border-emerald-500" : ""}`}
                     >
                       {profileName ? profileName.charAt(0).toUpperCase() : "?"}
                     </div>
@@ -928,11 +930,43 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
 
         {/* Contact Information */}
         <div className="border-b pb-4 text-muted-foreground">
-          <div className="flex gap-2 items-center pb-2 text-foreground">
+          <div className="flex gap-2 items-center pb-2 text-foreground justify-between md:justify-start">
             {/* <Phone className="md:size-7 size-6" /> */}
             <h3 className="md:text-xl font-medium text-[16px]">
               Contact Information
             </h3>
+            <Dialog
+              open={isContactInfoModalOpen}
+              onOpenChange={setIsContactInfoModalOpen}
+            >
+              <DialogTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size={"icon"}
+                  className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                >
+                  <SquarePen className="size-5" />
+                  <span className="sr-only">Edit Contact Information</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px] md:max-w-[600px] max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle className={"text-foreground"}>
+                    Edit Contact Information
+                  </DialogTitle>
+                  <DialogDescription>
+                    Update your contact details here.
+                  </DialogDescription>
+                </DialogHeader>
+                {/* ⭐ NEW: Render the EditFamilyInfoForm here */}
+                <EditContactInfoForm
+                // currentUserProfile={currentUserProfile}
+                // onSaveSuccess={handleSaveFamilyInfoSuccess}
+                // onCancel={() => setIsFamilyInfoModalOpen(false)}
+                />
+                {/* DialogFooter is now handled by the form component's internal buttons */}
+              </DialogContent>
+            </Dialog>
           </div>
           <Table className={"max-w-4xl"}>
             <TableBody className={"md:text-[16px] text-sm"}>
