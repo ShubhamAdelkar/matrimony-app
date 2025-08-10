@@ -83,6 +83,9 @@ import EditPersonalInfoForm from "./forms/EditPersonalInfoForm";
 import { toast } from "sonner";
 import EditFamilyInfoForm from "./forms/EditFamilyInfoForm";
 import EditContactInfoForm from "./forms/EditContactInfoForm";
+import EditLifeStyleInfoForm from "./forms/EditLifeStyleInfoForm";
+import EditChurchInfoForm from "./forms/EditChurchInfoForm";
+import EditPreferenceForm from "./forms/EditPreferenceForm";
 
 // Helper function to format height from cm to feet/inches
 const formatHeightCmToFeetInches = (cmValue) => {
@@ -145,6 +148,10 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
   const [isPersonalInfoModalOpen, setIsPersonalInfoModalOpen] = useState(false);
   const [isFamilyInfoModalOpen, setIsFamilyInfoModalOpen] = useState(false);
   const [isContactInfoModalOpen, setIsContactInfoModalOpen] = useState(false);
+  const [isLifeStyleInfoModalOpen, setIsLifeStyleInfoModalOpen] =
+    useState(false);
+  const [isChurchInfoModalOpen, setIsChurchInfoModalOpen] = useState(false);
+  const [isPreferenceModalOpen, setIsPreferenceModalOpen] = useState(false);
 
   // Function to format enum-like strings (e.g., "never_married" to "Never Married")
   const formatEnum = (str) => {
@@ -170,6 +177,20 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
   // Handler for successful save from the family info form
   const handleSaveFamilyInfoSuccess = (updatedDocument) => {
     setIsFamilyInfoModalOpen(false); // Close the modal
+    onProfileUpdate(updatedDocument);
+  };
+
+  const handleSaveLifeStyleInfoSuccess = (updatedDocument) => {
+    setIsLifeStyleInfoModalOpen(false); // Close the modal
+    onProfileUpdate(updatedDocument);
+  };
+
+  const handleSaveChurchInfoSuccess = (updatedDocument) => {
+    setIsChurchInfoModalOpen(false); // Close the modal
+    onProfileUpdate(updatedDocument);
+  };
+  const handleSavePreferenceSuccess = (updatedDocument) => {
+    setIsChurchInfoModalOpen(false); // Close the modal
     onProfileUpdate(updatedDocument);
   };
 
@@ -544,7 +565,7 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
       <CardContent className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4 p-0 md:text-[16px] border-t pt-1 lg:pt-2">
         {/* Personal Information */}
         <div className="border-b pb-4 text-muted-foreground">
-          <div className="flex gap-2 items-center pb-2 text-foreground justify-between md:justify-start">
+          <div className="flex gap-2 items-center text-foreground justify-between md:justify-start">
             {/* <CircleUser className="md:size-7 size-6.5" /> */}
             <h3 className="md:text-xl font-medium text-[16px]">
               Personal Information
@@ -723,7 +744,7 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
 
         {/* Family Information */}
         <div className="border-b pb-4 text-muted-foreground">
-          <div className="flex gap-2 items-center pb-2 text-foreground justify-between md:justify-start">
+          <div className="flex gap-2 items-center text-foreground justify-between md:justify-start">
             {/* <House className="md:size-7" /> */}
             <h3 className="md:text-xl font-medium text-[16px]">
               Family Information
@@ -821,7 +842,7 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
 
         {/* About you */}
         <div className="border-b pb-4 text-muted-foreground lg:hidden">
-          <div className="flex gap-2 items-center pb-2 text-foreground justify-between md:justify-start">
+          <div className="flex gap-2 items-center text-foreground justify-between md:justify-start">
             {/* <House className="md:size-7" /> */}
             <h3 className="md:text-xl font-medium text-[16px]">About You</h3>
           </div>
@@ -930,7 +951,7 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
 
         {/* Contact Information */}
         <div className="border-b pb-4 text-muted-foreground">
-          <div className="flex gap-2 items-center pb-2 text-foreground justify-between md:justify-start">
+          <div className="flex gap-2 items-center text-foreground justify-between md:justify-start">
             {/* <Phone className="md:size-7 size-6" /> */}
             <h3 className="md:text-xl font-medium text-[16px]">
               Contact Information
@@ -990,11 +1011,43 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
           </Table>
         </div>
 
-        {/* Lifestyle */}
+        {/* Lifestyle Information*/}
         <div className="border-b pb-4 text-muted-foreground">
-          <div className="flex gap-2 items-center pb-2 text-foreground">
+          <div className="flex gap-2 items-center text-foreground justify-between md:justify-start">
             {/* <SmilePlus className="md:size-8 size-6" /> */}
             <h3 className="md:text-xl font-medium text-[16px]">Lifestyle</h3>
+            <Dialog
+              open={isLifeStyleInfoModalOpen}
+              onOpenChange={setIsLifeStyleInfoModalOpen}
+            >
+              <DialogTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size={"icon"}
+                  className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                >
+                  <SquarePen className="size-5" />
+                  <span className="sr-only">Edit LifeStyle Information</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px] md:max-w-[600px] max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle className={"text-foreground"}>
+                    Edit LifeStyle Information
+                  </DialogTitle>
+                  <DialogDescription>
+                    Update your LifeStyle details here.
+                  </DialogDescription>
+                </DialogHeader>
+                {/* ⭐ NEW: Render the EditFamilyInfoForm here */}
+                <EditLifeStyleInfoForm
+                  currentUserProfile={currentUserProfile}
+                  onSaveSuccess={handleSaveLifeStyleInfoSuccess}
+                  onCancel={() => setIsLifeStyleInfoModalOpen(false)}
+                />
+                {/* DialogFooter is now handled by the form component's internal buttons */}
+              </DialogContent>
+            </Dialog>
           </div>
           <Table className={"max-w-4xl"}>
             <TableBody className={"md:text-[16px] text-sm"}>
@@ -1032,7 +1085,7 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
                 </TableCell>
               </TableRow>
 
-              <TableRow>
+              <TableRow className={""}>
                 <TableCell className="font-normal align-top">
                   Interests:
                 </TableCell>
@@ -1060,13 +1113,44 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
           </Table>
         </div>
 
-        {/* Church Details (if applicable) */}
+        {/* Church Information (if applicable) */}
         <div className="border-b md:border-0 pb-4 text-muted-foreground">
-          <div className="flex gap-2 items-center pb-2 text-foreground">
+          <div className="flex gap-2 items-center text-foreground justify-between md:justify-start">
             {/* <Church className="md:size-7" /> */}
             <h3 className="md:text-xl font-medium text-[16px]">
-              Church Details
+              Church Information
             </h3>
+            <Dialog
+              open={isChurchInfoModalOpen}
+              onOpenChange={setIsChurchInfoModalOpen}
+            >
+              <DialogTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size={"icon"}
+                  className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                >
+                  <SquarePen className="size-5" />
+                  <span className="sr-only">Edit Church Information</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px] md:max-w-[600px] max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle className={"text-foreground"}>
+                    Edit Church Information
+                  </DialogTitle>
+                  <DialogDescription>
+                    Update your Church details here.
+                  </DialogDescription>
+                </DialogHeader>
+                <EditChurchInfoForm
+                  currentUserProfile={currentUserProfile}
+                  onSaveSuccess={handleSaveChurchInfoSuccess}
+                  onCancel={() => setIsChurchInfoModalOpen(false)}
+                />
+                {/* DialogFooter is now handled by the form component's internal buttons */}
+              </DialogContent>
+            </Dialog>
           </div>
           <Table className={"max-w-4xl"}>
             <TableBody className={"md:text-[16px] text-sm"}>
@@ -1103,11 +1187,42 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
 
         {/* Partner Preferences */}
         <div className="pb-4 text-muted-foreground">
-          <div className="flex gap-2 items-center pb-2 text-foreground">
+          <div className="flex gap-2 items-center justify-between text-foreground md:justify-start">
             {/* <UserRoundCog className="md:size-7" /> */}
             <h3 className="md:text-xl font-medium text-[16px]">
               Partner Preferences
             </h3>
+            <Dialog
+              open={isPreferenceModalOpen}
+              onOpenChange={setIsPreferenceModalOpen}
+            >
+              <DialogTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size={"icon"}
+                  className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                >
+                  <SquarePen className="size-5" />
+                  <span className="sr-only">Edit Church Information</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px] md:max-w-[600px] max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle className={"text-foreground"}>
+                    Edit Church Information
+                  </DialogTitle>
+                  <DialogDescription>
+                    Update your Church details here.
+                  </DialogDescription>
+                </DialogHeader>
+                <EditPreferenceForm
+                  currentUserProfile={currentUserProfile}
+                  onSaveSuccess={handleSavePreferenceSuccess}
+                  onCancel={() => setIsPreferenceModalOpen(false)}
+                />
+                {/* DialogFooter is now handled by the form component's internal buttons */}
+              </DialogContent>
+            </Dialog>
           </div>
           <Table className={"max-w-4xl"}>
             <TableBody className={"md:text-[16px] text-sm"}>
