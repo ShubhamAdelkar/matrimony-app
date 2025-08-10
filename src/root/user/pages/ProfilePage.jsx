@@ -337,7 +337,7 @@ const ProfilePage = ({ currentUserProfile }) => {
                 <Card className="lg:max-w-[292px] overflow-hidden lg:min-w-[292px] md:min-w-[220px] p-0 active:scale-98 transition-all cursor-pointer group/card flex-shrink-0 select-none md:max-w-[220px] relative min-w-[112px] border-0">
                   {primaryPhotoSrc ? (
                     <div
-                      className={`w-full aspect-square object-cover max-w-[106px] rounded-full md:max-w-[292px] md:rounded-xl lg:max-w-[292px] lg:rounded-xl flex items-center justify-center border-3 p-[3px] ${isOnline ? "border-emerald-500" : "md:border-transparent"}`}
+                      className={`w-full aspect-square object-cover max-w-[106px] rounded-full md:max-w-[292px] md:rounded-xl lg:max-w-[292px] lg:rounded-xl flex items-center justify-center border-3 p-[3px] ${isOnline ? "border-emerald-500" : ""}`}
                     >
                       <img
                         src={primaryPhotoSrc}
@@ -361,7 +361,7 @@ const ProfilePage = ({ currentUserProfile }) => {
                   )}
                   {/* "+X more" badge overlay */}
                   {hasMultiplePhotos && (
-                    <Badge className="absolute bottom-2 left-16 lg:bottom-3 lg:left-54 bg-black/60 text-white rounded-full p-1 lg:text-xs text-[9px] lg:px-2 md:left-41 md:bottom-3">
+                    <Badge className="absolute bottom-2 left-16 lg:bottom-4 lg:left-54 bg-black/60 text-white rounded-full p-1 lg:text-xs text-[9px] lg:px-2 md:left-41 md:bottom-3">
                       +{photosToDisplay.length - 1} more
                     </Badge>
                   )}
