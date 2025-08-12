@@ -31,7 +31,6 @@ import {
 } from "./data/personalDetailsOptions";
 import { LoaderCircleIcon, Users } from "lucide-react";
 import { appwriteConfig, databases } from "@/lib/appwrite";
-// import { createUserAccount } from '../../lib/appwrite/client'; // <--- Import your Appwrite function here
 
 // --- NEW Zod Schema for Personal Details ---
 const personalDetailsSchema = z.object({

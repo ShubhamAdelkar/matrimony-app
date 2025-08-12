@@ -143,8 +143,6 @@ const EditLifeStyleInfoForm = ({
           hobbiesInterests: values.hobbiesInterests,
         }
       );
-
-      console.log("Lifestyle Info updated successfully:", updatedDocument);
       toast.success("Lifestyle information updated!");
       onSaveSuccess(updatedDocument);
     } catch (error) {

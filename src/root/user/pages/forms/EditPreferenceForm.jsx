@@ -31,7 +31,6 @@ import {
   drinkingHabitsOptions,
   motherTongueOptions,
   complexionOptions,
-  physicalStatusOptions,
   highestEducationOptions,
   employmentOptions,
   occupationOptions,
@@ -207,7 +206,6 @@ const EditPreferenceForm = ({
         currentUserProfile.$id,
         formattedValues
       );
-
       toast.success("Partner preferences updated!");
       onSaveSuccess(updatedDocument);
     } catch (error) {

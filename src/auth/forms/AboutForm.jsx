@@ -156,7 +156,6 @@ function AboutForm() {
 
   async function onSubmit(values) {
     setIsLoading(true);
-    console.log("About Form (Page 5) data submitted:", values);
 
     const userId = formData.userId;
 

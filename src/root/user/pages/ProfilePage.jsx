@@ -1,66 +1,22 @@
 // ProfilePage.jsx
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { databases, appwriteConfig, storage, client } from "@/lib/appwrite";
-import { useAuth } from "@/auth/context/AuthContext"; // Import useAuth
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent, CardDescription } from "@/components/ui/card";
 import {
   Lock,
   Loader2,
-  UserCircle,
   ChevronLeft,
   Heart,
-  Save,
-  SaveIcon,
   Bookmark,
-  PhoneCall,
   MessageSquareText,
-  CircleUser,
-  House,
-  Phone,
-  User,
-  Martini,
-  UserRoundCog,
-  Church,
-  CircleUserRound,
-  SmilePlus,
   Crown,
-  AtSign,
   BadgeCheckIcon,
-  ChevronRight,
   Info,
-  EllipsisVertical,
   Ellipsis,
 } from "lucide-react";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import { heightOptions } from "@/auth/forms/data/personalDetailsOptions";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import {
   Tooltip,
   TooltipContent,
@@ -73,19 +29,9 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { useParams, useNavigate, Outlet } from "react-router-dom";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { useParams, useNavigate } from "react-router-dom";
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 // Import useParams and useNavigate
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import ChurchPhotosSection from "./ChurchPhotosSection";
 

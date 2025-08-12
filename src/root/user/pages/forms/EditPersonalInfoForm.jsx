@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -26,17 +26,13 @@ import {
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner"; // For toast notifications
 // Assuming these are configured correctly
 import { appwriteConfig, databases } from "@/lib/appwrite";
-import { CardContent } from "@/components/ui/card";
 
 // --- External data imports (assuming they are in the specified paths) ---
 import marathiCastes from "@/auth/forms/data/marathiCastes";
@@ -59,21 +55,6 @@ import {
 // --- Define your Enum Options (These should match your Appwrite attributes) ---
 // Note: These are not used in the final code but are here for reference from your original code.
 const bodyTypeOptions = ["Slim", "Athletic", "Average", "Heavy"];
-const maritalStatusOptions = [
-  "Never Married",
-  "Divorced",
-  "Widowed",
-  "Separated",
-  "Annulled",
-];
-const employedInOptions = [
-  "Government",
-  "Private",
-  "Business",
-  "Not Employed",
-  "Student",
-  "Retired",
-];
 const motherTongueOptions = [
   { value: "marathi", label: "Marathi" },
   { value: "hindi", label: "Hindi" },
@@ -301,7 +282,9 @@ function EditPersonalInfoForm({ currentUserProfile, onSaveSuccess, onCancel }) {
         ? String(currentUserProfile.weight)
         : "",
       bodyType: currentUserProfile?.bodyType || undefined,
-      motherTongue: Array.isArray(currentUserProfile?.motherTongue) ? currentUserProfile.motherTongue : [],
+      motherTongue: Array.isArray(currentUserProfile?.motherTongue)
+        ? currentUserProfile.motherTongue
+        : [],
       maritalStatus: currentUserProfile?.maritalStatus || undefined,
       state: currentUserProfile?.state || "",
       district: currentUserProfile?.district || "",
@@ -397,10 +380,7 @@ function EditPersonalInfoForm({ currentUserProfile, onSaveSuccess, onCancel }) {
         currentUserProfile.$id,
         formattedValues
       );
-
-      console.log("Personal Info updated successfully:", updatedDocument);
       toast.success("Personal information updated!");
-      // ⭐ MODIFIED: Pass the newly updated document back to the parent.
       onSaveSuccess(updatedDocument);
     } catch (error) {
       console.error("Error updating personal info:", error);

@@ -1,19 +1,7 @@
 import { navMain } from "@/app/data";
-import {
-  Bell,
-  Command,
-  Heart,
-  Menu,
-  MenuIcon,
-  Moon,
-  Settings,
-  Sun,
-  User,
-  UserCog2,
-  UserPen,
-} from "lucide-react";
-import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
-import { BadgeCheck, ChevronsUpDown, CreditCard, LogOut } from "lucide-react";
+import { Heart, MenuIcon, Settings, UserCog2, UserPen } from "lucide-react";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { LogOut } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import {
   DropdownMenu,
@@ -29,7 +17,6 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { ModeToggle } from "../mode-toggle";
 import {
   Sidebar,
   SidebarContent,
@@ -39,8 +26,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "../ui/sidebar";
-import { useTheme } from "@/components/theme-provider";
-import { Button } from "../ui/button";
 import { useNavSource } from "@/context/NavSourceContext";
 import { useAuth } from "@/auth/context/AuthContext";
 
@@ -51,7 +36,7 @@ function LeftBar({ isAdmin, currentUserProfile, ...props }) {
   const navigate = useNavigate();
   const { activeNavSource, setActiveNavSource } = useNavSource();
 
-  // * Determine the profile photo source
+  // Determine the profile photo source
   const profilePhotoIDs = currentUserProfile?.profilePhotoID || [];
   const profilePhotoURLs = currentUserProfile?.profilePhotoURL || [];
 

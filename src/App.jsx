@@ -1,4 +1,3 @@
-// App.jsx
 import {
   BrowserRouter,
   Navigate,
@@ -7,8 +6,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import "./App.css";
-import React, { useState, useEffect } from "react";
-import { ID } from "appwrite";
+import { useState, useEffect } from "react";
 
 // Auth related imports
 import AuthLayout from "./auth/AuthLayout";
@@ -31,7 +29,7 @@ import InterestPage from "./root/user/pages/InterestPage";
 import MessagePage from "./root/user/pages/MessagePage";
 import PreferencePage from "./root/user/pages/PreferencePage";
 import { databases, appwriteConfig, client } from "@/lib/appwrite";
-import { Heart, Loader2 } from "lucide-react";
+import { Heart } from "lucide-react";
 
 // ADMIN IMPORTS
 import AdminDashboardPage from "./root/admin/pages/AdminDashboardPage";
@@ -181,9 +179,6 @@ function AppContent() {
         // );
       } catch (err) {
         if (err.code === 404) {
-          console.warn(
-            "AppContent: User profile not found. User needs to complete profile."
-          );
           setCurrentUserProfile(null); // No profile found
           setNeedsProfileCompletion(true); // Set flag to redirect to onboarding
         } else {
@@ -237,7 +232,6 @@ function AppContent() {
     if (isAdmin) {
       // Admin is logged in. Redirect to /admin if not already on an admin path.
       if (!location.pathname.startsWith("/admin")) {
-        console.log("AppContent: Authenticated admin, redirecting to /admin.");
         return <Navigate to="/admin" replace />;
       }
     } else {

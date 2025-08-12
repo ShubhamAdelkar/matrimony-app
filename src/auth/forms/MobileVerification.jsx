@@ -18,7 +18,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { CheckCheckIcon, LoaderCircleIcon, Smartphone } from "lucide-react"; // Changed icon to Smartphone
+import { CheckCheckIcon, LoaderCircleIcon, Smartphone } from "lucide-react";
 import { toast } from "sonner";
 import * as z from "zod";
 

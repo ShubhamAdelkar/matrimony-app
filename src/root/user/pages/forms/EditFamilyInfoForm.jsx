@@ -95,8 +95,6 @@ const EditFamilyInfoForm = ({
         currentUserProfile.$id,
         formattedValues
       );
-
-      console.log("Family Info updated successfully:", updatedDocument);
       toast.success("Family information updated!");
       // Call the success handler with the updated document
       onSaveSuccess(updatedDocument);

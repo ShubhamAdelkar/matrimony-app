@@ -2,13 +2,10 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import {
-  // Ensure all UI components are correctly imported
-  Form,
-} from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
 
 import { useMultiStepForm } from "../context/MultiStepFormContext";
-import { useNavigate } from "react-router-dom"; // Correct: useNavigate is a hook for programmatic navigation
+import { useNavigate } from "react-router-dom";
 import * as z from "zod";
 import {
   Card,
@@ -55,10 +52,6 @@ function EmailVerification() {
     setIsSendingEmail(true);
     try {
       // ⭐ Appwrite email verification initiation
-      // The redirect URL is where Appwrite sends the user AFTER they click the link in the email.
-      // This URL must be configured in your Appwrite project's "Auth -> Platforms -> Web -> Add redirect URL"
-      // For development, it might be http://localhost:5173/verify-email-callback or similar.
-      // For production, it would be your domain: https://yourdomain.com/verify-email-callback
       await account.createVerification(
         import.meta.env.VITE_APPWRITE_VERIFICATION_REDIRECT_URL // Using environment variable
       );

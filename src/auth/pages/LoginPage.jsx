@@ -1,6 +1,4 @@
 // src/auth/pages/LoginPage.jsx
-import React from "react";
-import AuthLayout from "../AuthLayout"; // Import AuthLayout
 import LoginForm from "../forms/LoginForm"; // Your LoginForm component
 import { useNavigate } from "react-router-dom";
 // import { createEmailPasswordSession } from '../../lib/appwrite/client'; // Your Appwrite login function
