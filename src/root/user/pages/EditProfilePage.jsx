@@ -1217,7 +1217,7 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
                     ? currentUserProfile.prefMaritalStatus
                         .map(formatEnum)
                         .join(", ")
-                    : currentUserProfile.maritalStatus}
+                    : formatEnum(currentUserProfile.maritalStatus)}
                 </TableCell>
               </TableRow>
 
@@ -1229,7 +1229,7 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
                     ? currentUserProfile.prefMotherTongue
                         .map(formatEnum)
                         .join(", ")
-                    : "Marathi"}
+                    : formatEnum(currentUserProfile.motherTongue)}
                 </TableCell>
               </TableRow>
 
@@ -1277,7 +1277,7 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
                     ? currentUserProfile.prefSmokingHabits
                         .map(formatEnum)
                         .join(", ")
-                    : "Doesn't Matter"}
+                    : "Not Specified"}
                 </TableCell>
               </TableRow>
 
@@ -1289,7 +1289,7 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
                     ? currentUserProfile.prefDrinkingHabits
                         .map(formatEnum)
                         .join(", ")
-                    : "Doesn't Matter"}
+                    : "Not Specified"}
                 </TableCell>
               </TableRow>
 
@@ -1303,8 +1303,8 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
               </TableRow>
 
               <TableRow>
-                <TableCell className="">Caste:</TableCell>
-                <TableCell className="text-foreground font-medium">
+                <TableCell className="align-top">Caste:</TableCell>
+                <TableCell className="text-foreground font-medium line-clamp-2">
                   {formatEnum(
                     currentUserProfile.prefCaste &&
                       currentUserProfile.prefCaste.length > 0
@@ -1317,7 +1317,7 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
               </TableRow>
 
               <TableRow>
-                <TableCell className="">Education Level:</TableCell>
+                <TableCell className="align-top">Education Level:</TableCell>
                 <TableCell className="text-foreground font-medium">
                   {currentUserProfile.prefEducationLevel &&
                   currentUserProfile.prefEducationLevel.length > 0

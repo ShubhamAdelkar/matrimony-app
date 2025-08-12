@@ -1167,7 +1167,7 @@ const ProfilePage = ({ currentUserProfile }) => {
                   {profile.prefMaritalStatus &&
                   profile.prefMaritalStatus.length > 0
                     ? profile.prefMaritalStatus.map(formatEnum).join(", ")
-                    : profile.maritalStatus}
+                    : formatEnum(profile.maritalStatus)}
                 </TableCell>
               </TableRow>
 
@@ -1177,7 +1177,7 @@ const ProfilePage = ({ currentUserProfile }) => {
                   {profile.prefMotherTongue &&
                   profile.prefMotherTongue.length > 0
                     ? profile.prefMotherTongue.map(formatEnum).join(", ")
-                    : "Marathi"}
+                    : formatEnum(profile.motherTongue)}
                 </TableCell>
               </TableRow>
 
