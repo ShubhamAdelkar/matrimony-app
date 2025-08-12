@@ -1,22 +1,10 @@
 import { useAuth } from "@/auth/context/AuthContext";
 import { heightOptions } from "@/auth/forms/data/personalDetailsOptions";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Play,
-  Heart,
-  MoreHorizontal,
-  Crown,
-  BadgeCheckIcon,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, Crown, BadgeCheckIcon } from "lucide-react";
 import {
   Card,
-  CardAction,
-  CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -25,7 +13,6 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Skeleton } from "@/components/ui/skeleton";
 import { appwriteConfig, databases, storage } from "@/lib/appwrite";
 import { Query } from "appwrite";
 import { Loader2 } from "lucide-react";
