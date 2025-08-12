@@ -7,8 +7,6 @@ const religions = [
     "Sikh",
     "Jain",
     "Buddhist",
-    "Parsi",
-    "Jewish",
 ]
 
 export default religions;

@@ -83,5 +83,8 @@ export const familyTypes = [
  */
 export const disabilityOptions = [
     { value: "none", label: "None" },
-    { value: "yes", label: "Yes" },
+    { value: "vision", label: "Vision" },
+    { value: "hearing", label: "Hearing" },
+    { value: "physical-motor", label: "Physical/Motor" },
+    { value: "neurodivergent", label: "Neurodivergent/ADHD" }
 ];
