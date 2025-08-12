@@ -43,11 +43,11 @@ const PhotoDisplayGridOrStack = ({ photos, onPhotoClick }) => {
     const visiblePhotos = photos.slice(0, maxStackedPhotos);
 
     return (
-      <div className="relative md:w-40 md:h-46 h-40 w-35 cursor-pointer pl-2.5 perspective-origin-center perspective-distant p-2.5">
+      <div className="relative md:w-40 md:h-46 h-40 w-35 cursor-pointer pl-2.5  p-2.5">
         {visiblePhotos.map((url, index) => (
           <div
             key={url} // Use URL as key, assuming unique
-            className="absolute w-full md:h-40 h-35 rounded-lg overflow-hidden md:shadow-lg shadow-sm transition-all duration-300 ease-in-out backdrop-blur-3xl bg-ring border border-ring"
+            className="absolute w-full md:h-40 h-35 rounded-lg overflow-hidden md:shadow-lg shadow-sm transition-all duration-300 ease-in-out backdrop-blur-xl bg-ring border border-ring"
             style={{
               transform: `rotateZ(${index * 6 - 6}deg) translateY(${index * -2}px)`, // Slight rotation and vertical offset
               zIndex: maxStackedPhotos - index, // Ensure correct stacking order
