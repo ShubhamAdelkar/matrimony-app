@@ -690,7 +690,7 @@ const ProfilePage = ({ currentUserProfile }) => {
           <div className="flex gap-2 items-center pb-2 text-foreground">
             {/* <CircleUser className="md:size-7 size-6.5" /> */}
             <h3 className="md:text-xl font-medium text-[16px]">
-              Personal Information
+              Profile Information
             </h3>
           </div>
           <Table className={"max-w-4xl"}>
@@ -1221,7 +1221,7 @@ const ProfilePage = ({ currentUserProfile }) => {
                   {profile.prefMaritalStatus &&
                   profile.prefMaritalStatus.length > 0
                     ? profile.prefMaritalStatus.map(formatEnum).join(", ")
-                    : "Never Married"}
+                    : profile.maritalStatus}
                 </TableCell>
               </TableRow>
 
@@ -1230,22 +1230,21 @@ const ProfilePage = ({ currentUserProfile }) => {
                 <TableCell className="text-foreground font-medium">
                   {profile.prefMotherTongue &&
                   profile.prefMotherTongue.length > 0
-                    ? profile.prefMotherTongue.join(", ")
+                    ? profile.prefMotherTongue.map(formatEnum).join(", ")
                     : "Marathi"}
                 </TableCell>
               </TableRow>
 
-              {profile.prefComplexion &&
-                profile.prefMotherTongue.length > 0 && (
-                  <TableRow>
-                    <TableCell className="">Complexion:</TableCell>
-                    <TableCell className="text-foreground font-medium">
-                      {profile.prefComplexion.map(formatEnum).join(", ")}
-                    </TableCell>
-                  </TableRow>
-                )}
+              {profile.prefComplexion && profile.prefComplexion.length > 0 && (
+                <TableRow>
+                  <TableCell className="">Complexion:</TableCell>
+                  <TableCell className="text-foreground font-medium">
+                    {profile.prefComplexion.map(formatEnum).join(", ")}
+                  </TableCell>
+                </TableRow>
+              )}
 
-              <TableRow>
+              {/* <TableRow>
                 <TableCell className="">Physical Status:</TableCell>
                 <TableCell className="text-foreground font-medium">
                   {profile.prefPhysicalStatus &&
@@ -1253,7 +1252,7 @@ const ProfilePage = ({ currentUserProfile }) => {
                     ? profile.prefPhysicalStatus.map(formatEnum).join(", ")
                     : "Normal"}
                 </TableCell>
-              </TableRow>
+              </TableRow> */}
 
               <TableRow>
                 <TableCell className="">Smoking Habits:</TableCell>
@@ -1261,7 +1260,7 @@ const ProfilePage = ({ currentUserProfile }) => {
                   {profile.prefSmokingHabits &&
                   profile.prefSmokingHabits.length > 0
                     ? profile.prefSmokingHabits.map(formatEnum).join(", ")
-                    : "Doesn't Matter"}
+                    : "Not Specified"}
                 </TableCell>
               </TableRow>
 
@@ -1271,16 +1270,15 @@ const ProfilePage = ({ currentUserProfile }) => {
                   {profile.prefDrinkingHabits &&
                   profile.prefDrinkingHabits.length > 0
                     ? profile.prefDrinkingHabits.map(formatEnum).join(", ")
-                    : "Doesn't Matter"}
+                    : "Not Specified"}
                 </TableCell>
               </TableRow>
 
               <TableRow>
                 <TableCell className="">Religion:</TableCell>
                 <TableCell className="text-foreground font-medium">
-                  {profile.prefReligion && profile.prefReligion.length > 0
-                    ? profile.prefReligion.join(", ")
-                    : profile.religion || "Any"}
+                  {(profile.prefReligion && formatEnum(profile.prefReligion)) ||
+                    formatEnum(profile.religion)}
                 </TableCell>
               </TableRow>
 
@@ -1338,7 +1336,7 @@ const ProfilePage = ({ currentUserProfile }) => {
                 </TableCell>
               </TableRow>
 
-              <TableRow>
+              {/* <TableRow>
                 <TableCell className="">Location:</TableCell>
                 <TableCell className="text-foreground font-medium">
                   {profile.prefState && profile.prefState.length > 0
@@ -1349,7 +1347,7 @@ const ProfilePage = ({ currentUserProfile }) => {
                     ? profile.prefCity.join(", ")
                     : " Any City"}
                 </TableCell>
-              </TableRow>
+              </TableRow> */}
             </TableBody>
           </Table>
         </div>

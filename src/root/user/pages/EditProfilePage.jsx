@@ -1,44 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { databases, appwriteConfig, storage, client } from "@/lib/appwrite";
-import { useAuth } from "@/auth/context/AuthContext"; // Import useAuth
+import { useState } from "react";
+import { appwriteConfig, storage } from "@/lib/appwrite";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription } from "@/components/ui/card";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Lock,
-  Loader2,
-  UserCircle,
   ChevronLeft,
-  Heart,
-  Save,
-  SaveIcon,
-  Bookmark,
-  PhoneCall,
-  MessageSquareText,
-  CircleUser,
-  House,
-  Phone,
-  User,
-  Martini,
-  UserRoundCog,
-  Church,
-  CircleUserRound,
-  SmilePlus,
   Crown,
-  AtSign,
   BadgeCheckIcon,
-  Check,
-  PencilIcon,
   SquarePen,
-  ChevronRight,
   Info,
-  EllipsisVertical,
   Ellipsis,
 } from "lucide-react";
 import {
@@ -51,10 +20,8 @@ import {
 import { heightOptions } from "@/auth/forms/data/personalDetailsOptions";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -64,23 +31,12 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useParams, useNavigate, Outlet } from "react-router-dom";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { useNavigate } from "react-router-dom";
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 // Import useParams and useNavigate
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import ChurchPhotosSection2 from "./ChurchPhotosSection2";
 import EditPersonalInfoForm from "./forms/EditPersonalInfoForm";
-import { toast } from "sonner";
 import EditFamilyInfoForm from "./forms/EditFamilyInfoForm";
 import EditContactInfoForm from "./forms/EditContactInfoForm";
 import EditLifeStyleInfoForm from "./forms/EditLifeStyleInfoForm";
@@ -190,7 +146,7 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
     onProfileUpdate(updatedDocument);
   };
   const handleSavePreferenceSuccess = (updatedDocument) => {
-    setIsChurchInfoModalOpen(false); // Close the modal
+    setIsPreferenceModalOpen(false); // Close the modal
     onProfileUpdate(updatedDocument);
   };
 
@@ -568,7 +524,7 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
           <div className="flex gap-2 items-center text-foreground justify-between md:justify-start">
             {/* <CircleUser className="md:size-7 size-6.5" /> */}
             <h3 className="md:text-xl font-medium text-[16px]">
-              Personal Information
+              Profile Information
             </h3>
             <Dialog
               open={isPersonalInfoModalOpen}
@@ -1203,16 +1159,16 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
                   className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                 >
                   <SquarePen className="size-5" />
-                  <span className="sr-only">Edit Church Information</span>
+                  <span className="sr-only">Edit Preference Information</span>
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[425px] md:max-w-[600px] max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle className={"text-foreground"}>
-                    Edit Church Information
+                    Edit Preference Information
                   </DialogTitle>
                   <DialogDescription>
-                    Update your Church details here.
+                    Update your preference details here.
                   </DialogDescription>
                 </DialogHeader>
                 <EditPreferenceForm
@@ -1220,7 +1176,6 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
                   onSaveSuccess={handleSavePreferenceSuccess}
                   onCancel={() => setIsPreferenceModalOpen(false)}
                 />
-                {/* DialogFooter is now handled by the form component's internal buttons */}
               </DialogContent>
             </Dialog>
           </div>
@@ -1262,7 +1217,7 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
                     ? currentUserProfile.prefMaritalStatus
                         .map(formatEnum)
                         .join(", ")
-                    : "Never Married"}
+                    : currentUserProfile.maritalStatus}
                 </TableCell>
               </TableRow>
 
@@ -1271,13 +1226,15 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
                 <TableCell className="text-foreground font-medium">
                   {currentUserProfile.prefMotherTongue &&
                   currentUserProfile.prefMotherTongue.length > 0
-                    ? currentUserProfile.prefMotherTongue.join(", ")
+                    ? currentUserProfile.prefMotherTongue
+                        .map(formatEnum)
+                        .join(", ")
                     : "Marathi"}
                 </TableCell>
               </TableRow>
 
               {currentUserProfile.prefComplexion &&
-                currentUserProfile.prefMotherTongue.length > 0 && (
+                currentUserProfile.prefComplexion.length > 0 && (
                   <TableRow>
                     <TableCell className="">Complexion:</TableCell>
                     <TableCell className="text-foreground font-medium">
@@ -1288,7 +1245,7 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
                   </TableRow>
                 )}
 
-              <TableRow>
+              {/* <TableRow>
                 <TableCell className="">Physical Status:</TableCell>
                 <TableCell className="text-foreground font-medium">
                   {currentUserProfile.prefPhysicalStatus &&
@@ -1298,7 +1255,7 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
                         .join(", ")
                     : "Normal"}
                 </TableCell>
-              </TableRow>
+              </TableRow> */}
 
               {/* <TableRow>
                 <TableCell className="">Eating Habits:</TableCell>
@@ -1339,10 +1296,9 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
               <TableRow>
                 <TableCell className="">Religion:</TableCell>
                 <TableCell className="text-foreground font-medium">
-                  {currentUserProfile.prefReligion &&
-                  currentUserProfile.prefReligion.length > 0
-                    ? currentUserProfile.prefReligion.join(", ")
-                    : currentUserProfile.religion || "Any"}
+                  {(currentUserProfile.prefReligion &&
+                    formatEnum(currentUserProfile.prefReligion)) ||
+                    formatEnum(currentUserProfile.religion)}
                 </TableCell>
               </TableRow>
 
@@ -1408,7 +1364,7 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
                 </TableCell>
               </TableRow>
 
-              <TableRow>
+              {/* <TableRow>
                 <TableCell className="">Location:</TableCell>
                 <TableCell className="text-foreground font-medium">
                   {currentUserProfile.prefState &&
@@ -1421,7 +1377,7 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
                     ? currentUserProfile.prefCity.join(", ")
                     : " Any City"}
                 </TableCell>
-              </TableRow>
+              </TableRow> */}
             </TableBody>
           </Table>
         </div>
