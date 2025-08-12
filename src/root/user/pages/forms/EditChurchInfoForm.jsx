@@ -454,7 +454,7 @@ const EditChurchInfoForm = ({
                                 <X className="size-3.5" />
                               </Button>
                               {file.isExisting && (
-                                <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs p-1 pl-1.5 rounded-b-md truncate">
+                                <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs p-1 pl-1.5 rounded-b-md truncate backdrop-blur-xs">
                                   Existing Photo
                                 </div>
                               )}
