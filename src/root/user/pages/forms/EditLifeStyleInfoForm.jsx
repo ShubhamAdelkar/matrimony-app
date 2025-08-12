@@ -78,8 +78,9 @@ const MultiSelectButtonGroup = ({ options, value, onChange }) => {
           onClick={() => toggleOption(option.value)}
           size={"sm"}
           className={cn(
-            "rounded-full transition-colors duration-200",
-            value.includes(option.value) && "bg-primary text-primary-foreground"
+            "rounded-full transition-colors duration-200 font-light",
+            value.includes(option.value) &&
+              "bg-primary text-primary-foreground font-medium"
           )}
         >
           {option.label}
