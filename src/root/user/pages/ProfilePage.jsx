@@ -395,7 +395,7 @@ const ProfilePage = ({ currentUserProfile }) => {
             </span>
             <Card className="p-0 bg-background w-full min-w-full shadow-none flex border-0">
               <CardDescription className={"p-0 flex flex-col items-start"}>
-                <p className="lg:text-3xl font-medium md:text-2xl text-foreground lg:pb-1 text-xl flex items-start gap-3">
+                <p className="lg:text-3xl font-bold md:text-2xl text-foreground lg:pb-1 text-lg flex items-center">
                   {profile.name}
                 </p>
                 <p
