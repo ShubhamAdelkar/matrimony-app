@@ -570,7 +570,7 @@ function EditPersonalInfoForm({ currentUserProfile, onSaveSuccess, onCancel }) {
                     <RadioGroup.Item
                       key={maritalStatus.value}
                       value={maritalStatus.value}
-                      className="ring-[1px] ring-border rounded py-1 px-2 data-[state=checked]:ring-2 data-[state=checked]:ring-blue-500 cursor-pointer data-[state=checked]:text-muted-foreground"
+                      className="ring-[1px] ring-border rounded py-1 px-2 data-[state=checked]:ring-2 data-[state=checked]:ring-blue-500 cursor-pointer"
                     >
                       <span className="tracking-tight text-sm">
                         {maritalStatus.label}

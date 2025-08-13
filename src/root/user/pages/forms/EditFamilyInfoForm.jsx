@@ -15,9 +15,18 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { databases, appwriteConfig } from "@/lib/appwrite";
+import { familyTypes } from "@/auth/forms/data/personalDetailsOptions";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 // Define the Zod schema for family information validation
 const familyInfoSchema = z.object({
+  familyType: z.string().optional(),
   fatherOccupation: z.string().optional(),
   motherOccupation: z.string().optional(),
   numberOfBrothers: z.string().optional(), // Use string to handle empty input
@@ -40,6 +49,7 @@ const EditFamilyInfoForm = ({
     defaultValues: {
       // Pre-fill form fields with current user profile data,
       // converting numbers to strings for input fields.
+      familyType: currentUserProfile?.familyType || "",
       fatherOccupation: currentUserProfile?.fatherOccupation || "",
       motherOccupation: currentUserProfile?.motherOccupation || "",
       numberOfBrothers: currentUserProfile?.numberOfBrothers
@@ -56,6 +66,7 @@ const EditFamilyInfoForm = ({
   // ensuring the form always reflects the latest data.
   useEffect(() => {
     form.reset({
+      familyType: currentUserProfile?.familyType || "",
       fatherOccupation: currentUserProfile?.fatherOccupation || "",
       motherOccupation: currentUserProfile?.motherOccupation || "",
       numberOfBrothers: currentUserProfile?.numberOfBrothers
@@ -114,6 +125,38 @@ const EditFamilyInfoForm = ({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        {/* Family Type */}
+        <FormField
+          control={form.control}
+          name="familyType"
+          render={({ field }) => (
+            <FormItem className="w-full">
+              <FormLabel>Family Type</FormLabel>
+              <FormControl>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <SelectTrigger className="w-full cursor-pointer">
+                    <SelectValue placeholder="Select family type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {familyTypes.map((option) => (
+                      <SelectItem
+                        className="cursor-pointer"
+                        key={option.value}
+                        value={option.value}
+                      >
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
         {/* Father's Occupation */}
         <FormField
           control={form.control}

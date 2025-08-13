@@ -243,9 +243,9 @@ const EditPreferenceForm = ({
             onClick={() => toggleOption(option.value)}
             size={"sm"}
             className={cn(
-              "rounded-full transition-colors duration-200 font-light",
+              "rounded-full transition-colors duration-200 font-light dark:text-muted-foreground",
               value.includes(option.value) &&
-                "bg-primary text-primary-foreground font-medium"
+                "bg-primary dark:text-background font-normal text-primary-foreground"
             )}
           >
             {option.label}
@@ -285,9 +285,9 @@ const EditPreferenceForm = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         {/* Age Range - Single selects with dynamic max options */}
-        <div className="flex gap-6 flex-col justify-between">
+        <div className="flex gap-4 flex-col justify-between">
           <FormField
             control={form.control}
             name="prefAgeMin"
@@ -339,7 +339,7 @@ const EditPreferenceForm = ({
         </div>
 
         {/* Height Range - Single selects with dynamic max options */}
-        <div className="flex gap-6 flex-col justify-between">
+        <div className="flex gap-4 flex-col justify-between">
           <FormField
             control={form.control}
             name="prefHeightMin"
@@ -411,7 +411,7 @@ const EditPreferenceForm = ({
                     <RadioGroup.Item
                       key={religion.value}
                       value={religion.value}
-                      className="ring-[1px] ring-border rounded py-1 px-2 data-[state=checked]:ring-2 data-[state=checked]:ring-blue-500 cursor-pointer data-[state=checked]:text-muted-foreground"
+                      className="ring-[1px] ring-border rounded py-1 px-2 data-[state=checked]:ring-2 data-[state=checked]:ring-blue-500 cursor-pointer "
                     >
                       <span className="font-semibold tracking-tight">
                         {/* UPDATED: Using the 'label' for display */}

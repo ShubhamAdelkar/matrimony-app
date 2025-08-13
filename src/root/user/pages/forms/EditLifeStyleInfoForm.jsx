@@ -80,7 +80,7 @@ const MultiSelectButtonGroup = ({ options, value, onChange }) => {
           className={cn(
             "rounded-full transition-colors duration-200 font-light",
             value.includes(option.value) &&
-              "bg-primary text-primary-foreground font-medium"
+              "bg-primary dark:text-background font-normal text-primary-foreground"
           )}
         >
           {option.label}

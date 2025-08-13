@@ -192,8 +192,8 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
       </Button>
 
       {/* Profile Card Header */}
-      <div className="lg:gap-6 flex flex-col gap-2 md:gap-3 md:mb-2">
-        <div className="flex md:flex-row p-0 lg:gap-6 flex-col gap-2 md:gap-4">
+      <div className="lg:gap-4 flex flex-col gap-2 md:gap-3 md:mb-2">
+        <div className="flex md:flex-row p-0 lg:gap-4 flex-col gap-2 md:gap-4">
           <div className="flex gap-2">
             <Dialog
               open={isModalOpen}
@@ -304,7 +304,7 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
             <Ellipsis className="md:hidden" />
           </div>
 
-          <div className="w-full flex flex-col justify-end md:gap-2">
+          <div className="w-full flex flex-col justify-end md:gap-1">
             <span className="flex items-center gap-[5px]">
               {currentUserProfile.isIDVerified && (
                 <Badge
@@ -312,9 +312,7 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
                   className="bg-blue-500 text-white dark:bg-blue-600 text-xs flex items-center rounded-full px-[5px] text-center pr-2"
                 >
                   <BadgeCheckIcon className="self-center scale-98" />
-                  <span className="text-[10px] md:text-[10px] lg:text-[12px]">
-                    Verified
-                  </span>
+                  <span className="text-[12px] font-normal">Verified</span>
                 </Badge>
               )}
             </span>
@@ -606,19 +604,9 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
                 <TableCell className="">Mother Tongue:</TableCell>
                 <TableCell className="text-foreground font-medium">
                   {currentUserProfile.motherTongue &&
-                  currentUserProfile.motherTongue.length > 0 ? (
-                    <div className="flex flex-wrap gap-1">
-                      {currentUserProfile.motherTongue
-                        .filter((lang) => lang.trim())
-                        .map((lang, index) => (
-                          <p key={index} className="rounded-full font-medium">
-                            {formatEnum(lang.trim())}
-                          </p>
-                        ))}
-                    </div>
-                  ) : (
-                    "Not specified"
-                  )}
+                  currentUserProfile.motherTongue.length > 0
+                    ? currentUserProfile.motherTongue.map(formatEnum).join(", ")
+                    : "Not specified"}
                 </TableCell>
               </TableRow>
 
@@ -770,8 +758,8 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
                   {currentUserProfile.numberOfBrothers !== undefined &&
                   currentUserProfile.numberOfBrothers !== null &&
                   currentUserProfile.numberOfBrothers > 0
-                    ? `${currentUserProfile.numberOfBrothers} ${currentUserProfile.numberOfBrothers === 1 ? "brother" : "brothers"}`
-                    : "Not specified"}
+                    ? `${currentUserProfile.numberOfBrothers} ${currentUserProfile.numberOfBrothers === 1 ? "Brother" : "Brothers"}`
+                    : "No Brother"}
                 </TableCell>
               </TableRow>
 
@@ -781,8 +769,8 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
                   {currentUserProfile.numberOfSisters !== undefined &&
                   currentUserProfile.numberOfSisters !== null &&
                   currentUserProfile.numberOfSisters > 0
-                    ? `${currentUserProfile.numberOfSisters} ${currentUserProfile.numberOfSisters === 1 ? "sister" : "sisters"}`
-                    : "Not specified"}
+                    ? `${currentUserProfile.numberOfSisters} ${currentUserProfile.numberOfSisters === 1 ? "Sister" : "Sisters"}`
+                    : "No Sister"}
                 </TableCell>
               </TableRow>
 
@@ -1229,7 +1217,9 @@ const EditProfilePage = ({ currentUserProfile, onProfileUpdate }) => {
                     ? currentUserProfile.prefMotherTongue
                         .map(formatEnum)
                         .join(", ")
-                    : formatEnum(currentUserProfile.motherTongue)}
+                    : currentUserProfile.motherTongue
+                        .map(formatEnum)
+                        .join(", ")}
                 </TableCell>
               </TableRow>
 

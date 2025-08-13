@@ -267,8 +267,8 @@ const ProfilePage = ({ currentUserProfile }) => {
       </Button>
 
       {/* Profile Card Header */}
-      <div className="lg:gap-6 flex flex-col gap-2 md:gap-3">
-        <div className="flex md:flex-row p-0 lg:gap-6 flex-col gap-2 md:gap-4">
+      <div className="lg:gap-4 flex flex-col gap-2 md:gap-3">
+        <div className="flex md:flex-row p-0 lg:gap-4 flex-col gap-2 md:gap-4">
           <div className="flex gap-2">
             <Dialog
               open={isModalOpen}
@@ -381,7 +381,7 @@ const ProfilePage = ({ currentUserProfile }) => {
             <Ellipsis className="items-start md:hidden" />
           </div>
 
-          <div className="w-full flex flex-col justify-end md:gap-2">
+          <div className="w-full flex flex-col justify-end md:gap-1">
             <span className="flex items-center gap-1">
               {profile.isIDVerified && (
                 <Badge
@@ -389,9 +389,7 @@ const ProfilePage = ({ currentUserProfile }) => {
                   className="bg-blue-500 text-white dark:bg-blue-600 text-xs flex items-center rounded-full px-[5px] text-center pr-2"
                 >
                   <BadgeCheckIcon className="self-center scale-98" />
-                  <span className="text-[10px] md:text-[10px] lg:text-[12px]">
-                    Verified
-                  </span>
+                  <span className="text-[12px] font-normal">Verified</span>
                 </Badge>
               )}
             </span>
@@ -1177,7 +1175,7 @@ const ProfilePage = ({ currentUserProfile }) => {
                   {profile.prefMotherTongue &&
                   profile.prefMotherTongue.length > 0
                     ? profile.prefMotherTongue.map(formatEnum).join(", ")
-                    : formatEnum(profile.motherTongue)}
+                    : profile.motherTongue.map(formatEnum).join(", ")}
                 </TableCell>
               </TableRow>
 

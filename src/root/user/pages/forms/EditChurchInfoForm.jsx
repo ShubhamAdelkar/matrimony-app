@@ -281,7 +281,7 @@ const EditChurchInfoForm = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         {/* Church Name Field */}
         <FormField
           control={form.control}
@@ -402,9 +402,9 @@ const EditChurchInfoForm = ({
                     {files.length > 0 ? (
                       <div className="flex w-full flex-col gap-3">
                         <div className="flex items-center justify-between gap-2">
-                          <h3 className="truncate text-sm font-medium">
+                          {/* <h3 className="truncate text-sm font-medium">
                             Church Photos ({files.length}/{maxFiles})
-                          </h3>
+                          </h3> */}
                           <Button
                             type="button"
                             variant="outline"
@@ -424,11 +424,15 @@ const EditChurchInfoForm = ({
                           </Button>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-                          {files.map((file) => (
+                        <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+                          {files.map((file, index) => (
                             <div
                               key={file.id}
-                              className="bg-accent relative aspect-square rounded-md"
+                              className={`bg-accent relative aspect-square rounded-md ${
+                                files.length === 3 && index === files.length - 1
+                                  ? "col-span-2 md:col-span-1"
+                                  : ""
+                              }`}
                             >
                               <img
                                 src={file.preview}
@@ -471,7 +475,7 @@ const EditChurchInfoForm = ({
                           ) : (
                             <>
                               <span
-                                className={`font-medium ${
+                                className={`font-normal ${
                                   files.length >= 2
                                     ? "text-green-600"
                                     : "text-orange-600"
