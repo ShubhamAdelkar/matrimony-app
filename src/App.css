@@ -216,7 +216,7 @@ summary::-webkit-details-marker {
 @layer base {
   html {
     @apply font-Geist;
-    @apply scrollbar-w-1 scrollbar scrollbar-thumb-rounded scrollbar-thumb-[#fd356e] scrollbar-track-background antialiased;
+    @apply scrollbar-w-2 scrollbar-h-2 scrollbar scrollbar-thumb-rounded scrollbar-thumb-[#fd356e] scrollbar-track-background antialiased scrollbar-track-rounded-full scrollbar-corner-logo-color scrollbar-corner-rounded-full;
     @apply text-foreground bg-background;
     @apply selection:bg-foreground selection:text-background;
     @apply !scroll-smooth;
@@ -263,7 +263,7 @@ summary::-webkit-details-marker {
 
   * {
     @apply font-Geist border-border outline-ring/50 focus-visible:outline-none;
-    @apply scrollbar-w-1 scrollbar scrollbar-thumb-rounded scrollbar-thumb-[#fd356e] scrollbar-track-background;
+    @apply scrollbar scrollbar-thumb-rounded scrollbar-thumb-[#fd356e] scrollbar-track-background scrollbar-track-rounded-full;
     @apply focus:outline-none focus-visible:outline-none;
   }
 
